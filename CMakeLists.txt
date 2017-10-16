@@ -1,10 +1,15 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 2.6)
+
 project(daemon)
 
-set(CMAKE_CXX_STANDARD 11)
+if(MSVC)
+    add_definitions(-DMSVC)
+elseif(APPLE)
+    add_definitions(-DAPPLE)
+endif()
 
-set(SOURCE_FILES
-        main.cpp
-        )
-
-add_executable(daemon ${SOURCE_FILES})
+add_subdirectory(UnitTests)
+add_subdirectory(Shared)
+#add_subdirectory(Linux)
+#add_subdirectory(Mac)
+add_subdirectory(Windows)
