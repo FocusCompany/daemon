@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
 
-project(daemon_windows_tests)
-
 add_executable(daemon_windows_tests DummyTest.cpp)
 
 target_include_directories(daemon_windows_tests PUBLIC ../ ${CMAKE_SOURCE_DIR}/UnitTests/gtest/googletest ${CMAKE_SOURCE_DIR}/UnitTests/gtest/googletest/include)

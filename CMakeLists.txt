@@ -16,6 +16,8 @@ elseif(APPLE)
     add_definitions(-DAPPLE)
 endif()
 
+enable_testing()
+
 add_subdirectory(UnitTests)
 add_subdirectory(Shared)
 #add_subdirectory(Linux)

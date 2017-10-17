@@ -13,5 +13,5 @@ TEST(DummyTestModule, Dummy) {
 
     toto.DisplayText(tmp);
 
-    ASSERT_EQ("Hello world", "Hello world") << "Error";
+    ASSERT_EQ(1, 1) << "Error";
 }

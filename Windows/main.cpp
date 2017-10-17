@@ -15,5 +15,7 @@ int main(int ac, char **av) {
 
     std::cout << "Hello world i'm back after 2 years" << std::endl;
 
+	system("pause");
+
     return (0);
 }
