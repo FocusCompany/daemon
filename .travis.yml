@@ -1,0 +1,29 @@
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+          - george-edison55/cmake-3.x
+          - ubuntu-toolchain-r-test
+          packages:
+          - cmake
+          - gcc-5
+          - g++-5
+
+    - os: osx
+      compiler: clang
+
+language: cpp
+
+install:
+  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then export CXX="g++-5" CC="gcc-5"; fi
+
+script:
+  - mkdir build
+  - cd build
+  - cmake .. && make
+  - ctest --verbose
