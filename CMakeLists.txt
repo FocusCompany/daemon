@@ -7,6 +7,9 @@ project(daemon)
 # defined projects like INSTALL.vcproj and ZERO_CHECK.vcproj
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+include(cmake/ucm.cmake)
+ucm_set_runtime(STATIC)
+
 if(MSVC)
     add_definitions(-DMSVC)
 elseif(APPLE)
