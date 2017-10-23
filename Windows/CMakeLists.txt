@@ -15,7 +15,9 @@ set(MAIN_FILES
 
 add_library(daemon_windows_lib STATIC ${DEAMON_WINDOWS_SOURCE_FILES})
 
-add_executable(daemon_windows ${MAIN_FILES} ${DEAMON_WINDOWS_SOURCE_FILES})
+add_executable(daemon_windows ${MAIN_FILES})
+
+target_link_libraries(daemon_windows daemon_windows_lib nanomsg)
 
 ####TESTS####
 
