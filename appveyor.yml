@@ -1,0 +1,23 @@
+os: Visual Studio 2017
+
+init:
+  - git config --global core.autocrlf input
+
+clone_folder: C:\projects\daemon
+
+platform:
+  - Win32
+configuration:
+  - Release
+
+build:
+  project: daemon.sln
+
+before_build:
+  - echo [RUNNING CMAKE]
+  - cd c:\projects\daemon
+  - cmake -G "Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=%P%
+
+after_build:
+  - echo Running Unit Tests...
+  - ctest -C Release --verbose
