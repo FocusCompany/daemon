@@ -27,12 +27,14 @@ enable_testing()
 add_subdirectory(UnitTests)
 
 ### Linking NanoMsg library
-add_definitions(-DNN_STATIC_LIB=ON)
+#add_definitions(-DNN_STATIC_LIB=ON)
 add_subdirectory(nanomsg)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/nanomsg/include)
 
 ### Subdirectory
 add_subdirectory(Shared)
-add_subdirectory(Windows)
-
-
+if(MSVC)
+    add_subdirectory(Windows)
+else()
+    add_subdirectory(Unix)
+endif()
