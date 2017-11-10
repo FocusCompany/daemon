@@ -7,12 +7,18 @@
 
 #include <IFocusNetworkManager.hpp>
 #include <thread>
+#include "IFocusEventListener.hpp"
+#include "FocusEventListener.hpp"
 
 class FocusNetworkManager : public IFocusNetworkManager {
 private:
+	int _socket;
 	std::unique_ptr<std::thread> _networkManagerThread;
+	std::unique_ptr<IFocusEventListener> _eventListener = std::unique_ptr<IFocusEventListener>(std::make_unique<FocusEventListener>());
 	void RunReceive();
 public:
+	FocusNetworkManager();
+	virtual ~FocusNetworkManager();
 	void Run() override final;
 };
 

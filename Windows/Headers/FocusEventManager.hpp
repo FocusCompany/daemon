@@ -10,9 +10,12 @@
 
 class FocusEventManager : public IFocusEventManager {
 private:
+	int _socketPUB;
+	int _socketSUB;
 	std::unique_ptr<std::thread> _eventManagerThread;
 	void RunReceive();
 public:
+	FocusEventManager();
 	void Run() override final;
 };
 

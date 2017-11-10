@@ -10,8 +10,9 @@
 #include <functional>
 #include <iostream>
 #include "IWindowsContextAgent.hpp"
-
-static IWindowsContextAgent *windowsContextAgent;
+#include <memory>
+#include "IFocusEventEmitter.hpp"
+#include "FocusEventEmitter.hpp"
 
 class WindowsContextAgent : public IWindowsContextAgent {
 
@@ -27,6 +28,7 @@ public:
 	static VOID CALLBACK WinEventProcCallback(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
 
 private:
+	std::unique_ptr<IFocusEventEmitter> _eventEmitter = std::unique_ptr<IFocusEventEmitter>(std::make_unique<FocusEventEmitter>());
 	HWINEVENTHOOK hEvent;
 };
 

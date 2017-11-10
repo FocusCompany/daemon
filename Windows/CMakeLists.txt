@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 11)
 set(DEAMON_WINDOWS_SOURCE_FILES
         Sources/FocusDaemon.cpp
         Sources/FocusEventManager.cpp
+        Sources/FocusEventEmitter.cpp
+        Sources/FocusEventListener.cpp
 		Sources/FocusKeyLogger.cpp
 		Sources/FocusNetworkManager.cpp
 		Sources/WindowsContextAgent.cpp
