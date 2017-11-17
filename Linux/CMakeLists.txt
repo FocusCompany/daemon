@@ -1,0 +1,32 @@
+cmake_minimum_required(VERSION 2.6)
+
+project(daemon_linux)
+
+set(CMAKE_CXX_STANDARD 11)
+
+set(DEAMON_LINUX_SOURCE_FILES
+		Sources/Dummy.cpp
+        )
+
+set(MAIN_FILES
+        main.cpp
+        )
+
+include_directories(Headers ../Shared/Interfaces ../Shared/Headers)
+
+add_library(daemon_linux_lib STATIC ${DEAMON_LINUX_SOURCE_FILES})
+
+add_executable(daemon_linux ${MAIN_FILES})
+
+target_link_libraries(daemon_linux daemon_linux_lib)
+
+####TESTS####
+
+add_subdirectory(UnitTests)
+
+enable_testing()
+IF (MSVC)
+    add_test(NAME daemon_linux_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_linux_tests.exe)
+ELSE ()
+    add_test(NAME daemon_linux_tests COMMAND daemon_linux_tests)
+ENDIF ()

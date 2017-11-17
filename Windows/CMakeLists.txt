@@ -5,12 +5,6 @@ project(daemon_windows)
 set(CMAKE_CXX_STANDARD 11)
 
 set(DEAMON_WINDOWS_SOURCE_FILES
-        Sources/FocusDaemon.cpp
-        Sources/FocusEventManager.cpp
-        Sources/FocusEventEmitter.cpp
-        Sources/FocusEventListener.cpp
-		Sources/FocusKeyLogger.cpp
-		Sources/FocusNetworkManager.cpp
 		Sources/WindowsContextAgent.cpp
         )
 
@@ -18,13 +12,13 @@ set(MAIN_FILES
         main.cpp
         )
 
-include_directories(Headers Interfaces ../Shared/Interfaces)
+include_directories(Headers ../Shared/Interfaces ../Shared/Headers)
 
 add_library(daemon_windows_lib STATIC ${DEAMON_WINDOWS_SOURCE_FILES})
 
 add_executable(daemon_windows ${MAIN_FILES})
 
-target_link_libraries(daemon_windows daemon_windows_lib nanomsg Psapi)
+target_link_libraries(daemon_windows daemon_windows_lib daemon_shared_lib Psapi)
 
 ####TESTS####
 

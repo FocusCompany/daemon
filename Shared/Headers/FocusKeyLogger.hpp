@@ -14,6 +14,7 @@
 #include "IFocusEventEmitter.hpp"
 #include "FocusEventEmitter.hpp"
 
+
 class FocusKeyLogger : public IFocusKeyLogger {
 private:
 	std::unique_ptr<std::thread> _keyLoggerThread;

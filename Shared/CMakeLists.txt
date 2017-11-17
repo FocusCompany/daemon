@@ -5,11 +5,25 @@ project(daemon_shared_lib)
 set(CMAKE_CXX_STANDARD 11)
 
 set(DEAMON_SHARED_SOURCE_FILES
-        TestShared.cpp
-        TestShared.hpp
+        Sources/FocusDaemon.cpp
+        Sources/FocusEventManager.cpp
+        Sources/FocusEventEmitter.cpp
+        Sources/FocusEventListener.cpp
+		Sources/FocusNetworkManager.cpp
+		Sources/FocusKeyLogger.cpp
         )
 
+include_directories(Headers Interfaces)
+
+IF(MSVC)
+	include_directories(../Windows/Headers)
+ELSE()
+	include_directories(../Unix/Headers)
+ENDIF()
+
 add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES})
+
+target_link_libraries(daemon_shared_lib nanomsg)
 
 ####TESTS####
 
