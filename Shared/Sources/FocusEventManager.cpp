@@ -6,6 +6,8 @@
 #include <iostream>
 #include <nanomsg/nn.h>
 #include <nanomsg/pubsub.h>
+#include <functional>
+#include <cstring>
 
 FocusEventManager::FocusEventManager() {
 	_socketPUB = nn_socket(AF_SP, NN_PUB);

@@ -7,10 +7,10 @@
 
 int main(const int ac, const char **av)
 {
-	//FocusDaemon daemon;
+	FocusDaemon daemon;
 
 	std::cout << "Starting Focus daemon on Linux Platform" << std::endl;
 
-	//daemon.Run();
+	daemon.Run();
 	return (0);
 }

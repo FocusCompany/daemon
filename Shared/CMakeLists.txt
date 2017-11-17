@@ -2,23 +2,38 @@ cmake_minimum_required(VERSION 2.6)
 
 project(daemon_shared_lib)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 set(DEAMON_SHARED_SOURCE_FILES
-        Sources/FocusDaemon.cpp
-        Sources/FocusEventManager.cpp
-        Sources/FocusEventEmitter.cpp
-        Sources/FocusEventListener.cpp
+		Sources/FocusDaemon.cpp
+		Sources/FocusEventManager.cpp
+		Sources/FocusEventEmitter.cpp
+		Sources/FocusEventListener.cpp
 		Sources/FocusNetworkManager.cpp
 		Sources/FocusKeyLogger.cpp
-        )
+
+		Headers/FocusDaemon.hpp
+		Headers/FocusEventManager.hpp
+		Headers/FocusEventEmitter.hpp
+		Headers/FocusEventListener.hpp
+		Headers/FocusNetworkManager.hpp
+		Headers/FocusKeyLogger.hpp
+
+		Interfaces/IFocusDaemon.hpp
+		Interfaces/IFocusEventManager.hpp
+		Interfaces/IFocusEventEmitter.hpp
+		Interfaces/IFocusEventListener.hpp
+		Interfaces/IFocusNetworkManager.hpp
+		Interfaces/IFocusKeyLogger.hpp
+		Interfaces/IWindowsContextAgent.hpp
+		)
 
 include_directories(Headers Interfaces)
 
 IF(MSVC)
 	include_directories(../Windows/Headers)
 ELSE()
-	include_directories(../Unix/Headers)
+	include_directories(../Linux/Headers)
 ENDIF()
 
 add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES})

@@ -2,10 +2,11 @@ cmake_minimum_required(VERSION 2.6)
 
 project(daemon_linux)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 set(DEAMON_LINUX_SOURCE_FILES
-		Sources/Dummy.cpp
+        Sources/WindowsContextAgent.cpp
+        Headers/WindowsContextAgent.hpp
         )
 
 set(MAIN_FILES
@@ -18,7 +19,7 @@ add_library(daemon_linux_lib STATIC ${DEAMON_LINUX_SOURCE_FILES})
 
 add_executable(daemon_linux ${MAIN_FILES})
 
-target_link_libraries(daemon_linux daemon_linux_lib)
+target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib)
 
 ####TESTS####
 

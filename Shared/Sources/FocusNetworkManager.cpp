@@ -22,7 +22,7 @@ void FocusNetworkManager::Run() {
 
 	_networkManagerThread = std::make_unique<std::thread>(std::bind(&FocusNetworkManager::RunReceive, this));
 
-	_eventListener->Register("FocusNetworkManager", [&](std::string clientId, std::string &payload) {
+	_eventListener->Register("FocusNetworkManager", [&](std::string clientId, std::string payload) {
 		std::cout << "Sending: " << payload << std::endl;
 		nn_send(_socket, payload.c_str(), payload.size(), 0);
 	});
