@@ -4,6 +4,9 @@ project(daemon_linux)
 
 set(CMAKE_CXX_STANDARD 14)
 
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
+
 set(DEAMON_LINUX_SOURCE_FILES
         Sources/WindowsContextAgent.cpp
         Headers/WindowsContextAgent.hpp
@@ -13,13 +16,13 @@ set(MAIN_FILES
         main.cpp
         )
 
-include_directories(Headers ../Shared/Interfaces ../Shared/Headers)
+include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Shared/Proto/ProtoCompiled ${PROTOBUF_INCLUDE_DIR})
 
 add_library(daemon_linux_lib STATIC ${DEAMON_LINUX_SOURCE_FILES})
 
 add_executable(daemon_linux ${MAIN_FILES})
 
-target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib)
+target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib ${PROTOBUF_LIBRARY})
 
 ####TESTS####
 

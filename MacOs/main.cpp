@@ -5,12 +5,11 @@
 #include <iostream>
 #include "FocusDaemon.hpp"
 
-int main(const int ac, const char **av)
-{
-	FocusDaemon daemon;
+int main(const int ac, const char **av) {
+    FocusDaemon daemon;
 
-	std::cout << "Starting Focus daemon on MacOs Platform" << std::endl;
+    std::cout << "Starting Focus daemon on MacOs Platform" << std::endl;
 
-	daemon.Run();
-	return (0);
+    //daemon.Run();
+    return (0);
 }

@@ -13,11 +13,26 @@ matrix:
           - cmake
           - gcc-5
           - g++-5
+          - autoconf
+          - automake
+          - libtool
+          - curl
+          - make
+          - unzip
 
     - os: osx
       compiler: clang
 
 language: cpp
+
+sudo: false
+
+cache:
+  directories:
+  - $HOME/protobuf
+
+before_install:
+  - bash travis_protobuf.sh
 
 install:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then export CXX="g++-5" CC="gcc-5"; fi

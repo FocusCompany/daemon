@@ -13,16 +13,16 @@
 class WindowsContextAgent : public IWindowsContextAgent {
 
 public:
-	WindowsContextAgent();
+    WindowsContextAgent();
 
-	~WindowsContextAgent();
+    ~WindowsContextAgent();
 
-	void Run() override final;
+    void Run() override final;
 
-	void OnContextChanged(std::string &processName, std::string &windowTitle) override final;
+    void OnContextChanged(std::string &processName, std::string &windowTitle) override final;
 
 private:
-	std::unique_ptr<IFocusEventEmitter> _eventEmitter = std::unique_ptr<IFocusEventEmitter>(std::make_unique<FocusEventEmitter>());
+    std::unique_ptr<IFocusEventEmitter> _eventEmitter = std::unique_ptr<IFocusEventEmitter>(std::make_unique<FocusEventEmitter>());
 };
 
 #endif //FOCUS_CLIENT_WINDOWSCONTEXTAGENT_HPP

@@ -72,14 +72,14 @@ elseif (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     # Get version from last tag
     execute_process (
         COMMAND             "${GIT_EXECUTABLE}" describe --always# | sed -e "s:v::"
-        WORKING_DIRECTORY   "${PROJECT_SOURCE_DIR}"
+        WORKING_DIRECTORY   "../.."
         OUTPUT_VARIABLE     NN_PACKAGE_VERSION
         OUTPUT_STRIP_TRAILING_WHITESPACE)
 
     # If the sources have been changed locally, add -dirty to the version.
     execute_process (
         COMMAND             "${GIT_EXECUTABLE}" diff --quiet
-        WORKING_DIRECTORY   "${PROJECT_SOURCE_DIR}"
+        WORKING_DIRECTORY   "../.."
         RESULT_VARIABLE     res)
     if (res EQUAL 1)
         set (NN_PACKAGE_VERSION "${NN_PACKAGE_VERSION}-dirty")
