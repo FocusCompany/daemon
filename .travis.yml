@@ -25,12 +25,6 @@ matrix:
 
 language: cpp
 
-sudo: false
-
-cache:
-  directories:
-  - $HOME/protobuf
-
 before_install:
   - bash travis_protobuf.sh
 
@@ -40,5 +34,5 @@ install:
 script:
   - mkdir build
   - cd build
-  - cmake -DCMAKE_LIBRARY_PATH=/home/travis/protobuf/lib/ .. && make
+  - cmake .. && make
   - ctest --verbose
