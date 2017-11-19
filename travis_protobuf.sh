@@ -2,6 +2,7 @@
 
 set -e
 ls -la
+pwd
 cd $HOME/protobuf/
 
 if [ ! -d "$HOME/protobuf/lib" ]; then
