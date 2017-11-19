@@ -25,6 +25,10 @@ matrix:
 
 language: cpp
 
+cache:
+  directories:
+  - $HOME/protobuf
+
 before_install:
   - bash travis_protobuf.sh
   - bash Shared/Proto/generate.sh
