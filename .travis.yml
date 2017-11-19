@@ -31,7 +31,6 @@ cache:
 
 before_install:
   - bash travis_protobuf.sh
-  - bash Shared/Proto/generate.sh
 
 install:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then export CXX="g++-5" CC="gcc-5"; fi
