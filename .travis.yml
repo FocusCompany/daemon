@@ -25,8 +25,6 @@ matrix:
 
 language: cpp
 
-sudo: false
-
 cache:
   directories:
   - $HOME/protobuf
