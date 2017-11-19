@@ -13,4 +13,4 @@ else
 fi
 
 cd $HOME/build/FocusCompany/daemon/Shared/Proto/
-./generate.sh
+sudo ./generate.sh
