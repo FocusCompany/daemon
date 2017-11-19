@@ -30,7 +30,8 @@ cache:
   - $HOME/protobuf
 
 before_install:
-  - bash travis_protobuf.sh
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bash travis_protobuf.sh osx; fi
+  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then bash travis_protobuf.sh linux; fi
 
 install:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then export CXX="g++-5" CC="gcc-5"; fi
