@@ -2,7 +2,6 @@
 
 set -e
 
-mkdir $HOME/protobuf/
 cd $HOME/protobuf/
 
 if [ ! -d "$HOME/protobuf/lib" ]; then
