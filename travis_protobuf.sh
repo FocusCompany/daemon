@@ -9,3 +9,5 @@ if [ ! -d "$HOME/protobuf/lib" ]; then
 else
   echo "Using cached directory."
 fi
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/travis/protobuf/lib
