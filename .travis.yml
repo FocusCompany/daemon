@@ -40,5 +40,5 @@ install:
 script:
   - mkdir build
   - cd build
-  - cmake -DCMAKE_LIBRARY_PATH=$HOME/protobuf/lib/ .. && make
+  - cmake -DCMAKE_LIBRARY_PATH=/home/travis/protobuf/lib/ .. && make
   - ctest --verbose
