@@ -25,6 +25,8 @@ matrix:
 
 language: cpp
 
+sudo: false
+
 cache:
   directories:
   - $HOME/protobuf
@@ -38,5 +40,5 @@ install:
 script:
   - mkdir build
   - cd build
-  - cmake .. && make
+  - cmake -DCMAKE_LIBRARY_PATH=$HOME/protobuf/ .. && make
   - ctest --verbose
