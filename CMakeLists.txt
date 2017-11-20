@@ -18,6 +18,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 ### Define some useful pre-processor for cross-compatibility
 if(MSVC)
     add_definitions(-DMSVC)
+	set(CMAKE_INCLUDE_PATH "C:/Program Files/protobuf/include")
+	set(CMAKE_LIBRARY_PATH "C:/Program Files/protobuf/lib")
 elseif(APPLE)
     add_definitions(-DAPPLE)
 endif()
