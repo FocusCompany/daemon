@@ -10,6 +10,7 @@ mkdir solution
 cd solution
 cmake -G "Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=../../../../install -Dprotobuf_BUILD_TESTS=OFF ../..
 msbuild protobuf.sln || goto error
+msbuild msbuild INSTALL.vcxproj || goto error
 goto :EOF
 
 :error
