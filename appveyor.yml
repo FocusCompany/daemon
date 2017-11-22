@@ -9,9 +9,6 @@ cache:
   - C:\projects\daemon\protobuf-3.5.0\
 
 install:
-  - curl -L -o protobuf.zip https://github.com/google/protobuf/releases/download/v3.5.0/protobuf-all-3.5.0.zip
-  - 7z x protobuf.zip
-  - del /Q protobuf.zip
   - CALL appveyor_protobuf.bat
 
 platform:
