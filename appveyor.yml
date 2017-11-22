@@ -20,6 +20,9 @@ build:
   project: daemon.sln
 
 before_build:
+  - echo [COMPILING PROTO FILES]
+  - cd c:\projects\daemon\Shared\Proto
+  - CALL generate.bat
   - echo [RUNNING CMAKE]
   - cd c:\projects\daemon
   - cmake -G "Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=%P%
