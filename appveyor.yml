@@ -6,7 +6,7 @@ init:
 clone_folder: C:\projects\daemon
 
 cache:
-  - C:\Tools\vcpkg\packages
+  - C:\Tools\vcpkg\packages -> appveyor.yml
 
 install:
   - vcpkg install protobuf:x64-windows-static
