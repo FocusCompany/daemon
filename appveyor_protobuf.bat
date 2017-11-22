@@ -2,7 +2,6 @@ setlocal
 
 echo Building Protobuf Library 
 mkdir install
-dir
 cd protobuf-3.5.0/cmake
 mkdir build
 cd build
