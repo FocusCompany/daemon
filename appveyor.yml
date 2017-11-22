@@ -19,6 +19,7 @@ build:
   project: daemon.sln
 
 before_build:
+  - C:/Tools/vcpkg/packages/protobuf_x64-windows-static/tools/protoc.exe --cpp_out=./Shared/Proto/ProtoCompiled ./Shared/Proto/FocusEnvelope.proto
   - echo [RUNNING CMAKE]
   - cd c:\projects\daemon
   - cmake -G "Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=%P% -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static
