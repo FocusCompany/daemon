@@ -5,6 +5,9 @@ init:
 
 clone_folder: C:\projects\daemon
 
+cache:
+  - C:\Tools\vcpkg\packages
+
 install:
   - vcpkg install protobuf
 
