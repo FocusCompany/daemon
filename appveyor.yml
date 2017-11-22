@@ -22,7 +22,7 @@ build:
 before_build:
   - echo [RUNNING CMAKE]
   - cd c:\projects\daemon
-  - cmake -G "Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=%P%
+  - cmake -G "Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=%P% -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static
 
 after_build:
   - echo Running Unit Tests...
