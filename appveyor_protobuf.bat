@@ -15,6 +15,7 @@ IF NOT exist "protobuf-3.5.0" (
    msbuild protobuf.sln || goto error
 ) ELSE (
   echo Using cached protobuf
+  cd protobuf-3.5.0/cmake/build/solution
 )
 echo Installing Protobuf Library 
 msbuild INSTALL.vcxproj || goto error
