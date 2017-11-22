@@ -37,6 +37,12 @@ install:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then export CXX="g++-5" CC="gcc-5"; fi
 
 script:
+  - echo "[COMPILING PROTO FILES]"
+  - cd $HOME/build/FocusCompany/daemon/Shared/Proto/
+  - chmod +x generate.sh
+  - ./generate.sh
+  - echo "[RUNNING CMAKE]"
+  - cd $HOME/build/FocusCompany/daemon/
   - mkdir build
   - cd build
   - cmake .. && make

@@ -4,18 +4,19 @@ set -e
 cd $HOME/protobuf/
 
 if [ ! -d "$HOME/protobuf/lib" ]; then
-  wget https://github.com/google/protobuf/archive/v3.5.0.tar.gz -O proto
-  tar -xzf proto
+  echo "Building Protobuf Library"
+  wget https://github.com/google/protobuf/releases/download/v3.5.0/protobuf-all-3.5.0.tar.gz -O protobuf.tar.gz
+  tar -xzf protobuf.tar.gz
+  rm protobuf.tar.gz
   if [[ $1 = "osx" ]]; then
-    cd protobuf-3.5.0 && ./autogen.sh && ./configure && make && sudo make install
+    cd protobuf-3.5.0 && ./autogen.sh && ./configure && make
   else
-    cd protobuf-3.5.0 && ./autogen.sh && ./configure --prefix=/usr && make && sudo make install
+    cd protobuf-3.5.0 && ./autogen.sh && ./configure --prefix=/usr && make
   fi
 else
-  echo "Using cached directory."
-  cd protobuf-3.5.0 && sudo make install
+  echo "Using cached protobuf"
+  cd protobuf-3.5.0
 fi
-
-cd $HOME/build/FocusCompany/daemon/Shared/Proto/
-chmod +x generate.sh
-./generate.sh
+echo "Installing Protobuf Library to /usr or /usr/local/ (Linux/Mac)"
+sudo make install
+echo "Protobuf successfully installed"
