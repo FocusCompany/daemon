@@ -9,7 +9,7 @@ cache:
   - C:\Tools\vcpkg\packages
 
 install:
-  - vcpkg install protobuf
+  - vcpkg install protobuf:x64-windows-static
 
 platform:
   - Win32
