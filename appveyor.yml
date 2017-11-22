@@ -5,10 +5,11 @@ init:
 
 clone_folder: C:\projects\daemon
 
-cache: c:\tools\vcpkg\installed\
-
 install:
-  - vcpkg install protobuf:x64-windows-static
+  - curl -L -o protobuf.zip https://github.com/google/protobuf/releases/download/v3.5.0/protobuf-all-3.5.0.zip
+  - 7z x protobuf.zip
+  - del /Q protobuf.zip
+  - CALL appveyor_protobuf.bat
 
 platform:
   - Win32
@@ -19,10 +20,9 @@ build:
   project: daemon.sln
 
 before_build:
-  - C:/Tools/vcpkg/packages/protobuf_x64-windows-static/tools/protoc.exe --cpp_out=./Shared/Proto/ProtoCompiled ./Shared/Proto/FocusEnvelope.proto
   - echo [RUNNING CMAKE]
   - cd c:\projects\daemon
-  - cmake -G "Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=%P% -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static
+  - cmake -G "Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=%P%
 
 after_build:
   - echo Running Unit Tests...
