@@ -1,0 +1,89 @@
+@startuml
+
+class Daemon {
+    -std::unique_ptr<FocusKeyLogger> KeyLogger
+    -std::unique_ptr<NetworkManager> NetworkManager
+    -std::unique_ptr<EventManager> EventManager
+    +Run()
+}
+
+class FocusKeyLogger {
+    -std::unique_ptr<std::thread> _keyLoggerThread
+    -std::unique_ptr<FocusEventListener> _eventListener
+    -std::unique_ptr<FocusEventEmitter> _eventEmitter
+    ..Module Keylogger..
+    -std::unique_ptr<IContextAgent> _contextAgent
+    -std::unique_ptr<IKeyListener> _keyListener
+    -std::unique_ptr<IMouseListener> _mouseListener
+    --
+    -PushKeyLog();
+    -RunKeyLogger();
+    +Run()
+}
+
+package "Keylogger Modules" <<Rectangle>> {
+    class IContextAgent {
+        ...
+    }
+
+    class IKeyListener {
+        ...
+    }
+
+    class IMouseListener {
+        ...
+    }
+
+    IContextAgent .[hidden] IKeyListener
+    IKeyListener .[hidden] IMouseListener
+}
+
+class FocusNetworkManager {
+    -int _socket
+    -std::unique_ptr<std::thread> _networkManagerThread;
+    -std::unique_ptr<FocusEventListener> _eventListener
+    +FocusNetworkManager()
+    +~FocusNetworkManager()
+    +Run()
+}
+
+class FocusEventManager {
+	-int _socketPUB
+	-int _socketSUB
+	-std::unique_ptr<std::thread> _eventManagerThread
+	-void RunReceive()
+	+FocusEventManager()
+	+void Run()
+}
+
+class FocusEventEmitter {
+    -int _socketPUB;
+    +FocusEventEmitter();
+    +void Emit(std::string destinator, std::string &payload);
+    +void RouteToModules(std::string &payload);
+}
+
+class FocusEventListener {
+    -std::function<void(std::string clientId, std::string payload)> _onMessage;
+	-std::unique_ptr<std::thread> _eventListenerThread;
+	-int _socketSUB;
+	-static void RunReceive(int socketSUB, std::function<...> *onMessage, bool shouldUnpack = false);
+    +FocusEventListener();
+	+void Register(std::string payloadType, std::function<...> onMessage);
+	+void RegisterNoUnpack(std::string payloadType, std::function<...> onMessage);
+}
+
+Daemon --* FocusKeyLogger
+Daemon --* FocusNetworkManager
+Daemon --* FocusEventManager
+
+FocusKeyLogger --* FocusEventListener
+FocusKeyLogger --* FocusEventEmitter
+
+"Keylogger Modules" --* FocusEventEmitter
+"Keylogger Modules" *-- FocusKeyLogger
+
+FocusNetworkManager --* FocusEventListener
+
+
+@enduml
