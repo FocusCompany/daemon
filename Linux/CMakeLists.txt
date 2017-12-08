@@ -8,8 +8,8 @@ include(FindProtobuf)
 find_package(Protobuf REQUIRED)
 
 set(DEAMON_LINUX_SOURCE_FILES
-        Sources/WindowsContextAgent.cpp
-        Headers/WindowsContextAgent.hpp
+        Sources/ContextAgent.cpp
+        Headers/ContextAgent.hpp
         )
 
 set(MAIN_FILES

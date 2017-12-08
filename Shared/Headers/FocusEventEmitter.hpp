@@ -5,18 +5,18 @@
 #ifndef FOCUS_CLIENT_FOCUSEVENTEMITTER_HPP
 #define FOCUS_CLIENT_FOCUSEVENTEMITTER_HPP
 
-#include <IFocusEventEmitter.hpp>
+#include <string>
 
-class FocusEventEmitter : public IFocusEventEmitter {
+class FocusEventEmitter {
 private:
-	int _socketPUB;
+    int _socketPUB;
 
 public:
-	FocusEventEmitter();
+    FocusEventEmitter();
 
-	void Emit(std::string destinator, std::string &payload) override final;
+    void Emit(std::string destinator, std::string &payload);
 
-	void RouteToModules(std::string &payload) override final;
+    void RouteToModules(std::string &payload);
 };
 
 

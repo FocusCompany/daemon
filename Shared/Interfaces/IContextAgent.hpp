@@ -7,7 +7,7 @@
 
 #include <string>
 
-class IWindowsContextAgent {
+class IContextAgent {
 public:
 	virtual void Run() = 0;
 	virtual void OnContextChanged(std::string &processName, std::string &windowTitle) = 0;

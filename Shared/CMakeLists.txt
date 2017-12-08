@@ -25,13 +25,7 @@ set(DEAMON_SHARED_SOURCE_FILES
 		Headers/FocusNetworkManager.hpp
 		Headers/FocusKeyLogger.hpp
 
-		Interfaces/IFocusDaemon.hpp
-		Interfaces/IFocusEventManager.hpp
-		Interfaces/IFocusEventEmitter.hpp
-		Interfaces/IFocusEventListener.hpp
-		Interfaces/IFocusNetworkManager.hpp
-		Interfaces/IFocusKeyLogger.hpp
-		Interfaces/IWindowsContextAgent.hpp
+		Interfaces/IContextAgent.hpp
 		)
 
 include_directories(Headers Interfaces ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled)

@@ -6,22 +6,19 @@
 #define FOCUS_CLIENT_FOCUSDAEMON_HPP
 
 #include <memory>
-#include "IFocusDaemon.hpp"
-#include "IFocusNetworkManager.hpp"
-#include "IFocusKeyLogger.hpp"
-#include "IFocusEventManager.hpp"
+#include "FocusKeyLogger.hpp"
 #include "FocusNetworkManager.hpp"
 #include "FocusKeyLogger.hpp"
 #include "FocusEventManager.hpp"
 
-class FocusDaemon : public IFocusDaemon {
+class FocusDaemon {
 private:
-	std::unique_ptr<IFocusKeyLogger> KeyLogger = std::unique_ptr<IFocusKeyLogger>(std::make_unique<FocusKeyLogger>());
-	std::unique_ptr<IFocusNetworkManager> NetworkManager = std::unique_ptr<IFocusNetworkManager>(std::make_unique<FocusNetworkManager>());
-	std::unique_ptr<IFocusEventManager> EventManager = std::unique_ptr<IFocusEventManager>(std::make_unique<FocusEventManager>());
+	std::unique_ptr<FocusKeyLogger> KeyLogger = std::make_unique<FocusKeyLogger>();
+	std::unique_ptr<FocusNetworkManager> NetworkManager = std::make_unique<FocusNetworkManager>();
+	std::unique_ptr<FocusEventManager> EventManager = std::make_unique<FocusEventManager>();
 
 public:
-	void Run() override final;
+	void Run();
 };
 
 #endif //FOCUS_CLIENT_FOCUSDAEMON_HPP

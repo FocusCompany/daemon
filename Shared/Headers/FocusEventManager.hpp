@@ -5,10 +5,9 @@
 #ifndef FOCUS_CLIENT_FOCUSEVENTMANAGER_HPP
 #define FOCUS_CLIENT_FOCUSEVENTMANAGER_HPP
 
-#include <IFocusEventManager.hpp>
 #include <thread>
 
-class FocusEventManager : public IFocusEventManager {
+class FocusEventManager {
 private:
 	int _socketPUB;
 	int _socketSUB;
@@ -16,7 +15,7 @@ private:
 	void RunReceive();
 public:
 	FocusEventManager();
-	void Run() override final;
+	void Run();
 };
 
 #endif //FOCUS_CLIENT_FOCUSEVENTMANAGER_HPP
