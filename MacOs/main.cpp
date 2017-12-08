@@ -10,6 +10,6 @@ int main(const int ac, const char **av) {
 
     std::cout << "Starting Focus daemon on MacOs Platform" << std::endl;
 
-    //daemon.Run();
+    daemon.Run();
     return (0);
 }
