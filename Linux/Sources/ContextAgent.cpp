@@ -15,10 +15,10 @@ ContextAgent::ContextAgent() {
 ContextAgent::~ContextAgent() {
 }
 
-void LinuxContextAgent::Run() {
+void ContextAgent::Run() {
     std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::hours((std::numeric_limits<int>::max)()));
 }
 
-void LinuxContextAgent::OnContextChanged(std::string &processName, std::string &windowTitle) {
+void ContextAgent::OnContextChanged(std::string &processName, std::string &windowTitle) {
     _eventEmitter->Emit("OnWindowsContextChanged", processName);
 }
