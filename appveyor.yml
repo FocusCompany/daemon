@@ -29,4 +29,4 @@ before_build:
 
 after_build:
   - echo Running Unit Tests...
-  - ctest -C Release --verbose
+  - ctest -C Debug --verbose
