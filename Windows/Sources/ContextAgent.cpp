@@ -3,6 +3,8 @@
 //
 
 #include "ContextAgent.hpp"
+#include "FocusSerializer.hpp"
+#include "FocusContextEventPayload.pb.h"
 
 IContextAgent *contextAgent;
 
@@ -20,8 +22,14 @@ void ContextAgent::Run() {
 	GetMessage(&msg, nullptr, NULL, NULL); // Windows message loop keepalive. This will block the current thread.
 }
 
-void ContextAgent::OnContextChanged(std::string &processName, std::string &windowTitle) {
-	_eventEmitter->Emit("OnWindowsContextChanged", processName);
+void ContextAgent::OnContextChanged(const std::string &processName, const std::string &windowTitle) const {
+	Focus::ContextEventPayload context;
+	context.set_processname(processName);
+	context.set_windowname(windowTitle);
+
+	Focus::Event event = FocusSerializer::CreateEventFromContext("OnWindowsContextChanged", context);
+
+	_eventEmitter->Emit("OnWindowsContextChanged", event);
 }
 
 VOID CALLBACK ContextAgent::WinEventProcCallback(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {

@@ -10,14 +10,18 @@
 
 class FocusNetworkManager {
 private:
-	int _socket;
-	std::unique_ptr<std::thread> _networkManagerThread;
-	std::unique_ptr<FocusEventListener> _eventListener = std::make_unique<FocusEventListener>();
-	void RunReceive();
+    int _socket;
+    std::unique_ptr<std::thread> _networkManagerThread;
+    std::unique_ptr<FocusEventListener<Focus::Event>> _eventListener = std::make_unique<FocusEventListener<Focus::Event>>();
+
+    void RunReceive();
+
 public:
-	FocusNetworkManager();
-	virtual ~FocusNetworkManager();
-	void Run();
+    FocusNetworkManager();
+
+    ~FocusNetworkManager();
+
+    void Run();
 };
 
 #endif //FOCUS_CLIENT_FOCUSNETWORKMANAGER_HPP

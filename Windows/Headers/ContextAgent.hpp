@@ -22,7 +22,7 @@ public:
 
 	void Run() override final;
 
-	void OnContextChanged(std::string &processName, std::string &windowTitle) override final;
+	void OnContextChanged(const std::string &processName, const std::string &windowTitle) const override final;
 
 	static VOID CALLBACK WinEventProcCallback(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
 

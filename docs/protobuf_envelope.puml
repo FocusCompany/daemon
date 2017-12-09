@@ -1,0 +1,40 @@
+@startuml
+
+package Focus <<Frame>> {
+  object Envelope {
+    clientID
+    events
+  }
+
+  object Event {
+    timestamp
+    payloadType
+    payload
+  }
+
+  object ContextEventPayload {
+    ProcessName
+    WindowName
+  }
+
+  object KeyEventPayload {
+    PlainTextKeylog
+  }
+
+  object MouseEventPayload {
+    type
+    X
+    Y
+  }
+
+  note "Each event can contain\nonly one type of payload" as N1
+
+  Envelope -* Event : "Contains multiple event"
+  Event --o N1
+
+  N1 --o ContextEventPayload
+  N1 --o MouseEventPayload
+  N1 --o KeyEventPayload
+}
+
+@enduml
