@@ -12,7 +12,7 @@ IF NOT exist "protobuf-3.5.0" (
    mkdir solution
    cd solution
    cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_INSTALL_PREFIX="../../../../install" -Dprotobuf_BUILD_TESTS=OFF ../..
-   msbuild protobuf.sln || goto error
+   msbuild protobuf.sln /property:Configuration=Debug /property:Platform=x64 || goto error
 ) ELSE (
   echo Using cached protobuf
   cd protobuf-3.5.0/cmake/build/solution
