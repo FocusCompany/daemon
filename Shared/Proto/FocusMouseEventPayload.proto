@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package Focus;
+
+message MouseEventPayload {
+    enum MouseEventType {
+        R_BUTTON_CLICK = 0;
+        L_BUTTON_CLICK = 1;
+        M_BUTTON_UP = 2;
+        M_BUTTON_DOWN = 3;
+        M_BUTTON_CLICK = 4;
+    }
+
+    MouseEventType type = 1;
+    uint32 X = 2;
+    uint32 Y = 3;
+}

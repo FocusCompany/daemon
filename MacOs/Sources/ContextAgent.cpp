@@ -5,7 +5,9 @@
 #include <chrono>
 #include <thread>
 #include <iostream>
+#include <FocusSerializer.hpp>
 #include "ContextAgent.hpp"
+#include "FocusContextEventPayload.pb.h"
 
 IContextAgent *contextAgent;
 
@@ -29,5 +31,11 @@ void ContextAgent::Run() {
 }
 
 void ContextAgent::OnContextChanged(std::string &processName, std::string &windowTitle) {
-    _eventEmitter->Emit("OnWindowsContextChanged", processName);
+    Focus::ContextEventPayload context;
+    context.set_processname(processName);
+    context.set_windowname(windowTitle);
+
+    Focus::Event event = FocusSerializer::CreateEventFromContext("OnWindowsContextChanged", context);
+
+    _eventEmitter->Emit("OnWindowsContextChanged", event);
 }

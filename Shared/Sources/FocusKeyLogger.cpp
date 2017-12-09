@@ -11,14 +11,13 @@ void FocusKeyLogger::Run()
 }
 
 void FocusKeyLogger::RunKeyLogger() {
-	_eventListener->Register("OnWindowsContextChanged", [&](std::string clientId, std::string newContext) {
+	_eventListener->Register("OnWindowsContextChanged", [&](std::string clientId, Focus::Event &newContext) {
 		PushKeyLog(newContext);
 	});
 
 	_contextAgent->Run(); //Block the current thread beacause msg loop windows (Remove after adding other components)
 }
 
-void FocusKeyLogger::PushKeyLog(std::string& context) {
-	std::cout << "New context: " << context << std::endl;
+void FocusKeyLogger::PushKeyLog(Focus::Event& context) {
 	_eventEmitter->Emit("FocusNetworkManager", context);
 }

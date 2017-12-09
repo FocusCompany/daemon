@@ -29,7 +29,7 @@
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/unknown_field_set.h>
-#include <google/protobuf/any.pb.h>
+#include "FocusEvent.pb.h"
 // @@protoc_insertion_point(includes)
 
 namespace protobuf_FocusEnvelope_2eproto {
@@ -43,36 +43,39 @@ struct TableStruct {
   static const ::google::protobuf::uint32 offsets[];
 };
 void AddDescriptors();
-void InitDefaultsFocusEnveloppeImpl();
-void InitDefaultsFocusEnveloppe();
+void InitDefaultsEnvelopeImpl();
+void InitDefaultsEnvelope();
 inline void InitDefaults() {
-  InitDefaultsFocusEnveloppe();
+  InitDefaultsEnvelope();
 }
 }  // namespace protobuf_FocusEnvelope_2eproto
-class FocusEnveloppe;
-class FocusEnveloppeDefaultTypeInternal;
-extern FocusEnveloppeDefaultTypeInternal _FocusEnveloppe_default_instance_;
+namespace Focus {
+class Envelope;
+class EnvelopeDefaultTypeInternal;
+extern EnvelopeDefaultTypeInternal _Envelope_default_instance_;
+}  // namespace Focus
+namespace Focus {
 
 // ===================================================================
 
-class FocusEnveloppe : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:FocusEnveloppe) */ {
+class Envelope : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Focus.Envelope) */ {
  public:
-  FocusEnveloppe();
-  virtual ~FocusEnveloppe();
+  Envelope();
+  virtual ~Envelope();
 
-  FocusEnveloppe(const FocusEnveloppe& from);
+  Envelope(const Envelope& from);
 
-  inline FocusEnveloppe& operator=(const FocusEnveloppe& from) {
+  inline Envelope& operator=(const Envelope& from) {
     CopyFrom(from);
     return *this;
   }
   #if LANG_CXX11
-  FocusEnveloppe(FocusEnveloppe&& from) noexcept
-    : FocusEnveloppe() {
+  Envelope(Envelope&& from) noexcept
+    : Envelope() {
     *this = ::std::move(from);
   }
 
-  inline FocusEnveloppe& operator=(FocusEnveloppe&& from) noexcept {
+  inline Envelope& operator=(Envelope&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -82,30 +85,30 @@ class FocusEnveloppe : public ::google::protobuf::Message /* @@protoc_insertion_
   }
   #endif
   static const ::google::protobuf::Descriptor* descriptor();
-  static const FocusEnveloppe& default_instance();
+  static const Envelope& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const FocusEnveloppe* internal_default_instance() {
-    return reinterpret_cast<const FocusEnveloppe*>(
-               &_FocusEnveloppe_default_instance_);
+  static inline const Envelope* internal_default_instance() {
+    return reinterpret_cast<const Envelope*>(
+               &_Envelope_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
     0;
 
-  void Swap(FocusEnveloppe* other);
-  friend void swap(FocusEnveloppe& a, FocusEnveloppe& b) {
+  void Swap(Envelope* other);
+  friend void swap(Envelope& a, Envelope& b) {
     a.Swap(&b);
   }
 
   // implements Message ----------------------------------------------
 
-  inline FocusEnveloppe* New() const PROTOBUF_FINAL { return New(NULL); }
+  inline Envelope* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  FocusEnveloppe* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  Envelope* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
   void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
   void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const FocusEnveloppe& from);
-  void MergeFrom(const FocusEnveloppe& from);
+  void CopyFrom(const Envelope& from);
+  void MergeFrom(const Envelope& from);
   void Clear() PROTOBUF_FINAL;
   bool IsInitialized() const PROTOBUF_FINAL;
 
@@ -121,7 +124,7 @@ class FocusEnveloppe : public ::google::protobuf::Message /* @@protoc_insertion_
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(FocusEnveloppe* other);
+  void InternalSwap(Envelope* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
@@ -137,7 +140,19 @@ class FocusEnveloppe : public ::google::protobuf::Message /* @@protoc_insertion_
 
   // accessors -------------------------------------------------------
 
-  // string ClientID = 1;
+  // repeated .Focus.Event events = 2;
+  int events_size() const;
+  void clear_events();
+  static const int kEventsFieldNumber = 2;
+  const ::Focus::Event& events(int index) const;
+  ::Focus::Event* mutable_events(int index);
+  ::Focus::Event* add_events();
+  ::google::protobuf::RepeatedPtrField< ::Focus::Event >*
+      mutable_events();
+  const ::google::protobuf::RepeatedPtrField< ::Focus::Event >&
+      events() const;
+
+  // string clientID = 1;
   void clear_clientid();
   static const int kClientIDFieldNumber = 1;
   const ::std::string& clientid() const;
@@ -151,39 +166,15 @@ class FocusEnveloppe : public ::google::protobuf::Message /* @@protoc_insertion_
   ::std::string* release_clientid();
   void set_allocated_clientid(::std::string* clientid);
 
-  // string PayloadType = 2;
-  void clear_payloadtype();
-  static const int kPayloadTypeFieldNumber = 2;
-  const ::std::string& payloadtype() const;
-  void set_payloadtype(const ::std::string& value);
-  #if LANG_CXX11
-  void set_payloadtype(::std::string&& value);
-  #endif
-  void set_payloadtype(const char* value);
-  void set_payloadtype(const char* value, size_t size);
-  ::std::string* mutable_payloadtype();
-  ::std::string* release_payloadtype();
-  void set_allocated_payloadtype(::std::string* payloadtype);
-
-  // .google.protobuf.Any Payload = 3;
-  bool has_payload() const;
-  void clear_payload();
-  static const int kPayloadFieldNumber = 3;
-  const ::google::protobuf::Any& payload() const;
-  ::google::protobuf::Any* release_payload();
-  ::google::protobuf::Any* mutable_payload();
-  void set_allocated_payload(::google::protobuf::Any* payload);
-
-  // @@protoc_insertion_point(class_scope:FocusEnveloppe)
+  // @@protoc_insertion_point(class_scope:Focus.Envelope)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::Focus::Event > events_;
   ::google::protobuf::internal::ArenaStringPtr clientid_;
-  ::google::protobuf::internal::ArenaStringPtr payloadtype_;
-  ::google::protobuf::Any* payload_;
   mutable int _cached_size_;
   friend struct ::protobuf_FocusEnvelope_2eproto::TableStruct;
-  friend void ::protobuf_FocusEnvelope_2eproto::InitDefaultsFocusEnveloppeImpl();
+  friend void ::protobuf_FocusEnvelope_2eproto::InitDefaultsEnvelopeImpl();
 };
 // ===================================================================
 
@@ -194,156 +185,86 @@ class FocusEnveloppe : public ::google::protobuf::Message /* @@protoc_insertion_
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
-// FocusEnveloppe
+// Envelope
 
-// string ClientID = 1;
-inline void FocusEnveloppe::clear_clientid() {
+// string clientID = 1;
+inline void Envelope::clear_clientid() {
   clientid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& FocusEnveloppe::clientid() const {
-  // @@protoc_insertion_point(field_get:FocusEnveloppe.ClientID)
+inline const ::std::string& Envelope::clientid() const {
+  // @@protoc_insertion_point(field_get:Focus.Envelope.clientID)
   return clientid_.GetNoArena();
 }
-inline void FocusEnveloppe::set_clientid(const ::std::string& value) {
+inline void Envelope::set_clientid(const ::std::string& value) {
   
   clientid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:FocusEnveloppe.ClientID)
+  // @@protoc_insertion_point(field_set:Focus.Envelope.clientID)
 }
 #if LANG_CXX11
-inline void FocusEnveloppe::set_clientid(::std::string&& value) {
+inline void Envelope::set_clientid(::std::string&& value) {
   
   clientid_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:FocusEnveloppe.ClientID)
+  // @@protoc_insertion_point(field_set_rvalue:Focus.Envelope.clientID)
 }
 #endif
-inline void FocusEnveloppe::set_clientid(const char* value) {
+inline void Envelope::set_clientid(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   
   clientid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:FocusEnveloppe.ClientID)
+  // @@protoc_insertion_point(field_set_char:Focus.Envelope.clientID)
 }
-inline void FocusEnveloppe::set_clientid(const char* value, size_t size) {
+inline void Envelope::set_clientid(const char* value, size_t size) {
   
   clientid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:FocusEnveloppe.ClientID)
+  // @@protoc_insertion_point(field_set_pointer:Focus.Envelope.clientID)
 }
-inline ::std::string* FocusEnveloppe::mutable_clientid() {
+inline ::std::string* Envelope::mutable_clientid() {
   
-  // @@protoc_insertion_point(field_mutable:FocusEnveloppe.ClientID)
+  // @@protoc_insertion_point(field_mutable:Focus.Envelope.clientID)
   return clientid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* FocusEnveloppe::release_clientid() {
-  // @@protoc_insertion_point(field_release:FocusEnveloppe.ClientID)
+inline ::std::string* Envelope::release_clientid() {
+  // @@protoc_insertion_point(field_release:Focus.Envelope.clientID)
   
   return clientid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void FocusEnveloppe::set_allocated_clientid(::std::string* clientid) {
+inline void Envelope::set_allocated_clientid(::std::string* clientid) {
   if (clientid != NULL) {
     
   } else {
     
   }
   clientid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), clientid);
-  // @@protoc_insertion_point(field_set_allocated:FocusEnveloppe.ClientID)
+  // @@protoc_insertion_point(field_set_allocated:Focus.Envelope.clientID)
 }
 
-// string PayloadType = 2;
-inline void FocusEnveloppe::clear_payloadtype() {
-  payloadtype_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// repeated .Focus.Event events = 2;
+inline int Envelope::events_size() const {
+  return events_.size();
 }
-inline const ::std::string& FocusEnveloppe::payloadtype() const {
-  // @@protoc_insertion_point(field_get:FocusEnveloppe.PayloadType)
-  return payloadtype_.GetNoArena();
+inline const ::Focus::Event& Envelope::events(int index) const {
+  // @@protoc_insertion_point(field_get:Focus.Envelope.events)
+  return events_.Get(index);
 }
-inline void FocusEnveloppe::set_payloadtype(const ::std::string& value) {
-  
-  payloadtype_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:FocusEnveloppe.PayloadType)
+inline ::Focus::Event* Envelope::mutable_events(int index) {
+  // @@protoc_insertion_point(field_mutable:Focus.Envelope.events)
+  return events_.Mutable(index);
 }
-#if LANG_CXX11
-inline void FocusEnveloppe::set_payloadtype(::std::string&& value) {
-  
-  payloadtype_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:FocusEnveloppe.PayloadType)
+inline ::Focus::Event* Envelope::add_events() {
+  // @@protoc_insertion_point(field_add:Focus.Envelope.events)
+  return events_.Add();
 }
-#endif
-inline void FocusEnveloppe::set_payloadtype(const char* value) {
-  GOOGLE_DCHECK(value != NULL);
-  
-  payloadtype_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:FocusEnveloppe.PayloadType)
+inline ::google::protobuf::RepeatedPtrField< ::Focus::Event >*
+Envelope::mutable_events() {
+  // @@protoc_insertion_point(field_mutable_list:Focus.Envelope.events)
+  return &events_;
 }
-inline void FocusEnveloppe::set_payloadtype(const char* value, size_t size) {
-  
-  payloadtype_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:FocusEnveloppe.PayloadType)
-}
-inline ::std::string* FocusEnveloppe::mutable_payloadtype() {
-  
-  // @@protoc_insertion_point(field_mutable:FocusEnveloppe.PayloadType)
-  return payloadtype_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* FocusEnveloppe::release_payloadtype() {
-  // @@protoc_insertion_point(field_release:FocusEnveloppe.PayloadType)
-  
-  return payloadtype_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void FocusEnveloppe::set_allocated_payloadtype(::std::string* payloadtype) {
-  if (payloadtype != NULL) {
-    
-  } else {
-    
-  }
-  payloadtype_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), payloadtype);
-  // @@protoc_insertion_point(field_set_allocated:FocusEnveloppe.PayloadType)
-}
-
-// .google.protobuf.Any Payload = 3;
-inline bool FocusEnveloppe::has_payload() const {
-  return this != internal_default_instance() && payload_ != NULL;
-}
-inline const ::google::protobuf::Any& FocusEnveloppe::payload() const {
-  const ::google::protobuf::Any* p = payload_;
-  // @@protoc_insertion_point(field_get:FocusEnveloppe.Payload)
-  return p != NULL ? *p : *reinterpret_cast<const ::google::protobuf::Any*>(
-      &::google::protobuf::_Any_default_instance_);
-}
-inline ::google::protobuf::Any* FocusEnveloppe::release_payload() {
-  // @@protoc_insertion_point(field_release:FocusEnveloppe.Payload)
-  
-  ::google::protobuf::Any* temp = payload_;
-  payload_ = NULL;
-  return temp;
-}
-inline ::google::protobuf::Any* FocusEnveloppe::mutable_payload() {
-  
-  if (payload_ == NULL) {
-    payload_ = new ::google::protobuf::Any;
-  }
-  // @@protoc_insertion_point(field_mutable:FocusEnveloppe.Payload)
-  return payload_;
-}
-inline void FocusEnveloppe::set_allocated_payload(::google::protobuf::Any* payload) {
-  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
-  if (message_arena == NULL) {
-    delete reinterpret_cast< ::google::protobuf::MessageLite*>(payload_);
-  }
-  if (payload) {
-    ::google::protobuf::Arena* submessage_arena = NULL;
-    if (message_arena != submessage_arena) {
-      payload = ::google::protobuf::internal::GetOwnedMessage(
-          message_arena, payload, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  payload_ = payload;
-  // @@protoc_insertion_point(field_set_allocated:FocusEnveloppe.Payload)
+inline const ::google::protobuf::RepeatedPtrField< ::Focus::Event >&
+Envelope::events() const {
+  // @@protoc_insertion_point(field_list:Focus.Envelope.events)
+  return events_;
 }
 
 #ifdef __GNUC__
@@ -352,6 +273,7 @@ inline void FocusEnveloppe::set_allocated_payload(::google::protobuf::Any* paylo
 
 // @@protoc_insertion_point(namespace_scope)
 
+}  // namespace Focus
 
 // @@protoc_insertion_point(global_scope)
 
