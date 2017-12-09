@@ -12,9 +12,9 @@ install:
   - CALL appveyor_protobuf.bat
 
 platform:
-  - Win32
+  - Win64
 configuration:
-  - Release
+  - Debug
 
 build:
   project: daemon.sln
