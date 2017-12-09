@@ -7,10 +7,12 @@ First take a look at the dependencies bellow, you should install all the depende
 ```bash
 mkdir build
 cd build
-cmake ..
 
-make                                                                        //For Linux/Mac users
-msbuild daemon.sln /property:Configuration=Debug /property:Platform=Win32   //For Windows users
+cmake ..
+make                   //For Linux/Mac users
+
+cmake -G "Visual Studio 15 2017 Win64" ..
+msbuild daemon.sln     //For Windows users
 ```
 Then simply run the generated executable depending on the platform where you have build the daemon.
 ### Dependencies
