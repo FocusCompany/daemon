@@ -12,7 +12,7 @@ install:
   - CALL appveyor_protobuf.bat
 
 platform:
-  - Win64
+  - x64
 configuration:
   - Debug
 
