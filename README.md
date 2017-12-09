@@ -45,4 +45,6 @@ cd protobuf-3.5.0 && ./autogen.sh && ./configure --prefix=/usr && make  //For Li
 sudo make install
 ```
 ## Class Diagram
-![placeholder](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/FocusCompany/Daemon/master/daemon.puml)
+![placeholder](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/FocusCompany/Daemon/master/docs/daemon.puml)
+## Protobuf Envelope
+![placeholder](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/FocusCompany/Daemon/master/docs/protobuf_envelope.puml)
