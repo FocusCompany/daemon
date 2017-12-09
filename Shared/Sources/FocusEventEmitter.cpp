@@ -7,11 +7,11 @@ FocusEventEmitter::FocusEventEmitter() {
     nn_connect(_socketPUB, "ipc:///tmp/EventListener");
 }
 
-void FocusEventEmitter::Emit(std::string dest, Focus::Event &payload) {
+void FocusEventEmitter::Emit(const std::string &dest, const Focus::Event &payload) const{
     std::string toSend = dest + "|" + payload.SerializeAsString();
     nn_send(_socketPUB, toSend.c_str(), toSend.size() + 1, 0);
 }
 
-void FocusEventEmitter::RouteToModules(Focus::Event &payload) {
+void FocusEventEmitter::RouteToModules(const Focus::Event &payload) const{
     Emit(payload.payloadtype(), payload);
 }

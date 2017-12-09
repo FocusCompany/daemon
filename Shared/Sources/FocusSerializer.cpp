@@ -6,7 +6,7 @@
 #include <chrono>
 #include <ctime>
 
-Focus::Event FocusSerializer::CreateEventFromContext(const std::string &dest, google::protobuf::Message &payload) {
+Focus::Event FocusSerializer::CreateEventFromContext(const std::string &dest, const google::protobuf::Message &payload) {
     Focus::Event event;
 
 	auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());

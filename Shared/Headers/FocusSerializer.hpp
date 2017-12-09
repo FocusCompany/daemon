@@ -10,7 +10,7 @@
 
 class FocusSerializer {
 public:
-    static Focus::Event CreateEventFromContext(const std::string &dest, google::protobuf::Message &payload);
+    static Focus::Event CreateEventFromContext(const std::string &dest, const google::protobuf::Message &payload);
 };
 
 

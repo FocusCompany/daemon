@@ -19,18 +19,13 @@ void FocusNetworkManager::Run() {
 
     _networkManagerThread = std::make_unique<std::thread>(std::bind(&FocusNetworkManager::RunReceive, this));
 
-    _eventListener->Register("FocusNetworkManager", [&](std::string clientId, Focus::Event &event) {
+    _eventListener->Register("FocusNetworkManager", [this](Focus::Event &event) {
         std::string envelopeData;
-
-        //Focus::ContextEventPayload context;
-        //event.payload().UnpackTo(&context);
-        //envelopeData = context.processname();
-
         event.SerializeToString(&envelopeData);
         nn_send(_socket, envelopeData.c_str(), envelopeData.size(), 0);
     });
 }
 
 void FocusNetworkManager::RunReceive() {
-
+    //TODO: Implementing Reception module to handle server request.
 }

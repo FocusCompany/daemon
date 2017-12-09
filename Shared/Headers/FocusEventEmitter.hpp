@@ -15,9 +15,9 @@ private:
 public:
     FocusEventEmitter();
 
-    void Emit(std::string dest, Focus::Event &payload);
+    void Emit(const std::string &dest, const Focus::Event &payload) const;
 
-    void RouteToModules(Focus::Event &payload);
+    void RouteToModules(const Focus::Event &payload) const;
 };
 
 

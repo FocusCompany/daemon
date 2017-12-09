@@ -22,7 +22,7 @@ void ContextAgent::Run() {
 	GetMessage(&msg, nullptr, NULL, NULL); // Windows message loop keepalive. This will block the current thread.
 }
 
-void ContextAgent::OnContextChanged(std::string &processName, std::string &windowTitle) {
+void ContextAgent::OnContextChanged(const std::string &processName, const std::string &windowTitle) const {
 	Focus::ContextEventPayload context;
 	context.set_processname(processName);
 	context.set_windowname(windowTitle);

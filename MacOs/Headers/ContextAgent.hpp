@@ -18,7 +18,7 @@ public:
 
     void Run() override final;
 
-    void OnContextChanged(std::string &processName, std::string &windowTitle) override final;
+    void OnContextChanged(const std::string &processName, const std::string &windowTitle) const override final;
 
 private:
     std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();

@@ -4,7 +4,7 @@
 
 #include <FocusDaemon.hpp>
 
-void FocusDaemon::Run() {
+void FocusDaemon::Run() const {
 	EventManager->Run();
 	NetworkManager->Run();
 	KeyLogger->Run();

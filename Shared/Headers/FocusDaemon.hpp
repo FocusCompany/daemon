@@ -18,7 +18,7 @@ private:
 	std::unique_ptr<FocusEventManager> EventManager = std::make_unique<FocusEventManager>();
 
 public:
-	void Run();
+	void Run() const;
 };
 
 #endif //FOCUS_CLIENT_FOCUSDAEMON_HPP
