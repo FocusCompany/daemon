@@ -28,7 +28,7 @@ mkdir build
 cd build
 mkdir solution
 cd solution
-cmake -G "Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=../../../../install -Dprotobuf_BUILD_TESTS=OFF ../..
+cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_INSTALL_PREFIX="../../../../install" -Dprotobuf_BUILD_TESTS=OFF ../..
 msbuild protobuf.sln
 msbuild INSTALL.vcxproj
 move "C:\....\tmp\install" "C:\Program Files\protobuf"
