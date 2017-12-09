@@ -3,15 +3,15 @@
 #include <nanomsg/pubsub.h>
 
 FocusEventEmitter::FocusEventEmitter() {
-	_socketPUB = nn_socket(AF_SP, NN_PUB);
-	nn_connect(_socketPUB, "ipc:///tmp/EventListener");
+    _socketPUB = nn_socket(AF_SP, NN_PUB);
+    nn_connect(_socketPUB, "ipc:///tmp/EventListener");
 }
 
-void FocusEventEmitter::Emit(std::string destinator, std::string& payload) {
-	std::string toSend = destinator + "|" + payload;
-	nn_send(_socketPUB, toSend.c_str(), toSend.size() + 1, 0);
+void FocusEventEmitter::Emit(const std::string &dest, const Focus::Event &payload) const{
+    std::string toSend = dest + "|" + payload.SerializeAsString();
+    nn_send(_socketPUB, toSend.c_str(), toSend.size() + 1, 0);
 }
 
-void FocusEventEmitter::RouteToModules(std::string& payload){
-	//nn_send(_socketPUB, payload.c_str(), strlen(payload.c_str()) + 1, 0);
+void FocusEventEmitter::RouteToModules(const Focus::Event &payload) const{
+    Emit(payload.payloadtype(), payload);
 }

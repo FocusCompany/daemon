@@ -6,6 +6,7 @@
 #define FOCUS_CLIENT_FOCUSEVENTEMITTER_HPP
 
 #include <string>
+#include <FocusEvent.pb.h>
 
 class FocusEventEmitter {
 private:
@@ -14,9 +15,9 @@ private:
 public:
     FocusEventEmitter();
 
-    void Emit(std::string destinator, std::string &payload);
+    void Emit(const std::string &dest, const Focus::Event &payload) const;
 
-    void RouteToModules(std::string &payload);
+    void RouteToModules(const Focus::Event &payload) const;
 };
 
 

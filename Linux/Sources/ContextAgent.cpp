@@ -4,21 +4,28 @@
 
 #include <chrono>
 #include <thread>
+#include <FocusSerializer.hpp>
 #include "ContextAgent.hpp"
-
-IContextAgent *contextAgent;
+#include "FocusContextEventPayload.pb.h"
 
 ContextAgent::ContextAgent() {
-    contextAgent = this; //This is mendatory for the hook to be able to communicate with our appContext.
+
 }
 
 ContextAgent::~ContextAgent() {
 }
 
 void ContextAgent::Run() {
+    //TODO: Implementing ContextAgent
     std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::hours((std::numeric_limits<int>::max)()));
 }
 
-void ContextAgent::OnContextChanged(std::string &processName, std::string &windowTitle) {
-    _eventEmitter->Emit("OnWindowsContextChanged", processName);
+void ContextAgent::OnContextChanged(const std::string &processName, const std::string &windowTitle) const {
+    Focus::ContextEventPayload context;
+    context.set_processname(processName);
+    context.set_windowname(windowTitle);
+
+    Focus::Event event = FocusSerializer::CreateEventFromContext("OnWindowsContextChanged", context);
+
+    _eventEmitter->Emit("OnWindowsContextChanged", event);
 }

@@ -10,18 +10,21 @@
 #include "ContextAgent.hpp"
 #include "FocusEventListener.hpp"
 #include "FocusEventEmitter.hpp"
+#include <FocusContextEventPayload.pb.h>
 
 class FocusKeyLogger {
 private:
-	std::unique_ptr<std::thread> _keyLoggerThread;
-	std::unique_ptr<IContextAgent> _contextAgent = std::unique_ptr<IContextAgent>(std::make_unique<ContextAgent>());
-	std::unique_ptr<FocusEventListener> _eventListener = std::make_unique<FocusEventListener>();
+    std::unique_ptr<std::thread> _keyLoggerThread;
+    std::unique_ptr<IContextAgent> _contextAgent = std::unique_ptr<IContextAgent>(std::make_unique<ContextAgent>());
+    std::unique_ptr<FocusEventListener<Focus::Event>> _eventListener = std::make_unique<FocusEventListener<Focus::Event>>();
     std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
-	void PushKeyLog(std::string &context);
-	void RunKeyLogger();
+
+    void PushKeyLog(const Focus::Event &context) const;
+
+    void RunKeyLogger() const;
 
 public:
-	void Run();
+    void Run();
 };
 
 #endif //FOCUS_CLIENT_FOCUSKEYLOGGER_HPP

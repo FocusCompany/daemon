@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package Focus;
+
+message ContextEventPayload {
+    bytes ProcessName = 1;
+    bytes WindowName = 2;
+}
