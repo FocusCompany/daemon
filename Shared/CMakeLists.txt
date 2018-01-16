@@ -17,6 +17,7 @@ set(DEAMON_SHARED_SOURCE_FILES
         Sources/FocusNetworkManager.cpp
         Sources/FocusKeyLogger.cpp
         Sources/FocusSerializer.cpp
+        Sources/FocusAuthenticator.cpp
 
         Headers/FocusDaemon.hpp
         Headers/FocusEventManager.hpp
@@ -25,11 +26,12 @@ set(DEAMON_SHARED_SOURCE_FILES
         Headers/FocusNetworkManager.hpp
         Headers/FocusKeyLogger.hpp
         Headers/FocusSerializer.hpp
+        Headers/FocusAuthenticator.hpp
 
         Interfaces/IContextAgent.hpp
         )
 
-include_directories(Headers Interfaces ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled)
+include_directories(Headers Interfaces ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ../Library)
 
 IF (MSVC)
     include_directories(../Windows/Headers)
