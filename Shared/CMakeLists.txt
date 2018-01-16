@@ -7,6 +7,10 @@ set(CMAKE_CXX_STANDARD 14)
 include(FindProtobuf)
 find_package(Protobuf REQUIRED)
 
+include(FindOpenSSL)
+find_package(OpenSSL REQUIRED)
+
+
 file(GLOB PROTO_SRC "Proto/ProtoCompiled/*.pb.cc")
 file(GLOB PROTO_HEADER "Proto/ProtoCompiled/*.pb.h")
 
@@ -31,7 +35,7 @@ set(DEAMON_SHARED_SOURCE_FILES
         Interfaces/IContextAgent.hpp
         )
 
-include_directories(Headers Interfaces ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ../Library)
+include_directories(Headers Interfaces ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ../Library ${OPENSSL_INCLUDE_DIR})
 
 IF (MSVC)
     include_directories(../Windows/Headers)
@@ -41,7 +45,7 @@ ENDIF ()
 
 add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER})
 
-target_link_libraries(daemon_shared_lib nanomsg ${PROTOBUF_LIBRARY})
+target_link_libraries(daemon_shared_lib nanomsg ${PROTOBUF_LIBRARY} ssl crypto jwt)
 
 ####TESTS####
 

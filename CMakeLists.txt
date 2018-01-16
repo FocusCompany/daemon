@@ -22,6 +22,10 @@ if(MSVC)
 	set(CMAKE_LIBRARY_PATH "C:/Program Files/protobuf/lib")
 elseif(APPLE)
     add_definitions(-DAPPLE)
+    set(CMAKE_INCLUDE_PATH "/usr/local/opt/openssl@1.1/include")
+    set(CMAKE_LIBRARY_PATH "/usr/local/opt/openssl@1.1/lib")
+elseif(UNIX)
+    add_definitions(-DUNIX)
 endif()
 
 ### Adding GoogleTest for unit testing and enable testing for ctest command.
