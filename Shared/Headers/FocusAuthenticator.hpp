@@ -13,12 +13,19 @@ class FocusAuthenticator {
 private:
     std::unique_ptr<httplib::Client> _cli;
     std::string _token;
+    std::string _uuid;
+    bool _connected = false;
 public:
     void Run();
+
     bool GetConnectionStatus();
+
     std::string GetCurrentToken();
-    bool Login(std::string &, std::string &);
+
+    bool Login(const std::string &email, const std::string &password);
+
     bool Disconnect();
+
     bool RenewToken();
 };
 

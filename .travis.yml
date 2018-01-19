@@ -11,8 +11,8 @@ matrix:
           - ubuntu-toolchain-r-test
           packages:
           - cmake
-          - gcc-5
-          - g++-5
+          - gcc-7
+          - g++-7
           - autoconf
           - automake
           - libtool
@@ -20,6 +20,8 @@ matrix:
           - make
           - unzip
           - libssl-dev
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
     - os: osx
       compiler: clang
