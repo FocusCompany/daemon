@@ -529,9 +529,10 @@ socket_t create_socket(const char* host, int port, Fn fn, int socket_flags = 0)
        int yes = 1;
        setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(yes));
 
+#ifdef APPLE
        int no_sig_pipe = 1;
        setsockopt(sock, SOL_SOCKET, SO_NOSIGPIPE, (char*)&no_sig_pipe, sizeof(no_sig_pipe));
-
+#endif
        // bind or connect
        if (fn(sock, *rp)) {
           freeaddrinfo(result);
