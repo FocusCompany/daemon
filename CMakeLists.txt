@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 2.6)
 
 project(daemon)
 
+### Set Cmake to compile with CPP 14
+set (CMAKE_CXX_STANDARD 14)
+
 ### Output everything inside of a BUILD directory to avoir issue with library linking.
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/BUILD)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/BUILD)
@@ -20,10 +23,12 @@ if(MSVC)
     add_definitions(-DMSVC)
 	set(CMAKE_INCLUDE_PATH "C:/Program Files/protobuf/include")
 	set(CMAKE_LIBRARY_PATH "C:/Program Files/protobuf/lib")
+    link_directories(${CMAKE_LIBRARY_PATH})
 elseif(APPLE)
     add_definitions(-DAPPLE)
     set(CMAKE_INCLUDE_PATH "/usr/local/opt/openssl@1.1/include")
     set(CMAKE_LIBRARY_PATH "/usr/local/opt/openssl@1.1/lib")
+    link_directories(${CMAKE_LIBRARY_PATH})
 elseif(UNIX)
     add_definitions(-DUNIX)
 endif()

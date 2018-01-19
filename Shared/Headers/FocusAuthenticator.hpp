@@ -6,18 +6,20 @@
 #define DAEMON_FOCUSAUTHENTICATOR_HPP
 
 #include <iostream>
+#include <fstream>
+#include "../../Library/httplib.h"
 
 class FocusAuthenticator {
 private:
+    std::unique_ptr<httplib::Client> _cli;
     std::string _token;
 public:
     void Run();
     bool GetConnectionStatus();
     std::string GetCurrentToken();
-    bool Connect(std::string &, std::string &);
+    bool Login(std::string &, std::string &);
     bool Disconnect();
     bool RenewToken();
-    bool Register(std::string &, std::string &, std::string &, std::string &);
 };
 
 

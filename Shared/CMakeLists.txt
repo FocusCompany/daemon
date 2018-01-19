@@ -4,12 +4,11 @@ project(daemon_shared_lib)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include(FindProtobuf)
-find_package(Protobuf REQUIRED)
-
 include(FindOpenSSL)
 find_package(OpenSSL REQUIRED)
 
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
 
 file(GLOB PROTO_SRC "Proto/ProtoCompiled/*.pb.cc")
 file(GLOB PROTO_HEADER "Proto/ProtoCompiled/*.pb.h")
@@ -39,13 +38,15 @@ include_directories(Headers Interfaces ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompil
 
 IF (MSVC)
     include_directories(../Windows/Headers)
-ELSE ()
+ELSEIF (APPLE)
+    include_directories(../MacOs/Headers)
+ELSEIF (UNIX)
     include_directories(../Linux/Headers)
 ENDIF ()
 
 add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER})
 
-target_link_libraries(daemon_shared_lib nanomsg ${PROTOBUF_LIBRARY} ssl crypto jwt)
+target_link_libraries(daemon_shared_lib nanomsg ${PROTOBUF_LIBRARY} jwt ${OPENSSL_LIBRARIES})
 
 ####TESTS####
 

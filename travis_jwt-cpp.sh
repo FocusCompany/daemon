@@ -9,7 +9,6 @@ if [ ! -d "$HOME/jwt-cpp/release" ]; then
   git clone https://github.com/pokowaka/jwt-cpp.git
   cd release
   cmake -DCMAKE_BUILD_TYPE=Release ../jwt-cpp/
-  fi
 else
   echo "Using cached JWT"
   cd release
