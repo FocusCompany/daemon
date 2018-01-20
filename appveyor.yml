@@ -7,9 +7,11 @@ clone_folder: C:\projects\daemon
 
 cache:
   - C:\projects\daemon\protobuf-3.5.0\
+  - C:\projects\daemon\jwt-cpp\
 
 install:
   - CALL appveyor_protobuf.bat
+  - CALL appveyor_jwt-cpp.bat
 
 platform:
   - x64
