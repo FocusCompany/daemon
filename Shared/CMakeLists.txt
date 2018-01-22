@@ -55,7 +55,7 @@ ENDIF ()
 
 add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER})
 
-target_link_libraries(daemon_shared_lib ${ZMQ_LIBRARIES} ${PROTOBUF_LIBRARY} ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(daemon_shared_lib pthread ${ZMQ_LIBRARIES} ${PROTOBUF_LIBRARY} ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 ####TESTS####
 
