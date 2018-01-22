@@ -18,6 +18,8 @@ private:
 public:
     void Run();
 
+    std::string GetUUID();
+
     bool GetConnectionStatus();
 
     std::string GetCurrentToken();

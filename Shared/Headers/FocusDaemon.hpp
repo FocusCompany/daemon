@@ -14,13 +14,13 @@
 
 class FocusDaemon {
 private:
-	std::unique_ptr<FocusAuthenticator> Authenticator = std::make_unique<FocusAuthenticator>();
-	std::unique_ptr<FocusKeyLogger> KeyLogger = std::make_unique<FocusKeyLogger>();
-	std::unique_ptr<FocusNetworkManager> NetworkManager = std::make_unique<FocusNetworkManager>();
-	std::unique_ptr<FocusEventManager> EventManager = std::make_unique<FocusEventManager>();
+    std::unique_ptr<FocusAuthenticator> Authenticator = std::make_unique<FocusAuthenticator>();
+    std::unique_ptr<FocusKeyLogger> KeyLogger = std::make_unique<FocusKeyLogger>();
+    std::unique_ptr<FocusNetworkManager> NetworkManager = std::make_unique<FocusNetworkManager>();
+    std::unique_ptr<FocusEventManager> EventManager = std::make_unique<FocusEventManager>();
     std::string _user_uuid;
 public:
-	void Run() const;
+    void Run();
 };
 
 #endif //FOCUS_CLIENT_FOCUSDAEMON_HPP

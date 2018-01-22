@@ -8,16 +8,10 @@
 
 void FocusAuthenticator::Run() {
     _cli = std::make_unique<httplib::Client>("localhost", 3000);
-    Login("enzo@gmail.com", "toto42sh");
-    std::cout << "UUID: " << _uuid << "\tToken: " << _token << std::endl;
+}
 
-    sleep(10);
-
-    RenewToken();
-    std::cout << "UUID: " << _uuid << "\tToken: " << _token << std::endl;
-
-    Disconnect();
-    std::cout << "UUID: " << _uuid << "\tToken: " << _token << std::endl;
+std::string FocusAuthenticator::GetUUID() {
+    return _uuid;
 }
 
 bool FocusAuthenticator::GetConnectionStatus() {

@@ -20,13 +20,14 @@ matrix:
           - make
           - unzip
           - libssl-dev
+          - libzmq3-dev
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
     - os: osx
       compiler: clang
       env:
-        - MATRIX_EVAL="brew install openssl@1.1"
+        - MATRIX_EVAL="brew install openssl@1.1 && brew install zmq"
 
 language: cpp
 

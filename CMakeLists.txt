@@ -23,24 +23,19 @@ if(MSVC)
     add_definitions(-DMSVC)
 	set(CMAKE_INCLUDE_PATH "C:/Program Files/protobuf/include;C:/Program Files/jwt-cpp/include")
 	set(CMAKE_LIBRARY_PATH "C:/Program Files/protobuf/lib;C:/Program Files/jwt-cpp/lib")
-    link_directories(${CMAKE_LIBRARY_PATH})
 elseif(APPLE)
     add_definitions(-DAPPLE)
     set(CMAKE_INCLUDE_PATH "/usr/local/opt/openssl@1.1/include")
     set(CMAKE_LIBRARY_PATH "/usr/local/opt/openssl@1.1/lib")
-    link_directories(${CMAKE_LIBRARY_PATH})
 elseif(UNIX)
     add_definitions(-DUNIX)
 endif()
 
+link_directories(${CMAKE_LIBRARY_PATH})
+
 ### Adding GoogleTest for unit testing and enable testing for ctest command.
 enable_testing()
 add_subdirectory(UnitTests)
-
-### Linking NanoMsg library
-add_definitions(-DNN_STATIC_LIB=ON)
-add_subdirectory(Library/nanomsg)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Library/nanomsg/include)
 
 ### Subdirectory
 add_subdirectory(Shared)
