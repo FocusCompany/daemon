@@ -10,8 +10,8 @@ find_package(OpenSSL REQUIRED)
 include(FindProtobuf)
 find_package(Protobuf REQUIRED)
 
-include(FindZMQ)
-find_package(ZMQ REQUIRED)
+include(FindZeroMQ)
+find_package(ZeroMQ REQUIRED)
 
 include(FindJWTCPP)
 find_package(JWTCPP REQUIRED)
@@ -43,7 +43,7 @@ set(DEAMON_SHARED_SOURCE_FILES
         Interfaces/IContextAgent.hpp
         Interfaces/IFocusSocket.hpp)
 
-include_directories(Headers Interfaces ../Library ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ${OPENSSL_INCLUDE_DIR} ${ZMQ_INCLUDE_DIRS} ${JWTCPP_INCLUDE_DIRS})
+include_directories(Headers Interfaces ../Library ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ${OPENSSL_INCLUDE_DIR} ${ZeroMQ_INCLUDE_DIR} ${JWTCPP_INCLUDE_DIRS})
 
 IF (MSVC)
     include_directories(../Windows/Headers)
@@ -55,7 +55,7 @@ ENDIF ()
 
 add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER})
 
-target_link_libraries(daemon_shared_lib pthread ${ZMQ_LIBRARIES} ${PROTOBUF_LIBRARY} ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(daemon_shared_lib pthread ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY} ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 ####TESTS####
 
