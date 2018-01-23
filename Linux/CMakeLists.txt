@@ -16,13 +16,21 @@ set(MAIN_FILES
         main.cpp
         )
 
-include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Shared/Proto/ProtoCompiled ${PROTOBUF_INCLUDE_DIR})
+find_package(PkgConfig)
+pkg_check_modules(WNCK REQUIRED libwnck-3.0)
+
+message( "  WNCK_INCLUDE_DIRS = ${WNCK_INCLUDE_DIRS}" )
+message( "  ${WNCK_LIBRARIES} ${WNCK_LIBRARY_DIRS} ${WNCK_LDFLAGS} ${WNCK_LDFLAGS_OTHER}" )
+
+include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Shared/Proto/ProtoCompiled ${PROTOBUF_INCLUDE_DIR} ${WNCK_INCLUDE_DIRS})
+
+add_definitions(-DWNCK_I_KNOW_THIS_IS_UNSTABLE)
 
 add_library(daemon_linux_lib STATIC ${DEAMON_LINUX_SOURCE_FILES})
 
 add_executable(daemon_linux ${MAIN_FILES})
 
-target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib ${PROTOBUF_LIBRARY})
+target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib ${PROTOBUF_LIBRARY} ${WNCK_LIBRARY_DIRS})
 
 ####TESTS####
 
