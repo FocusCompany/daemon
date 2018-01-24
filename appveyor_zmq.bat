@@ -16,5 +16,5 @@ IF NOT exist "libzmq-4.2.3" (
 )
 echo Installing ZMQ Library
 echo Moving ZMQ Library to C:\...
-copy "C:\projects\daemon\libzmq-4.2.3\install-zmq" "C:\Program Files\Focus\zmq"
+xcopy "C:\projects\daemon\libzmq-4.2.3\install-zmq" "C:\Program Files\Focus\zmq" /E /I
 echo ZMQ successfully installed
