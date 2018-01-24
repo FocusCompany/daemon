@@ -11,6 +11,7 @@ cache:
   - C:\projects\daemon\jwt-cpp\
 
 install:
+  - '"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x86'
   - CALL appveyor_protobuf.bat
   - CALL appveyor_jwt-cpp.bat
   - CALL appveyor_zmq.bat
