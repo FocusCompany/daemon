@@ -2,6 +2,7 @@ os: Visual Studio 2017
 
 init:
   - git config --global core.autocrlf input
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
 
 clone_folder: C:\projects\daemon
 
@@ -11,7 +12,6 @@ cache:
   - C:\projects\daemon\jwt-cpp\
 
 install:
-  - '"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x86'
   - CALL appveyor_protobuf.bat
   - CALL appveyor_jwt-cpp.bat
   - CALL appveyor_zmq.bat
