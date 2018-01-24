@@ -7,14 +7,14 @@ set(CMAKE_CXX_STANDARD 14)
 include(FindOpenSSL)
 find_package(OpenSSL REQUIRED)
 
+include(FindJWTCPP)
+find_package(JWTCPP REQUIRED)
+
 include(FindProtobuf)
 find_package(Protobuf REQUIRED)
 
 include(FindZeroMQ)
 find_package(ZeroMQ REQUIRED)
-
-include(FindJWTCPP)
-find_package(JWTCPP REQUIRED)
 
 file(GLOB PROTO_SRC "Proto/ProtoCompiled/*.pb.cc")
 file(GLOB PROTO_HEADER "Proto/ProtoCompiled/*.pb.h")
@@ -43,7 +43,7 @@ set(DEAMON_SHARED_SOURCE_FILES
         Interfaces/IContextAgent.hpp
         Interfaces/IFocusSocket.hpp)
 
-include_directories(Headers Interfaces ../Library ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ${OPENSSL_INCLUDE_DIR} ${ZeroMQ_INCLUDE_DIR} ${JWTCPP_INCLUDE_DIRS})
+include_directories(Headers Interfaces ${OPENSSL_INCLUDE_DIR} ${JWTCPP_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ${ZeroMQ_INCLUDE_DIR})
 
 IF (MSVC)
     include_directories(../Windows/Headers)
@@ -55,7 +55,17 @@ ENDIF ()
 
 add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER})
 
-target_link_libraries(daemon_shared_lib pthread ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY} ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
+
+IF (MSVC)
+	target_link_libraries(daemon_shared_lib wsock32 ws2_32)
+
+	file(GLOB ZMQ_DLL "${ZeroMQ_ROOT_DIR}/bin/*.dll")
+	add_custom_command(TARGET daemon_shared_lib POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		${ZMQ_DLL}
+		$<TARGET_FILE_DIR:daemon_shared_lib>)
+ENDIF ()
 
 ####TESTS####
 

@@ -21,8 +21,10 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 ### Define some useful pre-processor for cross-compatibility
 if(MSVC)
     add_definitions(-DMSVC)
-	set(CMAKE_INCLUDE_PATH "C:/Program Files/protobuf/include;C:/Program Files/jwt-cpp/include;C:/Program Files/ZMQ/include")
-	set(CMAKE_LIBRARY_PATH "C:/Program Files/protobuf/lib;C:/Program Files/jwt-cpp/lib;C:/Program Files/ZMQ/lib")
+	add_definitions(-DWIN32_LEAN_AND_MEAN)
+	set(OPENSSL_ROOT_DIR "C:/OpenSSL-Win32")
+	set(CMAKE_INCLUDE_PATH "C:/Program Files/Focus/protobuf/include;C:/Program Files/Focus/jwt-cpp/include;C:/Program Files/Focus/zmq/include")
+	set(CMAKE_LIBRARY_PATH "C:/Program Files/Focus/protobuf/lib;C:/Program Files/Focus/jwt-cpp/lib;C:/Program Files/Focus/zmq/lib")
 elseif(APPLE)
     add_definitions(-DAPPLE)
     set(CMAKE_INCLUDE_PATH "/usr/local/opt/openssl@1.1/include")
@@ -31,14 +33,17 @@ elseif(UNIX)
     add_definitions(-DUNIX)
 endif()
 
-link_directories(${CMAKE_LIBRARY_PATH})
-
 ### Adding GoogleTest for unit testing and enable testing for ctest command.
 enable_testing()
 add_subdirectory(UnitTests)
 
+### Include directories
+include_directories(${CMAKE_INCLUDE_PATH})
+include_directories(Library)
+
 ### Subdirectory
 add_subdirectory(Shared)
+
 if(MSVC)
     add_subdirectory(Windows)
 elseif(APPLE)

@@ -6,7 +6,7 @@
 #define DAEMON_FOCUSSOCKET_HPP
 
 #include <IFocusSocket.hpp>
-#include "../../Library/zmq_addon.hpp"
+#include <zmq_addon.hpp>
 
 class FocusSocket : public IFocusSocket{
 public:

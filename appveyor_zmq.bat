@@ -9,12 +9,12 @@ IF NOT exist "libzmq-4.2.3" (
    mkdir install-zmq
    mkdir build
    cd build
-   cmake -G "NMake Makefiles" -DZMQ_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="../install-zmq" ..
+   cmake -G "NMake Makefiles" -DZMQ_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="../install-zmq" -DBUILD_STATIC=OFF ..
    nmake install
 ) ELSE (
   echo Using cached ZMQ
 )
 echo Installing ZMQ Library
 echo Moving ZMQ Library to C:\...
-copy "C:\projects\daemon\libzmq-4.2.3\install-zmq" "C:\Program Files\ZMQ"
+copy "C:\projects\daemon\libzmq-4.2.3\install-zmq" "C:\Program Files\Focus\zmq"
 echo ZMQ successfully installed

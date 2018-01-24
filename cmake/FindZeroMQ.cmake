@@ -58,9 +58,11 @@ if(MSVC)
     set(_zmq_debug_names)
     foreach( ver ${_zmq_versions})
         list(APPEND _zmq_release_names "libzmq${_zmq_TOOLSET}-mt-${ver}")
+        list(APPEND _zmq_release_names "libzmq-mt-${ver}")
     endforeach()
     foreach( ver ${_zmq_versions})
         list(APPEND _zmq_debug_names "libzmq${_zmq_TOOLSET}-mt-gd-${ver}")
+        list(APPEND _zmq_debug_names "libzmq-mt-gd-${ver}")
     endforeach()
 
     #now try to find the release and debug version

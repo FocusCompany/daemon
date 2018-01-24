@@ -7,7 +7,8 @@
 
 #include <iostream>
 #include <fstream>
-#include "../../Library/httplib.h"
+#include <memory>
+#include <httplib.h>
 
 class FocusAuthenticator {
 private:

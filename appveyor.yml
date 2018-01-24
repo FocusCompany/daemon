@@ -13,9 +13,10 @@ cache:
 install:
   - CALL appveyor_protobuf.bat
   - CALL appveyor_jwt-cpp.bat
+  - CALL appveyor_zmq.bat
 
 platform:
-  - x64
+  - x86
 configuration:
   - Debug
 
