@@ -17,10 +17,10 @@ install:
   - CALL appveyor_jwt-cpp.bat
   - CALL appveyor_zmq.bat
 
-platform:
-  - Win32
-configuration:
-  - Debug
+environment:
+  matrix:
+  - configuration: Debug
+    platform: Win32
 
 build:
   project: daemon.sln
