@@ -22,9 +22,6 @@ environment:
   - configuration: Debug
     platform: Win32
 
-build:
-  project: daemon.sln
-
 before_build:
   - echo [COMPILING PROTO FILES]
   - cd c:\projects\daemon\Shared\Proto
@@ -32,6 +29,9 @@ before_build:
   - echo [RUNNING CMAKE]
   - cd c:\projects\daemon
   - cmake -G "Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=%P%
+
+build_script:
+  - msbuild /p:Configuration=Debug /p:Platform=Win32 "C:\projects\daemon\daemon.sln"
 
 after_build:
   - echo Running Unit Tests...
