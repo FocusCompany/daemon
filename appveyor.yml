@@ -28,7 +28,7 @@ before_build:
   - CALL generate.bat
   - echo [RUNNING CMAKE]
   - cd c:\projects\daemon
-  - cmake -G "Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=%P% -D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
+  - cmake -G "Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=%P%
 
 build_script:
   - msbuild /p:Configuration=Debug /p:Platform=Win32 "C:\projects\daemon\daemon.sln"
