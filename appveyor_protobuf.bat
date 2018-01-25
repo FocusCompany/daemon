@@ -19,5 +19,4 @@ echo Installing Protobuf Library
 nmake install
 echo Moving Protobuf Library to C:\... 
 move "C:\projects\daemon\install-protobuf" "C:\Program Files\Focus\protobuf"
-set PATH=%PATH%;C:\Program Files\Focus\protobuf\bin
 echo Protobuf successfully installed
