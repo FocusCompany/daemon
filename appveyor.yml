@@ -8,7 +8,7 @@ init:
 clone_folder: C:\projects\daemon
 
 cache:
-  - C:\projects\daemon\protobuf-3.5.0\
+  - C:\projects\daemon\protobuf-3.5.1\
   - C:\projects\daemon\libzmq-4.2.3\
   - C:\projects\daemon\jwt-cpp\
 
