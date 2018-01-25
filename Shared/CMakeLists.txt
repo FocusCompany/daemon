@@ -60,11 +60,15 @@ target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES}
 IF (MSVC)
     target_link_libraries(daemon_shared_lib wsock32 ws2_32)
 
+	set(ZeroMQ_ROOT_DIR "C:/Program Files/Focus/zmq")
     file(GLOB ZMQ_DLL "${ZeroMQ_ROOT_DIR}/bin/*.dll")
-    add_custom_command(TARGET daemon_shared_lib POST_BUILD
+	message(STATUS "ZMQ_DLL: " ${ZMQ_DLL})
+	foreach(DLL ${ZMQ_DLL})
+		add_custom_command(TARGET daemon_shared_lib POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${ZMQ_DLL}
-            $<TARGET_FILE_DIR:daemon_shared_lib>)
+            "${DLL}"
+            "$<TARGET_FILE_DIR:daemon_shared_lib>")
+	endforeach()
 ELSE ()
     target_link_libraries(daemon_shared_lib pthread)
 ENDIF ()

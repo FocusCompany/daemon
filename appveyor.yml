@@ -18,7 +18,7 @@ install:
   - CALL appveyor_zmq.bat
 
 platform:
-  - x86
+  - Win32
 configuration:
   - Debug
 
