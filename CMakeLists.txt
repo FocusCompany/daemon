@@ -32,6 +32,7 @@ elseif(APPLE)
     set(CMAKE_LIBRARY_PATH "/usr/local/opt/openssl@1.1/lib")
 elseif(UNIX)
     add_definitions(-DUNIX)
+    add_definitions(-DWNCK_I_KNOW_THIS_IS_UNSTABLE)
 endif()
 
 ### Adding GoogleTest for unit testing and enable testing for ctest command.
