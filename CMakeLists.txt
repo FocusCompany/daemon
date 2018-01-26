@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 2.6)
 
 project(daemon)
 
+### Set Cmake to compile with CPP 14
+set (CMAKE_CXX_STANDARD 14)
+
 ### Output everything inside of a BUILD directory to avoir issue with library linking.
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/BUILD)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/BUILD)
@@ -18,23 +21,30 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 ### Define some useful pre-processor for cross-compatibility
 if(MSVC)
     add_definitions(-DMSVC)
-	set(CMAKE_INCLUDE_PATH "C:/Program Files/protobuf/include")
-	set(CMAKE_LIBRARY_PATH "C:/Program Files/protobuf/lib")
+	add_definitions(-DWIN32_LEAN_AND_MEAN)
+	set(OPENSSL_ROOT_DIR "C:/OpenSSL-Win32")
+	set(ZeroMQ_ROOT_DIR "C:/Program Files/Focus/zmq")
+	set(CMAKE_INCLUDE_PATH "C:/Program Files/Focus/protobuf/include;C:/Program Files/Focus/jwt-cpp/include;C:/Program Files/Focus/zmq/include")
+	set(CMAKE_LIBRARY_PATH "C:/Program Files/Focus/protobuf/lib;C:/Program Files/Focus/jwt-cpp/lib;C:/Program Files/Focus/zmq/lib")
 elseif(APPLE)
     add_definitions(-DAPPLE)
+    set(CMAKE_INCLUDE_PATH "/usr/local/opt/openssl@1.1/include")
+    set(CMAKE_LIBRARY_PATH "/usr/local/opt/openssl@1.1/lib")
+elseif(UNIX)
+    add_definitions(-DUNIX)
 endif()
 
 ### Adding GoogleTest for unit testing and enable testing for ctest command.
 enable_testing()
 add_subdirectory(UnitTests)
 
-### Linking NanoMsg library
-add_definitions(-DNN_STATIC_LIB=ON)
-add_subdirectory(Library/nanomsg)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Library/nanomsg/include)
+### Include directories
+include_directories(${CMAKE_INCLUDE_PATH})
+include_directories(Library)
 
 ### Subdirectory
 add_subdirectory(Shared)
+
 if(MSVC)
     add_subdirectory(Windows)
 elseif(APPLE)

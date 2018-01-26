@@ -7,10 +7,11 @@
 
 #include <string>
 #include <FocusEvent.pb.h>
+#include <FocusSocket.hpp>
 
 class FocusEventEmitter {
 private:
-    int _socketPUB;
+    std::shared_ptr<zmq::socket_t> _socketPUB = std::make_shared<zmq::socket_t>(*FocusSocket::Context, ZMQ_PUB);
 
 public:
     FocusEventEmitter();

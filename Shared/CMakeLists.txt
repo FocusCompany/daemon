@@ -4,8 +4,17 @@ project(daemon_shared_lib)
 
 set(CMAKE_CXX_STANDARD 14)
 
+include(FindOpenSSL)
+find_package(OpenSSL REQUIRED)
+
+include(FindJWTCPP)
+find_package(JWTCPP REQUIRED)
+
 include(FindProtobuf)
 find_package(Protobuf REQUIRED)
+
+include(FindZeroMQ)
+find_package(ZeroMQ REQUIRED)
 
 file(GLOB PROTO_SRC "Proto/ProtoCompiled/*.pb.cc")
 file(GLOB PROTO_HEADER "Proto/ProtoCompiled/*.pb.h")
@@ -17,6 +26,8 @@ set(DEAMON_SHARED_SOURCE_FILES
         Sources/FocusNetworkManager.cpp
         Sources/FocusKeyLogger.cpp
         Sources/FocusSerializer.cpp
+        Sources/FocusAuthenticator.cpp
+        Sources/FocusSocket.cpp
 
         Headers/FocusDaemon.hpp
         Headers/FocusEventManager.hpp
@@ -25,21 +36,42 @@ set(DEAMON_SHARED_SOURCE_FILES
         Headers/FocusNetworkManager.hpp
         Headers/FocusKeyLogger.hpp
         Headers/FocusSerializer.hpp
+        Headers/FocusAuthenticator.hpp
+        Headers/FocusSocket.hpp
+        Headers/FocusSecureSocket.hpp
 
         Interfaces/IContextAgent.hpp
-        )
+        Interfaces/IFocusSocket.hpp)
 
-include_directories(Headers Interfaces ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled)
+include_directories(Headers Interfaces ${OPENSSL_INCLUDE_DIR} ${JWTCPP_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ${ZeroMQ_INCLUDE_DIR})
 
 IF (MSVC)
     include_directories(../Windows/Headers)
-ELSE ()
+ELSEIF (APPLE)
+    include_directories(../MacOs/Headers)
+ELSEIF (UNIX)
     include_directories(../Linux/Headers)
 ENDIF ()
 
 add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER})
 
-target_link_libraries(daemon_shared_lib nanomsg ${PROTOBUF_LIBRARY})
+target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
+
+IF (MSVC)
+    target_link_libraries(daemon_shared_lib wsock32 ws2_32)
+
+	set(ZeroMQ_ROOT_DIR "C:/Program Files/Focus/zmq")
+    file(GLOB ZMQ_DLL "${ZeroMQ_ROOT_DIR}/bin/*.dll")
+	message(STATUS "ZMQ_DLL: " ${ZMQ_DLL})
+	foreach(DLL ${ZMQ_DLL})
+		add_custom_command(TARGET daemon_shared_lib POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${DLL}"
+            "$<TARGET_FILE_DIR:daemon_shared_lib>")
+	endforeach()
+ELSE ()
+    target_link_libraries(daemon_shared_lib pthread)
+ENDIF ()
 
 ####TESTS####
 
