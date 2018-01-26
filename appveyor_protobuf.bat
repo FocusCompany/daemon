@@ -1,7 +1,7 @@
 setlocal
 
 mkdir install-protobuf
-IF NOT exist "protobuf-3.5.1" (
+IF NOT exist "C:\projects\daemon\protobuf-3.5.1" (
    echo Building Protobuf Library
    curl -L -o protobuf.zip https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-all-3.5.1.zip
    7z x protobuf.zip

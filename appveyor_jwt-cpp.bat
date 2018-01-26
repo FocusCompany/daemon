@@ -1,7 +1,7 @@
 setlocal
 
 mkdir install-jwt
-IF NOT exist "jwt-cpp" (
+IF NOT exist "C:\projects\daemon\jwt-cpp" (
    echo Building jwt-cpp library
    git clone https://github.com/pokowaka/jwt-cpp.git
    cd jwt-cpp

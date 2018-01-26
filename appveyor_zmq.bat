@@ -1,6 +1,6 @@
 setlocal
 
-IF NOT exist "libzmq-4.2.3" (
+IF NOT exist "C:\projects\daemon\libzmq-4.2.3" (
    echo Building ZMQ Library
    curl -L -o libzmq.zip https://github.com/zeromq/libzmq/archive/v4.2.3.zip
    7z x libzmq.zip
