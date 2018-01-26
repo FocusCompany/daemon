@@ -21,6 +21,7 @@ matrix:
           - unzip
           - libssl-dev
           - libzmq3-dev
+          - libwnck-3-dev
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
