@@ -25,9 +25,9 @@ void ContextAgent::OnContextChanged(const std::string &processName, const std::s
 	context.set_processname(processName);
 	context.set_windowname(windowTitle);
 
-	Focus::Event event = FocusSerializer::CreateEventFromContext("OnWindowsContextChanged", context);
+	Focus::Event event = FocusSerializer::CreateEventFromContext("ContextChanged", context);
 
-	_eventEmitter->Emit("OnWindowsContextChanged", event);
+	_eventEmitter->Emit("NewEvent", event);
 }
 
 VOID CALLBACK ContextAgent::WinEventProcCallback(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {

@@ -11,7 +11,7 @@ void FocusDaemon::Run() {
     if (!_user_uuid.empty()) {
         EventManager->Run();
         NetworkManager->Run(_user_uuid);
-        KeyLogger->Run();
+        KeyLogger->Run(_user_uuid);
 
         //Let's wait indefinitely
         std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::hours((std::numeric_limits<int>::max)()));

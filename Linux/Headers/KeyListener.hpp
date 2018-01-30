@@ -5,8 +5,6 @@
 #ifndef FOCUS_CLIENT_KEYLISTENER_HPP
 #define FOCUS_CLIENT_KEYLISTENER_HPP
 
-#include <atlstr.h>
-#include <Windows.h>
 #include <vector>
 #include "IKeyListener.hpp"
 
@@ -24,7 +22,6 @@ public:
 	KeyListener();
 
 private:
-	static LRESULT CALLBACK LowLevelKeyboardProc(int code, WPARAM wp, LPARAM lp);
 	std::vector<std::string> _capturedInputs;
 };
 

@@ -6,6 +6,7 @@
 #include <FocusContextEventPayload.pb.h>
 #include <FocusSecureSocket.hpp>
 #include <iostream>
+#include <FocusEnvelope.pb.h>
 
 FocusNetworkManager::FocusNetworkManager() {
     _socket = std::static_pointer_cast<IFocusSocket>(std::make_shared<FocusSecureSocket<Client>>("rq:rM>}U?@Lns47E1%kR.o@n%FcmmsL/@{H8]yf7", "Yne@$w-vo<fVvi]a<NY6T1ed:M$fCG*[IaLV{hID", "D:)Q[IlAW!ahhC2ac:9*A}h:p?([4%wOTJ%JR%cs"));
@@ -20,9 +21,10 @@ void FocusNetworkManager::Run(std::string user_uuid) {
 
     _networkManagerThread = std::make_unique<std::thread>(std::bind(&FocusNetworkManager::RunReceive, this));
 
-    _eventListener->Register("FocusNetworkManager", [this, user_uuid](Focus::Event &event) {
+    _eventListener->RegisterEnvelope("FocusNetworkManager", [this, user_uuid](Focus::Envelope &envelope) {
+        std::cout << "ID from envelope: " << envelope.clientid() << std::endl;
         std::string envelopeData;
-        event.SerializeToString(&envelopeData);
+        envelope.SerializeToString(&envelopeData);
         try {
             _socket->Send(user_uuid, envelopeData);
         }
