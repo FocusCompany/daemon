@@ -19,11 +19,11 @@ private:
 public:
     void Run();
 
-    std::string GetUUID();
+    std::string GetUUID() const;
 
-    bool GetConnectionStatus();
+    bool GetConnectionStatus() const;
 
-    std::string GetCurrentToken();
+    std::string GetCurrentToken() const;
 
     bool Login(const std::string &email, const std::string &password);
 

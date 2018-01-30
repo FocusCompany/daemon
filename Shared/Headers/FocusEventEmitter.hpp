@@ -21,7 +21,7 @@ public:
 
     void EmitEnvelope(const std::string &dest, const Focus::Envelope &envelope) const;
 
-    void RouteToModules(const Focus::Event &payload) const;
+    void EmitMessage(const std::string &dest, const std::string &message) const;
 };
 
 

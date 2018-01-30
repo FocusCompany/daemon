@@ -41,7 +41,9 @@ set(DEAMON_SHARED_SOURCE_FILES
         Headers/FocusSecureSocket.hpp
 
         Interfaces/IContextAgent.hpp
-        Interfaces/IFocusSocket.hpp)
+        Interfaces/IKeyListener.hpp
+        Interfaces/IMouseListener.hpp
+        )
 
 include_directories(Headers Interfaces ${OPENSSL_INCLUDE_DIR} ${JWTCPP_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ${ZeroMQ_INCLUDE_DIR})
 
