@@ -19,3 +19,11 @@ void FocusEventEmitter::Emit(const std::string &dest, const Focus::Event &payloa
 void FocusEventEmitter::RouteToModules(const Focus::Event &payload) const{
     Emit(payload.payloadtype(), payload);
 }
+
+void FocusEventEmitter::EmitEnvelope(const std::string &dest, const Focus::Envelope &envelope) const {
+    zmq::multipart_t msg;
+    msg.addstr(dest);
+    std::string temp = envelope.SerializeAsString();
+    msg.addstr(temp);
+    msg.send(*_socketPUB);
+}

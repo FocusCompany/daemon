@@ -16,7 +16,7 @@ class FocusKeyLogger {
     -std::unique_ptr<IKeyListener> _keyListener
     -std::unique_ptr<IMouseListener> _mouseListener
     --
-    -PushKeyLog();
+    -AddEvent();
     -RunKeyLogger();
     +Run()
 }

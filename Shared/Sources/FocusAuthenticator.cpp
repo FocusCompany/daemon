@@ -7,7 +7,7 @@
 #include <jwt/jwt_all.h>
 
 void FocusAuthenticator::Run() {
-    _cli = std::make_unique<httplib::Client>("localhost", 3000);
+    _cli = std::make_unique<httplib::Client>("auth.thefocuscompany.me", 3000);
 }
 
 std::string FocusAuthenticator::GetUUID() {
