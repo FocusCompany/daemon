@@ -17,12 +17,11 @@ FocusNetworkManager::~FocusNetworkManager() {
 }
 
 void FocusNetworkManager::Run(std::string user_uuid) {
-    _socket->Connect("tcp://192.168.1.106:5555");
+    _socket->Connect("tcp://backend.thefocuscompany.me:5555");
 
     _networkManagerThread = std::make_unique<std::thread>(std::bind(&FocusNetworkManager::RunReceive, this));
 
     _eventListener->RegisterEnvelope("FocusNetworkManager", [this, user_uuid](Focus::Envelope &envelope) {
-        std::cout << "ID from envelope: " << envelope.clientid() << std::endl;
         std::string envelopeData;
         envelope.SerializeToString(&envelopeData);
         try {
