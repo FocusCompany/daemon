@@ -2,7 +2,6 @@ os: Visual Studio 2017
 
 init:
   - git config --global core.autocrlf input
-  - git submodule update --init --recursive
   - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
   - mkdir "C:\Program Files\Focus\"
 
@@ -24,6 +23,7 @@ environment:
     platform: Win32
 
 before_build:
+  - git submodule update --init --recursive
   - echo [COMPILING PROTO FILES]
   - cd c:\projects\daemon\Shared\Proto
   - CALL generate.bat
