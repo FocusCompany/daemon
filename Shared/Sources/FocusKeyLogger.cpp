@@ -4,6 +4,7 @@
 
 #include <FocusKeyLogger.hpp>
 #include <FocusEnvelope.pb.h>
+#include <spdlog/spdlog.h>
 #include "FocusKeyEventPayload.pb.h"
 #include "FocusSerializer.hpp"
 
@@ -14,6 +15,7 @@
 //	- "MouseEvent" -> Triggered when users click with his mouse. Contain coordinate (x, y) and the button pressed.
 
 void FocusKeyLogger::Run(const std::string &user_uuid) {
+    spdlog::get("logger")->info("FocusKeyLogger is running");
     _user_uuid = user_uuid;
     _keyLoggerThread = std::make_unique<std::thread>(std::bind(&FocusKeyLogger::RunKeyLogger, this));
 }
@@ -21,6 +23,11 @@ void FocusKeyLogger::Run(const std::string &user_uuid) {
 void FocusKeyLogger::RunKeyLogger() {
     _eventListener->Register("NewEvent", [this](Focus::Event &newContext) {
         AddEvent(newContext);
+    });
+    _messageListener->RegisterMessage("FocusSendDataToBackend", [this](const std::string &msg) {
+        //TODO: Ensure is thread safe to clear the vector here
+        spdlog::get("console")->info("Clear events cached");
+        _events.clear();
     });
 
     _contextAgent->Run();
@@ -30,6 +37,8 @@ void FocusKeyLogger::RunKeyLogger() {
 
 void FocusKeyLogger::AddEvent(const Focus::Event &ev) {
     _events.push_back(ev);
+    spdlog::get("console")->info("Adding new event to cache");
+
     if (ev.payloadtype() == "ContextChanged") {
         Focus::KeyEventPayload keyPayload;
         std::string tmpStr = _keyListener->Flush();
@@ -37,6 +46,7 @@ void FocusKeyLogger::AddEvent(const Focus::Event &ev) {
             keyPayload.set_plaintextkeylog(tmpStr);
             Focus::Event tmpEvent = FocusSerializer::CreateEventFromContext("KeyPayload", keyPayload);
             _events.push_back(tmpEvent);
+            spdlog::get("console")->info("Adding new event to cache");
         }
     }
 
@@ -48,6 +58,5 @@ void FocusKeyLogger::AddEvent(const Focus::Event &ev) {
         envelope.mutable_events()->Swap(&data);
 
         _eventEmitter->EmitEnvelope("FocusNetworkManager", envelope);
-        _events.clear();
     }
 }

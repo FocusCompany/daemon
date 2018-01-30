@@ -23,6 +23,7 @@ environment:
     platform: Win32
 
 before_build:
+  - git submodule update --init --recursive
   - echo [COMPILING PROTO FILES]
   - cd c:\projects\daemon\Shared\Proto
   - CALL generate.bat

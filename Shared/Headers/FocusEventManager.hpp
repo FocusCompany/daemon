@@ -13,10 +13,10 @@ private:
     std::shared_ptr<zmq::socket_t> _socketPUB;
 	std::shared_ptr<zmq::socket_t> _socketSUB;
 	std::unique_ptr<std::thread> _eventManagerThread;
-	void RunReceive();
+	void RunReceive() const;
 public:
 	FocusEventManager();
-	void Run();
+	void Run() ;
 };
 
 #endif //FOCUS_CLIENT_FOCUSEVENTMANAGER_HPP
