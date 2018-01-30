@@ -8,6 +8,7 @@
 #include <string>
 #include <FocusEvent.pb.h>
 #include <FocusSocket.hpp>
+#include <FocusEnvelope.pb.h>
 
 class FocusEventEmitter {
 private:
@@ -17,6 +18,8 @@ public:
     FocusEventEmitter();
 
     void Emit(const std::string &dest, const Focus::Event &payload) const;
+
+    void EmitEnvelope(const std::string &dest, const Focus::Envelope &envelope) const;
 
     void RouteToModules(const Focus::Event &payload) const;
 };

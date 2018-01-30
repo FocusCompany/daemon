@@ -18,8 +18,6 @@ ContextAgent::~ContextAgent() {
 
 void ContextAgent::Run() {
 	hEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, nullptr, WinEventProcCallback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
-	MSG msg;
-	GetMessage(&msg, nullptr, NULL, NULL); // Windows message loop keepalive. This will block the current thread.
 }
 
 void ContextAgent::OnContextChanged(const std::string &processName, const std::string &windowTitle) const {
@@ -27,9 +25,9 @@ void ContextAgent::OnContextChanged(const std::string &processName, const std::s
 	context.set_processname(processName);
 	context.set_windowname(windowTitle);
 
-	Focus::Event event = FocusSerializer::CreateEventFromContext("OnWindowsContextChanged", context);
+	Focus::Event event = FocusSerializer::CreateEventFromContext("ContextChanged", context);
 
-	_eventEmitter->Emit("OnWindowsContextChanged", event);
+	_eventEmitter->Emit("NewEvent", event);
 }
 
 VOID CALLBACK ContextAgent::WinEventProcCallback(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
