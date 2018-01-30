@@ -1,29 +1,22 @@
 setlocal
 
-mkdir install
-IF NOT exist "protobuf-3.5.0" (
+mkdir install-protobuf
+IF NOT exist "C:\projects\daemon\protobuf-3.5.1" (
    echo Building Protobuf Library
-   curl -L -o protobuf.zip https://github.com/google/protobuf/releases/download/v3.5.0/protobuf-all-3.5.0.zip
+   curl -L -o protobuf.zip https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-all-3.5.1.zip
    7z x protobuf.zip
    del /Q protobuf.zip
-   cd protobuf-3.5.0/cmake
-   mkdir build
-   cd build
-   mkdir solution
-   cd solution
-   cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_INSTALL_PREFIX="../../../../install" -Dprotobuf_BUILD_TESTS=OFF ../..
-   msbuild protobuf.sln /property:Configuration=Debug /property:Platform=x64 || goto error
+   cd protobuf-3.5.1
+   mkdir tmp
+   cd tmp
+   cmake -G "NMake Makefiles" -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="../../install-protobuf" ../cmake
+   nmake
 ) ELSE (
   echo Using cached protobuf
-  cd protobuf-3.5.0/cmake/build/solution
+  cd protobuf-3.5.1/tmp
 )
 echo Installing Protobuf Library 
-msbuild INSTALL.vcxproj || goto error
+nmake install
 echo Moving Protobuf Library to C:\... 
-move "C:\projects\daemon\install" "C:\Program Files\protobuf"
+move "C:\projects\daemon\install-protobuf" "C:\Program Files\Focus\protobuf"
 echo Protobuf successfully installed
-goto :EOF
-
-:error
-echo Failed!
-EXIT /b %ERRORLEVEL%

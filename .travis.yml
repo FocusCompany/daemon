@@ -11,30 +11,36 @@ matrix:
           - ubuntu-toolchain-r-test
           packages:
           - cmake
-          - gcc-5
-          - g++-5
+          - gcc-7
+          - g++-7
           - autoconf
           - automake
           - libtool
           - curl
           - make
           - unzip
+          - libssl-dev
+          - libzmq3-dev
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
     - os: osx
       compiler: clang
+      env:
+        - MATRIX_EVAL="brew install openssl@1.1 && brew install zmq"
 
 language: cpp
 
 cache:
   directories:
   - $HOME/protobuf
+  - $HOME/jwt-cpp
 
 before_install:
+  - eval "${MATRIX_EVAL}"
+  - bash travis_jwt-cpp.sh
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bash travis_protobuf.sh osx; fi
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then bash travis_protobuf.sh linux; fi
-
-install:
-  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then export CXX="g++-5" CC="gcc-5"; fi
 
 script:
   - echo "[COMPILING PROTO FILES]"

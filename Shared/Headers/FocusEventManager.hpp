@@ -6,16 +6,17 @@
 #define FOCUS_CLIENT_FOCUSEVENTMANAGER_HPP
 
 #include <thread>
+#include <FocusSocket.hpp>
 
 class FocusEventManager {
 private:
-	int _socketPUB;
-	int _socketSUB;
+    std::shared_ptr<zmq::socket_t> _socketPUB;
+	std::shared_ptr<zmq::socket_t> _socketSUB;
 	std::unique_ptr<std::thread> _eventManagerThread;
-	void RunReceive();
+	void RunReceive() const;
 public:
 	FocusEventManager();
-	void Run();
+	void Run() ;
 };
 
 #endif //FOCUS_CLIENT_FOCUSEVENTMANAGER_HPP

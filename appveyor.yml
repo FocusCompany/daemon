@@ -2,30 +2,37 @@ os: Visual Studio 2017
 
 init:
   - git config --global core.autocrlf input
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
+  - mkdir "C:\Program Files\Focus\"
 
 clone_folder: C:\projects\daemon
 
 cache:
-  - C:\projects\daemon\protobuf-3.5.0\
+  - C:\projects\daemon\protobuf-3.5.1\
+  - C:\projects\daemon\libzmq-4.2.3\
+  - C:\projects\daemon\jwt-cpp\
 
 install:
   - CALL appveyor_protobuf.bat
+  - CALL appveyor_jwt-cpp.bat
+  - CALL appveyor_zmq.bat
 
-platform:
-  - x64
-configuration:
-  - Debug
-
-build:
-  project: daemon.sln
+environment:
+  matrix:
+  - configuration: Debug
+    platform: Win32
 
 before_build:
+  - git submodule update --init --recursive
   - echo [COMPILING PROTO FILES]
   - cd c:\projects\daemon\Shared\Proto
   - CALL generate.bat
   - echo [RUNNING CMAKE]
   - cd c:\projects\daemon
-  - cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_INSTALL_PREFIX=%P%
+  - cmake -G "Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=%P%
+
+build_script:
+  - msbuild /p:Configuration=Debug /p:Platform=Win32 "C:\projects\daemon\daemon.sln"
 
 after_build:
   - echo Running Unit Tests...

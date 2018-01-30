@@ -8,24 +8,23 @@
 #include <string>
 #include <functional>
 #include <thread>
-#include <nanomsg/nn.h>
-#include <nanomsg/pubsub.h>
-#include "FocusEvent.pb.h"
+#include <FocusSocket.hpp>
+#include <FocusEvent.pb.h>
+#include <FocusEnvelope.pb.h>
 
 template<class TPayload>
 class FocusEventListener {
 private:
     std::function<void(TPayload &payload)> _onMessage;
     std::unique_ptr<std::thread> _eventListenerThread;
-    int _socketSUB;
+    std::shared_ptr<zmq::socket_t> _socketSUB = std::make_shared<zmq::socket_t>(*FocusSocket::Context, ZMQ_SUB);
 
-    static void RunReceive(int socketSUB, const std::function<void(TPayload &)> onMessage) {
+    static void RunReceive(zmq::socket_t *socketSUB, const std::function<void(TPayload &)> onMessage) {
         while (true) {
-            char *buf = NULL;
-            int bytes = nn_recv(socketSUB, &buf, NN_MSG, 0);
-            std::string recv(buf);
-            nn_freemsg(buf);
-            std::string payload = recv.substr(recv.find_first_of('|') + 1);
+            zmq::message_t msg;
+            socketSUB->recv(&msg);
+            socketSUB->recv(&msg);
+            std::string payload = std::string(static_cast<char*>(msg.data()), msg.size());
             Focus::Event event;
             if (!event.ParseFromString(payload))
                 continue;
@@ -33,16 +32,50 @@ private:
         }
     }
 
+    static void RunReceiveEnvelope(zmq::socket_t *socketSUB, const std::function<void(TPayload &)> onMessage) {
+        while (true) {
+            zmq::message_t msg;
+            socketSUB->recv(&msg);
+            socketSUB->recv(&msg);
+            std::string payload = std::string(static_cast<char*>(msg.data()), msg.size());
+            Focus::Envelope envelope;
+            if (!envelope.ParseFromString(payload))
+                continue;
+            onMessage(envelope);
+        }
+    }
+
+    static void RunReceiveMessage(zmq::socket_t *socketSUB, const std::function<void(TPayload &)> onMessage) {
+        while (true) {
+            zmq::message_t msg;
+            socketSUB->recv(&msg);
+            socketSUB->recv(&msg);
+            std::string payload = std::string(static_cast<char*>(msg.data()), msg.size());
+            onMessage(payload);
+        }
+    }
+
 public:
     FocusEventListener() {
-        _socketSUB = nn_socket(AF_SP, NN_SUB);
-        nn_connect(_socketSUB, "ipc:///tmp/EventEmitter");
+        _socketSUB->connect("inproc:///tmp/EventEmitter");
     }
 
     void Register(const std::string &payloadType, const std::function<void(TPayload &)> onMessage) {
-        nn_setsockopt(_socketSUB, NN_SUB, NN_SUB_SUBSCRIBE, payloadType.c_str(), payloadType.size());
+        _socketSUB->setsockopt(ZMQ_SUBSCRIBE, payloadType.c_str(), payloadType.size());
         _onMessage = onMessage;
-        _eventListenerThread = std::make_unique<std::thread>(RunReceive, _socketSUB, _onMessage);
+        _eventListenerThread = std::make_unique<std::thread>(RunReceive, _socketSUB.get(), _onMessage);
+    }
+
+    void RegisterEnvelope(const std::string &payloadType, const std::function<void(TPayload &)> onMessage) {
+        _socketSUB->setsockopt(ZMQ_SUBSCRIBE, payloadType.c_str(), payloadType.size());
+        _onMessage = onMessage;
+        _eventListenerThread = std::make_unique<std::thread>(RunReceiveEnvelope, _socketSUB.get(), _onMessage);
+    }
+
+    void RegisterMessage(const std::string &payloadType, const std::function<void(TPayload &)> onMessage) {
+        _socketSUB->setsockopt(ZMQ_SUBSCRIBE, payloadType.c_str(), payloadType.size());
+        _onMessage = onMessage;
+        _eventListenerThread = std::make_unique<std::thread>(RunReceiveMessage, _socketSUB.get(), _onMessage);
     }
 };
 

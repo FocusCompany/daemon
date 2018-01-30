@@ -4,30 +4,34 @@
 
 #include <FocusEventManager.hpp>
 #include <iostream>
-#include <nanomsg/nn.h>
-#include <nanomsg/pubsub.h>
-#include <functional>
-#include <cstring>
+#include <spdlog/spdlog.h>
 
 FocusEventManager::FocusEventManager() {
-	_socketPUB = nn_socket(AF_SP, NN_PUB);
-	_socketSUB = nn_socket(AF_SP, NN_SUB);
+    _socketPUB = std::make_shared<zmq::socket_t>(*FocusSocket::Context, ZMQ_PUB);
+    _socketSUB = std::make_shared<zmq::socket_t>(*FocusSocket::Context, ZMQ_SUB);
 }
 
 void FocusEventManager::Run() {
-	nn_setsockopt(_socketSUB, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+    spdlog::get("logger")->info("FocusEventManager is running");
 
-	nn_bind(_socketPUB, "ipc:///tmp/EventEmitter");
-	nn_bind(_socketSUB, "ipc:///tmp/EventListener");
+    _socketPUB->bind("inproc:///tmp/EventEmitter");
+    _socketSUB->bind("inproc:///tmp/EventListener");
+    _socketSUB->setsockopt(ZMQ_SUBSCRIBE, "", 0);
 
-	_eventManagerThread = std::make_unique<std::thread>(std::bind(&FocusEventManager::RunReceive, this));
+    _eventManagerThread = std::make_unique<std::thread>(std::bind(&FocusEventManager::RunReceive, this));
 }
 
-void FocusEventManager::RunReceive() {
-	while (true) {
-		char *buf = NULL;
-		nn_recv(_socketSUB, &buf, NN_MSG, 0);
-		nn_send(_socketPUB, buf, strlen(buf) + 1, 0);
-		nn_freemsg(buf);
-	}
+void FocusEventManager::RunReceive() const {
+    while (true) {
+        zmq::multipart_t rep;
+        zmq::message_t msg;
+        _socketSUB->recv(&msg);
+        std::string ret = std::string(static_cast<char*>(msg.data()), msg.size());
+        rep.addstr(ret);
+        zmq::message_t msg2;
+        _socketSUB->recv(&msg2);
+        ret = std::string(static_cast<char*>(msg2.data()), msg2.size());
+        rep.addstr(ret);
+        rep.send(*_socketPUB, 0);
+    }
 }

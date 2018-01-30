@@ -7,17 +7,21 @@
 
 #include <string>
 #include <FocusEvent.pb.h>
+#include <FocusSocket.hpp>
+#include <FocusEnvelope.pb.h>
 
 class FocusEventEmitter {
 private:
-    int _socketPUB;
+    std::shared_ptr<zmq::socket_t> _socketPUB = std::make_shared<zmq::socket_t>(*FocusSocket::Context, ZMQ_PUB);
 
 public:
     FocusEventEmitter();
 
     void Emit(const std::string &dest, const Focus::Event &payload) const;
 
-    void RouteToModules(const Focus::Event &payload) const;
+    void EmitEnvelope(const std::string &dest, const Focus::Envelope &envelope) const;
+
+    void EmitMessage(const std::string &dest, const std::string &message) const;
 };
 
 
