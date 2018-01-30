@@ -1,0 +1,3 @@
+[submodule "Shared/Proto"]
+	path = Shared/Proto
+	url = https://github.com/FocusCompany/Proto.git
