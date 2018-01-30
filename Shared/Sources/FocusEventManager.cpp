@@ -4,6 +4,7 @@
 
 #include <FocusEventManager.hpp>
 #include <iostream>
+#include <spdlog/spdlog.h>
 
 FocusEventManager::FocusEventManager() {
     _socketPUB = std::make_shared<zmq::socket_t>(*FocusSocket::Context, ZMQ_PUB);
@@ -11,6 +12,8 @@ FocusEventManager::FocusEventManager() {
 }
 
 void FocusEventManager::Run() {
+    spdlog::get("logger")->info("FocusEventManager is running");
+
     _socketPUB->bind("inproc:///tmp/EventEmitter");
     _socketSUB->bind("inproc:///tmp/EventListener");
     _socketSUB->setsockopt(ZMQ_SUBSCRIBE, "", 0);
@@ -18,7 +21,7 @@ void FocusEventManager::Run() {
     _eventManagerThread = std::make_unique<std::thread>(std::bind(&FocusEventManager::RunReceive, this));
 }
 
-void FocusEventManager::RunReceive() {
+void FocusEventManager::RunReceive() const {
     while (true) {
         zmq::multipart_t rep;
         zmq::message_t msg;
