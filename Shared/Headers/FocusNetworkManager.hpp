@@ -10,6 +10,7 @@
 #include "FocusEventListener.hpp"
 #include <FocusEnvelope.pb.h>
 #include "FocusEventEmitter.hpp"
+#include "FocusConfiguration.hpp"
 
 class FocusNetworkManager {
 private:
@@ -25,7 +26,7 @@ public:
 
     ~FocusNetworkManager();
 
-    void Run(std::string user_uuid);
+    void Run(std::string user_uuid, FocusConfiguration &config);
 };
 
 #endif //FOCUS_CLIENT_FOCUSNETWORKMANAGER_HPP

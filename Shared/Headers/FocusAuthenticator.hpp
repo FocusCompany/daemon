@@ -9,6 +9,7 @@
 #include <fstream>
 #include <memory>
 #include <httplib.h>
+#include "FocusConfiguration.hpp"
 
 class FocusAuthenticator {
 private:
@@ -17,7 +18,7 @@ private:
     std::string _uuid;
     bool _connected = false;
 public:
-    void Run();
+    void Run(FocusConfiguration &config);
 
     std::string GetUUID() const;
 
