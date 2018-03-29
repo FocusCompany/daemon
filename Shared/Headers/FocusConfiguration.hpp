@@ -9,7 +9,7 @@
 #include <vector>
 
 enum class serverType {
-    AUTHENTICATION, BACKEND
+    AUTHENTICATION, BACKEND, DEFAULT
 };
 
 struct user {
@@ -29,13 +29,14 @@ class FocusConfiguration {
 private:
     user _userInfo;
     std::vector<server> _serversInfo;
-    bool _filed = false;
+    bool _filled = false;
+    struct server _defaultServer;
 public:
     FocusConfiguration(const std::string &configFile);
 
-    bool isFiled() const;
+    bool isFilled() const;
 
-    struct user getUser()const ;
+    struct user getUser() const;
 
     struct server getServer(const serverType type) const;
 };

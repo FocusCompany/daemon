@@ -29,7 +29,7 @@ int main(const int ac, const char **av) {
 	spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [thread %t] [%l]\t\t: %v");
 
     FocusConfiguration config("daemon.config");
-    if (config.isFiled()) {
+    if (config.isFilled()) {
         FocusDaemon daemon;
         daemon.Run(config);
     }
