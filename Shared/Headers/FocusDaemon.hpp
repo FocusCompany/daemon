@@ -11,6 +11,7 @@
 #include "FocusKeyLogger.hpp"
 #include "FocusEventManager.hpp"
 #include "FocusAuthenticator.hpp"
+#include "FocusConfiguration.hpp"
 
 class FocusDaemon {
 private:
@@ -20,7 +21,7 @@ private:
     std::unique_ptr<FocusEventManager> EventManager = std::make_unique<FocusEventManager>();
     std::string _user_uuid;
 public:
-    void Run();
+    void Run(FocusConfiguration &config);
 };
 
 #endif //FOCUS_CLIENT_FOCUSDAEMON_HPP

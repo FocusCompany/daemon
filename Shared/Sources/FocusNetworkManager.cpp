@@ -17,11 +17,18 @@ FocusNetworkManager::~FocusNetworkManager() {
     _socket->Disconnect();
 }
 
-void FocusNetworkManager::Run(std::string user_uuid) {
+void FocusNetworkManager::Run(std::string user_uuid, FocusConfiguration &config) {
     spdlog::get("logger")->info("FocusNetworkManager is running");
+
+    auto srv = config.getServer(serverType::BACKEND);
+    std::string urlStr = "tcp://";
+    urlStr += srv._ip;
+    urlStr += ":";
+    urlStr += std::to_string(srv._port);
+
     _user_uuid = user_uuid;
 
-    _socket->Connect("tcp://backend.thefocuscompany.me:5555");
+    _socket->Connect(urlStr);
 
     _networkManagerThread = std::make_unique<std::thread>(std::bind(&FocusNetworkManager::RunReceive, this));
 
