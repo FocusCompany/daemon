@@ -10,23 +10,31 @@
 #include <memory>
 #include <httplib.h>
 #include "FocusConfiguration.hpp"
+#include "FocusEventListener.hpp"
+
 
 class FocusAuthenticator {
 private:
     std::unique_ptr<httplib::Client> _cli;
-    std::string _token;
-    std::string _uuid;
+    std::shared_ptr<FocusConfiguration> _config;
+    std::string _token = "";
+    std::string _uuid = "";
+    std::string _deviceId = "";
     bool _connected = false;
 public:
-    void Run(FocusConfiguration &config);
+    void Run(std::shared_ptr<FocusConfiguration> &config);
 
     std::string GetUUID() const;
 
+    std::string GetDeviceId() const;
+
     bool GetConnectionStatus() const;
 
-    std::string GetCurrentToken() const;
+    std::string GetToken();
 
-    bool Login(const std::string &email, const std::string &password);
+    bool Login(const std::string &email, const std::string &password, const std::string &deviceId = "");
+
+    bool RegisterDevice(const std::string &name);
 
     bool Disconnect();
 

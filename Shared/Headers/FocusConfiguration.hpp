@@ -28,9 +28,12 @@ struct server {
 class FocusConfiguration {
 private:
     user _userInfo;
+    std::string _deviceId;
     std::vector<server> _serversInfo;
     bool _filled = false;
     struct server _defaultServer;
+    std::string _configFile;
+    std::string _source;
 public:
     FocusConfiguration(const std::string &configFile);
 
@@ -39,6 +42,10 @@ public:
     struct user getUser() const;
 
     struct server getServer(const serverType type) const;
+
+    std::string getDeviceId() const;
+
+    void setDeviceId(const std::string &deviceId);
 };
 
 

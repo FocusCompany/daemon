@@ -4,7 +4,6 @@
 
 #include <spdlog/spdlog.h>
 #include "FocusDaemon.hpp"
-#include "FocusConfiguration.hpp"
 
 void exitProgram(int sig) {
     spdlog::set_pattern("\t*****  %v  *****");
@@ -29,11 +28,8 @@ int main(const int ac, const char **av) {
     spdlog::get("logger")->info("Starting Focus daemon on MacOs Platform");
     spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [thread %t] [%l]\t\t: %v");
 
-    FocusConfiguration config("daemon.config");
-    if (config.isFilled()) {
-        FocusDaemon daemon;
-        daemon.Run(config);
-    }
+    FocusDaemon daemon;
+    daemon.Run("daemon.config");
 
     exitProgram(0);
     return (0);
