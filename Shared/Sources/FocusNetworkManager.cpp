@@ -17,11 +17,18 @@ FocusNetworkManager::~FocusNetworkManager() {
     _socket->Disconnect();
 }
 
-void FocusNetworkManager::Run(std::string user_uuid) {
+void FocusNetworkManager::Run(const std::string &device_id, std::shared_ptr<FocusConfiguration> &config) {
     spdlog::get("logger")->info("FocusNetworkManager is running");
-    _user_uuid = user_uuid;
 
-    _socket->Connect("tcp://backend.thefocuscompany.me:5555");
+    auto srv = config->getServer(serverType::BACKEND);
+    std::string urlStr = "tcp://";
+    urlStr += srv._ip;
+    urlStr += ":";
+    urlStr += std::to_string(srv._port);
+
+    _device_id = device_id;
+
+    _socket->Connect(urlStr);
 
     _networkManagerThread = std::make_unique<std::thread>(std::bind(&FocusNetworkManager::RunReceive, this));
 
@@ -29,7 +36,7 @@ void FocusNetworkManager::Run(std::string user_uuid) {
         spdlog::get("console")->info("Trying to send envelope");
         std::string envelopeData;
         envelope.SerializeToString(&envelopeData);
-        if (_socket->Send(_user_uuid, envelopeData) == 0) {
+        if (_socket->Send(_device_id, envelopeData) == 0) {
             spdlog::get("console")->info("Envelope send successfully");
             _eventEmitter->EmitMessage("FocusSendDataToBackend", "OK");
         } else {

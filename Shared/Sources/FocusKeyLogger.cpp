@@ -14,9 +14,9 @@
 //	- "KeyPayload" -> Triggered when users change his active window. Contain plain text key log.
 //	- "MouseEvent" -> Triggered when users click with his mouse. Contain coordinate (x, y) and the button pressed.
 
-void FocusKeyLogger::Run(const std::string &user_uuid) {
+void FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator) {
     spdlog::get("logger")->info("FocusKeyLogger is running");
-    _user_uuid = user_uuid;
+    _authenticator = authenticator;
     _keyLoggerThread = std::make_unique<std::thread>(std::bind(&FocusKeyLogger::RunKeyLogger, this));
 }
 
@@ -53,7 +53,8 @@ void FocusKeyLogger::AddEvent(const Focus::Event &ev) {
     if (_events.size() > 5) {
         Focus::Envelope envelope;
 
-        envelope.set_clientid(_user_uuid);
+        envelope.set_jwt(_authenticator->GetToken());
+        envelope.set_deviceid(_authenticator->GetDeviceId());
         google::protobuf::RepeatedPtrField<Focus::Event> data(_events.begin(), _events.end());
         envelope.mutable_events()->Swap(&data);
 
