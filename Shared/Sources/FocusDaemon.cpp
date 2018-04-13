@@ -5,19 +5,26 @@
 #include <FocusDaemon.hpp>
 #include <spdlog/spdlog.h>
 
-void FocusDaemon::Run(FocusConfiguration &config) {
+void FocusDaemon::Run(const std::string &configFileName) {
     spdlog::get("logger")->info("FocusDaemon is running");
-    auto usr = config.getUser();
-    Authenticator->Run(config);
-    if (Authenticator->Login(usr._email, usr._password)) {
-        _user_uuid = Authenticator->GetUUID();
-        spdlog::get("console")->info("User uuid: {}", _user_uuid);
+    EventManager->Run();
+    _config = std::make_shared<FocusConfiguration>(configFileName);
+    auto usr = _config->getUser();
+    Authenticator->Run(_config);
+    if (Authenticator->Login(usr._email, usr._password, _config->getDeviceId())) {
+        _device_id = Authenticator->GetDeviceId();
+        spdlog::get("logger")->info("User uuid: {}", Authenticator->GetUUID());
+        if (_device_id.empty()) {
+            if (Authenticator->RegisterDevice("MacBook Pro de Etienne")) {
+                Authenticator->Login(usr._email, usr._password, _config->getDeviceId());
+                _device_id = Authenticator->GetDeviceId();
+            }
+        }
     }
-    if (!_user_uuid.empty()) {
-        EventManager->Run();
-        NetworkManager->Run(_user_uuid, config);
-        KeyLogger->Run(_user_uuid);
-
-        std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::hours((std::numeric_limits<int>::max)()));
+    if (!_device_id.empty()) {
+        spdlog::get("logger")->info("Device Id: {}", _device_id);
+        NetworkManager->Run(_device_id, _config);
+        KeyLogger->Run(Authenticator);
     }
+    std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::hours((std::numeric_limits<int>::max)()));
 }

@@ -40,11 +40,8 @@ int main(const int ac, const char** av)
 	spdlog::get("logger")->info("Starting Focus daemon on Windows Platform");
 	spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [thread %t] [%l]\t\t: %v");
 
-	FocusConfiguration config("daemon.config");
-	if (config.isFilled()) {
-		FocusDaemon daemon;
-		daemon.Run(config);
-	}
+	FocusDaemon daemon;
+	daemon.Run("daemon.config");
 
 	exitProgram();
 	return (0);

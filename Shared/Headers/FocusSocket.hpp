@@ -17,7 +17,7 @@ public:
 
     FocusSocket();
 
-    bool Send(const std::string &clientId, const std::string &payload) const;
+    bool Send(const std::string &deviceId, const std::string &payload) const;
 
     std::string Receive() const;
 

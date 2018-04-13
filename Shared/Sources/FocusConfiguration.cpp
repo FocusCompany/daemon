@@ -11,8 +11,8 @@
 
 namespace lightconf {
     LIGHTCONF_BEGIN_ENUM(serverType)
-        LIGHTCONF_ENUM_VALUE(serverType::AUTHENTICATION, "AUTHENTICATION")
-        LIGHTCONF_ENUM_VALUE(serverType::BACKEND, "BACKEND")
+                    LIGHTCONF_ENUM_VALUE(serverType::AUTHENTICATION, "AUTHENTICATION")
+                    LIGHTCONF_ENUM_VALUE(serverType::BACKEND, "BACKEND")
     LIGHTCONF_END_ENUM()
 
     LIGHTCONF_BEGIN_TYPE(user)
@@ -34,18 +34,20 @@ FocusConfiguration::FocusConfiguration(const std::string &configFile) {
     _defaultServer._port = 4242;
     _defaultServer._type = serverType::DEFAULT;
 
-    lightconf::group config_group;
-
-    std::string source;
+    _configFile = configFile;
+    lightconf::group config;
+    _source = "";
     try {
-        std::ifstream stream(configFile, std::ios::in);
+        std::ifstream stream(_configFile, std::ios::in);
         if (stream) {
-            source = std::string(std::istreambuf_iterator<char>(stream),
-                                 std::istreambuf_iterator<char>());
-            config_group = lightconf::config_format::read(source);
-            _userInfo = config_group.get<user>("user");
-            _serversInfo = config_group.get<std::vector<server>>("servers", {});
+            _source = std::string(std::istreambuf_iterator<char>(stream),
+                                  std::istreambuf_iterator<char>());
+            config = lightconf::config_format::read(_source);
+            _userInfo = config.get<user>("user");
+            _deviceId = config.get<std::string>("id_device", "");
+            _serversInfo = config.get<std::vector<server>>("servers", {});
             _filled = true;
+            spdlog::get("logger")->info("Reading configuration file successfully");
         } else {
             _filled = false;
             spdlog::get("logger")->error("Missing configuration file");
@@ -74,4 +76,22 @@ struct server FocusConfiguration::getServer(const serverType type) const {
     else {
         return (_defaultServer);
     }
+}
+
+void FocusConfiguration::setDeviceId(const std::string &deviceId) {
+    if (_filled && !_source.empty()) {
+        _deviceId = deviceId;
+        lightconf::group config;
+        config = lightconf::config_format::read(_source);
+        config.set<std::string>("id_device", deviceId);
+        std::ofstream stream(_configFile, std::ios::out);
+        if (stream) {
+            stream << lightconf::config_format::write(config, _source, 80);
+            spdlog::get("logger")->info("Device id stored in configuration file");
+        }
+    }
+}
+
+std::string FocusConfiguration::getDeviceId() const {
+    return _deviceId;
 }

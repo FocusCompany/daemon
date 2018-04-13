@@ -15,6 +15,7 @@
 #include "KeyListener.hpp"
 #include "IMouseListener.hpp"
 #include "MouseListener.hpp"
+#include "FocusAuthenticator.hpp"
 
 class FocusKeyLogger {
 private:
@@ -23,17 +24,17 @@ private:
     std::unique_ptr<IMouseListener> _mouseListener = std::unique_ptr<IMouseListener>(std::make_unique<MouseListener>());
     std::unique_ptr<IKeyListener> _keyListener = std::unique_ptr<IKeyListener>(std::make_unique<KeyListener>());
     std::unique_ptr<FocusEventListener<Focus::Event>> _eventListener = std::make_unique<FocusEventListener<Focus::Event>>();
-    std::unique_ptr<FocusEventListener<const std::string&>> _messageListener = std::make_unique<FocusEventListener<const std::string &>>();
+    std::unique_ptr<FocusEventListener<const std::string &>> _messageListener = std::make_unique<FocusEventListener<const std::string &>>();
     std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
+    std::shared_ptr<FocusAuthenticator> _authenticator;
     std::vector<Focus::Event> _events;
-    std::string _user_uuid;
 
     void AddEvent(const Focus::Event &event);
 
     void RunKeyLogger();
 
 public:
-    void Run(const std::string &user_uuid);
+    void Run(std::shared_ptr<FocusAuthenticator> &authenticator);
 };
 
 #endif //FOCUS_CLIENT_FOCUSKEYLOGGER_HPP
