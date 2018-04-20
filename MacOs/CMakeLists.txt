@@ -7,9 +7,6 @@ set(CMAKE_CXX_STANDARD 14)
 include(FindProtobuf)
 find_package(Protobuf REQUIRED)
 
-FIND_LIBRARY(CARBON_LIBRARY Carbon)
-FIND_LIBRARY(COCOA_LIBRARY Cocoa)
-
 set(DEAMON_MAC_SOURCE_FILES
         Sources/ContextAgent.cpp
         Sources/KeyListener.cpp
@@ -30,7 +27,7 @@ add_library(daemon_mac_lib STATIC ${DEAMON_MAC_SOURCE_FILES})
 
 add_executable(daemon_mac ${MAIN_FILES})
 
-target_link_libraries(daemon_mac daemon_mac_lib daemon_shared_lib ${PROTOBUF_LIBRARY} ${CARBON_LIBRARY} ${COCOA_LIBRARY})
+target_link_libraries(daemon_mac daemon_mac_lib daemon_shared_lib ${PROTOBUF_LIBRARY})
 
 ####TESTS####
 
