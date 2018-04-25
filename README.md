@@ -8,11 +8,8 @@ First take a look at the dependencies bellow, you should install all the depende
 mkdir build
 cd build
 
-  cmake ..
-  make                   //For Linux/Mac users
-----------------------------------------------------------
-  cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug ..
-  nmake                  //For Windows users
+cmake .. (Linux)  /or/  cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug .. (Windows)
+make     (Linux)  /or/  nmake                                                  (Windows)
 ```
 Then simply run the generated executable depending on the platform where you have build the daemon.
 ### Dependencies
@@ -23,6 +20,8 @@ Then simply run the generated executable depending on the platform where you hav
     - Jwt-cpp (https://github.com/pokowaka/jwt-cpp)
 #### Linux
     - wnck 3
+#### MacOs
+    - Carbon    
 ## Class Diagram
 ![placeholder](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/FocusCompany/Daemon/master/docs/daemon.puml)
 ## Protobuf Envelope

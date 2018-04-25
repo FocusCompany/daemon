@@ -7,7 +7,8 @@
 #include <FocusAfkEventPayload.pb.h>
 #include <FocusSerializer.hpp>
 
-void AfkListener::Run() {
+void AfkListener::Run(int triggerAfkInSecond) {
+    _triggerAfkInSecond = triggerAfkInSecond;
     _eventListener = std::make_unique<std::thread>(std::bind(&AfkListener::EventListener, this));
 }
 

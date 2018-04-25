@@ -10,7 +10,7 @@
 
 class IAfkListener {
 public:
-    virtual void Run() = 0;
+    virtual void Run(int triggerAfkInSecond) = 0;
 
 private:
     virtual void EventListener() = 0;

@@ -31,7 +31,7 @@ private:
     void RunKeyLogger();
 
 public:
-    void Run(std::shared_ptr<FocusAuthenticator> &authenticator);
+    void Run(std::shared_ptr<FocusAuthenticator> &authenticator, std::shared_ptr<FocusConfiguration> &config);
 };
 
 #endif //FOCUS_CLIENT_FOCUSKEYLOGGER_HPP
