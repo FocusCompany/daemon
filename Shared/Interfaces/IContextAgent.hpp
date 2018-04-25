@@ -9,8 +9,12 @@
 
 class IContextAgent {
 public:
-	virtual void Run() = 0;
-	virtual void OnContextChanged(const std::string &processName, const std::string &windowTitle) const = 0;
+    virtual void Run() = 0;
+
+private:
+    virtual void EventListener() const = 0;
+
+    virtual void OnContextChanged(const std::string &processName, const std::string &windowTitle) const = 0;
 
 };
 

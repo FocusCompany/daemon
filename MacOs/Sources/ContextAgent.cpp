@@ -11,15 +11,11 @@
 #include <spdlog/spdlog.h>
 #include <array>
 
-ContextAgent::ContextAgent() {
-
-}
-
-ContextAgent::~ContextAgent() {
-
-}
-
 void ContextAgent::Run() {
+    _eventListener = std::make_unique<std::thread>(std::bind(&ContextAgent::EventListener, this));
+}
+
+void ContextAgent::EventListener() const {
     std::string cmd = "osascript ./MacOs/printAppTitle.scpt";
     std::string oldProcessName;
     std::string oldWindowsTitle;

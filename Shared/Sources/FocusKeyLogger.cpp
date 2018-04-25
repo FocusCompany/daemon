@@ -5,25 +5,16 @@
 #include <FocusKeyLogger.hpp>
 #include <FocusEnvelope.pb.h>
 #include <spdlog/spdlog.h>
-#include "FocusKeyEventPayload.pb.h"
 #include "FocusSerializer.hpp"
-
-// FOCUS KEYLOGGER
-// They are 3 types of events :
-//	- "ContextChanged" -> Triggered when users change his active window. Contain processName and windowName.
-//	- "KeyPayload" -> Triggered when users change his active window. Contain plain text key log.
-//	- "MouseEvent" -> Triggered when users click with his mouse. Contain coordinate (x, y) and the button pressed.
 
 void FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator) {
     spdlog::get("logger")->info("FocusKeyLogger is running");
     _authenticator = authenticator;
-    _keyLoggerThread = std::make_unique<std::thread>(std::bind(&FocusKeyLogger::RunKeyLogger, this));
-}
 
-void FocusKeyLogger::RunKeyLogger() {
     _eventListener->Register("NewEvent", [this](Focus::Event &newContext) {
         AddEvent(newContext);
     });
+
     _messageListener->RegisterMessage("FocusSendDataToBackend", [this](const std::string &msg) {
         //TODO: Ensure is thread safe to clear the vector here
         spdlog::get("console")->info("Clear events cached");
@@ -31,25 +22,12 @@ void FocusKeyLogger::RunKeyLogger() {
     });
 
     _contextAgent->Run();
-    _mouseListener->Run();
-    _keyListener->Run(); //This will block current thread (on windows).
+    _afkListener->Run();
 }
 
 void FocusKeyLogger::AddEvent(const Focus::Event &ev) {
     _events.push_back(ev);
     spdlog::get("console")->info("Adding new event to cache");
-
-    if (ev.payloadtype() == "ContextChanged") {
-        Focus::KeyEventPayload keyPayload;
-        std::string tmpStr = _keyListener->Flush();
-        if (!tmpStr.empty()) {
-            keyPayload.set_plaintextkeylog(tmpStr);
-            Focus::Event tmpEvent = FocusSerializer::CreateEventFromContext("KeyPayload", keyPayload);
-            _events.push_back(tmpEvent);
-            spdlog::get("console")->info("Adding new event to cache");
-        }
-    }
-
     if (_events.size() > 5) {
         Focus::Envelope envelope;
 
