@@ -29,7 +29,7 @@ void AfkListener::EventListener() {
             if (!afk) {
                 spdlog::get("console")->info("AFK since 5 minutes");
                 auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-                OnAfk(now + std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(_triggerAfkInSecond)));
+                OnAfk(now - std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(_triggerAfkInSecond)));
                 afk = true;
             }
         }
