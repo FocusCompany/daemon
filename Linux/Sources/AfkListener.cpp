@@ -11,7 +11,7 @@ void AfkListener::Run() {
     _eventListener = std::make_unique<std::thread>(std::bind(&AfkListener::EventListener, this));
 }
 
-void AfkListener::EventListener() const {
+void AfkListener::EventListener() {
     //TODO: Implementing ContextAgent
     std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::hours((std::numeric_limits<int>::max)()));
 }

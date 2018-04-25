@@ -13,7 +13,7 @@ public:
     virtual void Run() = 0;
 
 private:
-    virtual void EventListener() const = 0;
+    virtual void EventListener() = 0;
 
     virtual void OnAfk(const std::chrono::milliseconds &timeSinceEpoch) const = 0;
 };

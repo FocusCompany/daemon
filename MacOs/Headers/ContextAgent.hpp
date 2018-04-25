@@ -14,12 +14,13 @@ private:
     std::unique_ptr<std::thread> _eventListener;
     std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
 
-    void EventListener() const override final;
+    void EventListener() override final;
 
-    void OnContextChanged(const std::string &processName, const std::string &windowTitle) const override final;
 
 public:
     void Run() override final;
+
+	void OnContextChanged(const std::string &processName, const std::string &windowTitle) const override final;
 };
 
 #endif //FOCUS_CLIENT_WINDOWSCONTEXTAGENT_HPP

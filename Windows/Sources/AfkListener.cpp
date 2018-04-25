@@ -3,7 +3,6 @@
 //
 
 #include "AfkListener.hpp"
-#include <ApplicationServices/ApplicationServices.h>
 #include <spdlog/spdlog.h>
 #include <FocusAfkEventPayload.pb.h>
 #include <FocusSerializer.hpp>
@@ -13,24 +12,31 @@ void AfkListener::Run() {
 }
 
 void AfkListener::EventListener() {
-    bool afk = false;
-    double lastInputSince = 0;
-    int triggerAfkInSecond = 10;
+	bool afk = false;
+	int lastInputSince = 0;
+	int triggerAfkInSecond = 10;
+	LASTINPUTINFO li;
+	li.cbSize = sizeof(LASTINPUTINFO);
 
-    while (true) {
-        lastInputSince = CGEventSourceSecondsSinceLastEventType(kCGEventSourceStateHIDSystemState, kCGAnyInputEventType);
-        if (lastInputSince < triggerAfkInSecond) {
-            afk = false;
-        } else {
-            if (!afk) {
-                spdlog::get("console")->info("AFK since 5 minutes");
-                auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-                OnAfk(now + std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(triggerAfkInSecond)));
-                afk = true;
-            }
-        }
-        sleep(2);
-    }
+	while (true)
+	{
+		GetLastInputInfo(&li);
+		DWORD te = ::GetTickCount();
+		lastInputSince = (te - li.dwTime) / 1000;
+
+		if (lastInputSince < triggerAfkInSecond) {
+			afk = false;
+		}
+		else {
+			if (!afk) {
+				spdlog::get("console")->info("AFK since 5 minutes");
+				auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+				OnAfk(now + std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(triggerAfkInSecond)));
+				afk = true;
+			}
+		}
+		Sleep(2000);
+	}
 }
 
 
@@ -46,5 +52,4 @@ void AfkListener::OnAfk(const std::chrono::milliseconds &timeSinceEpoch) const {
     Focus::Event event = FocusSerializer::CreateEventFromContext("Afk", afk);
 
     _eventEmitter->Emit("NewEvent", event);
-
 }

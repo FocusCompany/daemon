@@ -9,12 +9,10 @@ find_package(Protobuf REQUIRED)
 
 set(DEAMON_WINDOWS_SOURCE_FILES
         Sources/ContextAgent.cpp
-        Sources/KeyListener.cpp
-        Sources/MouseListener.cpp
+        Sources/AfkListener.cpp
 
         Headers/ContextAgent.hpp
-        Headers/KeyListener.hpp
-        Headers/MouseListener.hpp
+        Headers/AfkListener.hpp
         )
 
 set(MAIN_FILES

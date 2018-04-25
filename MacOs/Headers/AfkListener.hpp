@@ -14,7 +14,7 @@ private:
     std::unique_ptr<std::thread> _eventListener;
     std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
 
-    void EventListener() const override final;
+    void EventListener() override final;
 
     void OnAfk(const std::chrono::milliseconds &timeSinceEpoch) const override final;
 
