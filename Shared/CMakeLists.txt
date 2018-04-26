@@ -43,8 +43,7 @@ set(DEAMON_SHARED_SOURCE_FILES
         Headers/FocusConfiguration.hpp
 
         Interfaces/IContextAgent.hpp
-        Interfaces/IKeyListener.hpp
-        Interfaces/IMouseListener.hpp
+        Interfaces/IAfkListener.hpp
         )
 
 include_directories(Headers Interfaces ${OPENSSL_INCLUDE_DIR} ${JWTCPP_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ${ZeroMQ_INCLUDE_DIR})

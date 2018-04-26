@@ -8,14 +8,11 @@
 #include "ContextAgent.hpp"
 #include "FocusContextEventPayload.pb.h"
 
-ContextAgent::ContextAgent() {
-
-}
-
-ContextAgent::~ContextAgent() {
-}
-
 void ContextAgent::Run() {
+    _eventListener = std::make_unique<std::thread>(std::bind(&ContextAgent::EventListener, this));
+}
+
+void ContextAgent::EventListener() {
     //TODO: Implementing ContextAgent
     std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::hours((std::numeric_limits<int>::max)()));
 }

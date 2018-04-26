@@ -29,6 +29,7 @@ class FocusConfiguration {
 private:
     user _userInfo;
     std::string _deviceId;
+    std::string _triggerAfk;
     std::vector<server> _serversInfo;
     bool _filled = false;
     struct server _defaultServer;
@@ -46,6 +47,10 @@ public:
     std::string getDeviceId() const;
 
     void setDeviceId(const std::string &deviceId);
+
+    void setTriggerAfk(const std::string &triggerAfk);
+
+    std::string getTriggerAfk() const;
 };
 
 

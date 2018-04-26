@@ -7,14 +7,14 @@ set(CMAKE_CXX_STANDARD 14)
 include(FindProtobuf)
 find_package(Protobuf REQUIRED)
 
+find_library(CARBON_LIBRARY Carbon)
+
 set(DEAMON_MAC_SOURCE_FILES
         Sources/ContextAgent.cpp
-        Sources/KeyListener.cpp
-        Sources/MouseListener.cpp
+        Sources/AfkListener.cpp
 
         Headers/ContextAgent.hpp
-        Headers/KeyListener.hpp
-        Headers/MouseListener.hpp
+        Headers/AfkListener.hpp
         )
 
 set(MAIN_FILES
@@ -27,7 +27,7 @@ add_library(daemon_mac_lib STATIC ${DEAMON_MAC_SOURCE_FILES})
 
 add_executable(daemon_mac ${MAIN_FILES})
 
-target_link_libraries(daemon_mac daemon_mac_lib daemon_shared_lib ${PROTOBUF_LIBRARY})
+target_link_libraries(daemon_mac daemon_mac_lib daemon_shared_lib ${PROTOBUF_LIBRARY} ${CARBON_LIBRARY})
 
 ####TESTS####
 

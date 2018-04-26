@@ -7,27 +7,30 @@ set(CMAKE_CXX_STANDARD 14)
 include(FindProtobuf)
 find_package(Protobuf REQUIRED)
 
+find_package(PkgConfig)
+pkg_check_modules(WNCK REQUIRED libwnck-3.0)
+
 set(DEAMON_LINUX_SOURCE_FILES
         Sources/ContextAgent.cpp
-        Sources/KeyListener.cpp
-        Sources/MouseListener.cpp
+        Sources/AfkListener.cpp
 
         Headers/ContextAgent.hpp
-        Headers/KeyListener.hpp
-        Headers/MouseListener.hpp
+        Headers/AfkListener.hpp
         )
 
 set(MAIN_FILES
         main.cpp
         )
 
-include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ../Shared/Proto/ProtoCompiled ${PROTOBUF_INCLUDE_DIR})
+include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ../Shared/Proto/ProtoCompiled ${PROTOBUF_INCLUDE_DIR} ${WNCK_INCLUDE_DIRS})
 
 add_library(daemon_linux_lib STATIC ${DEAMON_LINUX_SOURCE_FILES})
 
 add_executable(daemon_linux ${MAIN_FILES})
 
-target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib ${PROTOBUF_LIBRARY})
+target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib ${PROTOBUF_LIBRARY} ${WNCK_LIBRARIES})
+
+link_directories(${WNCK_LIBRARY_DIRS})
 
 ####TESTS####
 

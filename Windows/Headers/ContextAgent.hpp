@@ -12,8 +12,18 @@
 #include "IContextAgent.hpp"
 #include <memory>
 #include "FocusEventEmitter.hpp"
+#include <thread>
 
-class ContextAgent : public IContextAgent {
+class ContextAgent : public IContextAgent
+{
+private:
+	std::unique_ptr<std::thread> _eventListener;
+	std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
+	HWINEVENTHOOK hEvent;
+
+	void EventListener() override final;
+
+	static VOID CALLBACK WinEventProcCallback(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
 
 public:
 	ContextAgent();
@@ -22,13 +32,7 @@ public:
 
 	void Run() override final;
 
-	void OnContextChanged(const std::string &processName, const std::string &windowTitle) const override final;
-
-	static VOID CALLBACK WinEventProcCallback(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-
-private:
-	std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
-	HWINEVENTHOOK hEvent;
+	void OnContextChanged(const std::string& processName, const std::string& windowTitle) const override final;
 };
 
 #endif //FOCUS_CLIENT_WINDOWSCONTEXTAGENT_HPP

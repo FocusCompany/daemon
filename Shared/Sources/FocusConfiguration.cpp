@@ -44,6 +44,7 @@ FocusConfiguration::FocusConfiguration(const std::string &configFile) {
                                   std::istreambuf_iterator<char>());
             config = lightconf::config_format::read(_source);
             _userInfo = config.get<user>("user");
+            _triggerAfk = config.get<std::string>("trigger_afk", "300");
             _deviceId = config.get<std::string>("id_device", "");
             _serversInfo = config.get<std::vector<server>>("servers", {});
             _filled = true;
@@ -94,4 +95,22 @@ void FocusConfiguration::setDeviceId(const std::string &deviceId) {
 
 std::string FocusConfiguration::getDeviceId() const {
     return _deviceId;
+}
+
+std::string FocusConfiguration::getTriggerAfk() const {
+    return _triggerAfk;
+}
+
+void FocusConfiguration::setTriggerAfk(const std::string &triggerAfk) {
+    if (_filled && !_source.empty()) {
+        _triggerAfk = triggerAfk;
+        lightconf::group config;
+        config = lightconf::config_format::read(_source);
+        config.set<std::string>("trigger_afk", triggerAfk);
+        std::ofstream stream(_configFile, std::ios::out);
+        if (stream) {
+            stream << lightconf::config_format::write(config, _source, 80);
+            spdlog::get("logger")->info("triggerAfk id stored in configuration file");
+        }
+    }
 }
