@@ -16,11 +16,14 @@ private:
 
     void EventListener() override final;
 
-
 public:
+    ContextAgent();
+
+    ~ContextAgent();
+
     void Run() override final;
 
-	void OnContextChanged(const std::string &processName, const std::string &windowTitle) const override final;
+    void OnContextChanged(const std::string &processName, const std::string &windowTitle) const override final;
 };
 
 #endif //FOCUS_CLIENT_WINDOWSCONTEXTAGENT_HPP
