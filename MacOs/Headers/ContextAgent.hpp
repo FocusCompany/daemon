@@ -10,18 +10,17 @@
 #include "FocusEventEmitter.hpp"
 
 class ContextAgent : public IContextAgent {
+private:
+    std::unique_ptr<std::thread> _eventListener;
+    std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
+
+    void EventListener() override final;
+
 
 public:
-    ContextAgent();
-
-    ~ContextAgent();
-
     void Run() override final;
 
-    void OnContextChanged(const std::string &processName, const std::string &windowTitle) const override final;
-
-private:
-    std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
+	void OnContextChanged(const std::string &processName, const std::string &windowTitle) const override final;
 };
 
 #endif //FOCUS_CLIENT_WINDOWSCONTEXTAGENT_HPP

@@ -36,7 +36,7 @@ std::string FocusAuthenticator::GetToken() {
         try {
             nlohmann::json header, payload;
             std::tie(header, payload) = JWT::Decode(_token, &signer, &exp);
-            spdlog::get("logger")->error("Token is valid");
+            spdlog::get("logger")->info("Token is valid");
         } catch (InvalidTokenError &tfe) {
             spdlog::get("logger")->error("Renewing token");
             RenewToken();

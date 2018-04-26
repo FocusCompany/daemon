@@ -12,12 +12,10 @@ pkg_check_modules(WNCK REQUIRED libwnck-3.0)
 
 set(DEAMON_LINUX_SOURCE_FILES
         Sources/ContextAgent.cpp
-        Sources/KeyListener.cpp
-        Sources/MouseListener.cpp
+        Sources/AfkListener.cpp
 
         Headers/ContextAgent.hpp
-        Headers/KeyListener.hpp
-        Headers/MouseListener.hpp
+        Headers/AfkListener.hpp
         )
 
 set(MAIN_FILES

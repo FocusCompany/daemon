@@ -24,7 +24,7 @@ void FocusDaemon::Run(const std::string &configFileName) {
     if (!_device_id.empty()) {
         spdlog::get("logger")->info("Device Id: {}", _device_id);
         NetworkManager->Run(_device_id, _config);
-        KeyLogger->Run(Authenticator);
+        KeyLogger->Run(Authenticator, _config);
     }
     std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::hours((std::numeric_limits<int>::max)()));
 }

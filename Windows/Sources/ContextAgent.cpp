@@ -17,7 +17,13 @@ ContextAgent::~ContextAgent() {
 }
 
 void ContextAgent::Run() {
+	_eventListener = std::make_unique<std::thread>(std::bind(&ContextAgent::EventListener, this));
+}
+
+void ContextAgent::EventListener() {
 	hEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, nullptr, WinEventProcCallback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+	MSG msg;
+	GetMessage(&msg, nullptr, NULL, NULL); // Windows message loop keepalive. This will block the current thread.
 }
 
 void ContextAgent::OnContextChanged(const std::string &processName, const std::string &windowTitle) const {

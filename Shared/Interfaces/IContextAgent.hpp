@@ -9,9 +9,12 @@
 
 class IContextAgent {
 public:
-	virtual void Run() = 0;
+    virtual void Run() = 0;
+
 	virtual void OnContextChanged(const std::string &processName, const std::string &windowTitle) const = 0;
 
+private:
+    virtual void EventListener() = 0;
 };
 
 #endif //FOCUS_CLIENT_IWINDOWSCONTEXTAGENT_HPP
