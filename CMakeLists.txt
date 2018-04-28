@@ -43,6 +43,18 @@ add_subdirectory(UnitTests)
 include_directories(${CMAKE_INCLUDE_PATH})
 include_directories(Library)
 
+### Compiling protobuf envelops
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
+if (NOT EXISTS ${CMAKE_SOURCE_DIR}/Shared/Proto/ProtoCompiled)
+    execute_process(COMMAND git submodule update --init --recursive WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+endif ()
+if(MSVC)
+    execute_process(COMMAND ./generate.bat WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Shared/Proto)
+else()
+    execute_process(COMMAND ./generate.sh WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Shared/Proto)
+endif()
+
 ### Subdirectory
 add_subdirectory(Shared)
 

@@ -27,7 +27,7 @@ bool FocusAuthenticator::GetConnectionStatus() const {
 
 std::string FocusAuthenticator::GetToken() {
     ExpValidator exp;
-    std::ifstream rsa_pub_file("./keys/public_key");
+    std::ifstream rsa_pub_file("keys/public_key");
     if (!rsa_pub_file.is_open()) {
         spdlog::get("logger")->error("Can not find rsa public key to verify the token signature");
     } else {
@@ -63,7 +63,7 @@ bool FocusAuthenticator::Login(const std::string &email, const std::string &pass
         auto j = nlohmann::json::parse(res->body);
         if (j.find("token") != j.end()) {
             ExpValidator exp;
-            std::ifstream rsa_pub_file("./keys/public_key");
+            std::ifstream rsa_pub_file("keys/public_key");
             if (!rsa_pub_file.is_open()) {
                 spdlog::get("logger")->error("Can not find rsa public key to verify the token signature");
             } else {
@@ -131,7 +131,7 @@ bool FocusAuthenticator::RenewToken() {
         auto j = nlohmann::json::parse(res->body);
         if (j.find("token") != j.end()) {
             ExpValidator exp;
-            std::ifstream rsa_pub_file("./keys/public_key");
+            std::ifstream rsa_pub_file("keys/public_key");
             if (!rsa_pub_file.is_open()) {
                 spdlog::get("logger")->error("Can not find rsa public key to verify the token signature");
             } else {
