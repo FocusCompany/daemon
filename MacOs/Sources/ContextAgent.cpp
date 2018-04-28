@@ -16,7 +16,7 @@ void ContextAgent::Run() {
 }
 
 void ContextAgent::EventListener() {
-    std::string cmd = "osascript ./MacOs/printAppTitle.scpt";
+    std::string cmd = "osascript ./printAppTitle.scpt";
     std::string oldProcessName;
     std::string oldWindowsTitle;
     while (true) {

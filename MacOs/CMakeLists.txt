@@ -29,6 +29,8 @@ add_executable(daemon_mac ${MAIN_FILES})
 
 target_link_libraries(daemon_mac daemon_mac_lib daemon_shared_lib ${PROTOBUF_LIBRARY} ${CARBON_LIBRARY})
 
+add_custom_command(TARGET daemon_mac POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/MacOs/printAppTitle.scpt" "$<TARGET_FILE_DIR:daemon_mac>")
+
 ####TESTS####
 
 add_subdirectory(UnitTests)
