@@ -1,22 +1,22 @@
 !include "MUI.nsh"
 
-!define MUI_ABORTWARNING # This will warn the user if he exits from the installer.
-!insertmacro MUI_PAGE_WELCOME # Welcome to the installer page.
-!insertmacro MUI_PAGE_INSTFILES # Installing page.
-!insertmacro MUI_PAGE_FINISH # Finished installation page.
-!insertmacro MUI_LANGUAGE "English"
+!define MUI_ICON "icon_daemon.ico"
+!define MUI_UNICON "icon_uninstall.ico"
+!define MUI_ABORTWARNING
 
-!define PRODUCT_NAME "Focus Beta Ver. 1.0"
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
+!insertmacro MUI_LANGUAGE "English"
 
 RequestExecutionLevel admin
 
 Name "Focus"
-OutFile "Focus_Installer.exe"
+OutFile "Setup.exe"
 InstallDir "$PROGRAMFILES64\Focus"
 ShowInstDetails show
 
 Section "Focus"
-
 	SetOutPath "C:\OpenSSL-Win32\"
 	File /r "C:\OpenSSL-Win32\*"
 	
@@ -32,8 +32,8 @@ Section "Focus"
 
 	CreateDirectory "$SMPROGRAMS\Focus"
 	CreateShortCut "$SMPROGRAMS\Focus\uninstall.lnk" "$INSTDIR\uninstall.exe"
-	CreateShortCut "$SMPROGRAMS\Focus\Focus.lnk" "$INSTDIR\Focus\daemon_windows.exe"
-	CreateShortCut "$DESKTOP\Focus.lnk" "$INSTDIR\Focus\daemon_windows.exe"
+	CreateShortCut "$SMPROGRAMS\Focus\Focus.lnk" "$INSTDIR\Focus\daemon_windows.exe" "" "$INSTDIR\Focus\icon_daemon.ico" 0
+	CreateShortCut "$DESKTOP\Focus.lnk" "$INSTDIR\Focus\daemon_windows.exe" "" "$INSTDIR\Focus\icon_daemon.ico" 0
 SectionEnd
 
 Section "Uninstall"
@@ -49,13 +49,4 @@ Section "Uninstall"
 
     RMDir /r "$INSTDIR\*"
     RMDir "$INSTDIR"
- SectionEnd
-
-Function .onInstSuccess
-  MessageBox MB_OK "You have successfully installed ${PRODUCT_NAME}."
-FunctionEnd
- 
- 
-Function un.onUninstSuccess
-  MessageBox MB_OK "You have successfully uninstalled ${PRODUCT_NAME}."
-FunctionEnd
+SectionEnd
