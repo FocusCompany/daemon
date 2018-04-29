@@ -4,55 +4,105 @@
 
 #include <chrono>
 #include <thread>
-#include <libwnck/libwnck.h>
 #include <FocusSerializer.hpp>
+#include <spdlog/spdlog.h>
+#include <iostream>
 #include "ContextAgent.hpp"
 #include "FocusContextEventPayload.pb.h"
 
+bool _xerror = false;
 
-static ContextAgent *ca_instance;
+int ContextAgent::x11Errorhandler(Display *display, XErrorEvent *error) {
+    _xerror = true;
+    spdlog::get("logger")->error("X11 Error");
+    return 1;
+}
 
-static void window_switch_handler(WnckScreen *screen, WnckWindow *previously_active_window, gpointer user_data) {
-    (void) previously_active_window, (void) user_data;
-    WnckWindow *active_window;
-    GList *window_l;
-    WnckWindow *window;
-    char const *winname;
-
-    wnck_screen_force_update(screen);
-    active_window = wnck_screen_get_active_window(screen);
-    for (window_l = wnck_screen_get_windows(screen); window_l != NULL; window_l = window_l->next) {
-        window = WNCK_WINDOW(window_l->data);
-        winname = wnck_window_get_name(window);
-        if (window == active_window) {
-            g_print("%s%s\n", winname, " (active)");
-            ca_instance->OnContextChanged("", winname);
+std::tuple<std::string, std::string> ContextAgent::getWindowInfo() {
+    int tmp;
+    XGetInputFocus(_display, &_window, &tmp);
+    if (!_xerror) {
+        if (_window == None) {
+            spdlog::get("logger")->error("No windows on focus");
         } else {
-            g_print("%s\n", winname);
+            Window parent = _window;
+            Window root = None;
+            Window *children;
+            unsigned int nchild;
+            Status s1;
+            while (parent != root) {
+                _window = parent;
+                s1 = XQueryTree(_display, _window, &root, &parent, &children, &nchild);
+                if (s1)
+                    XFree(children);
+                if (_xerror) {
+                    spdlog::get("logger")->error("Failing to find window name");
+                    return std::make_tuple(std::string(), std::string());
+                }
+            }
+            _window = XmuClientWindow(_display, _window);
+            XTextProperty prop;
+            Status s2;
+            s2 = XGetWMName(_display, _window, &prop);
+            if (!_xerror && s2) {
+                int count = 0;
+                int result;
+                char **list = NULL;
+                result = XmbTextPropertyToTextList(_display, &prop, &list, &count);
+                if (result == Success) {
+                    std::string windowName(list[0]);
+                    Status s3;
+                    XClassHint *classWindow;
+                    classWindow = XAllocClassHint();
+                    if (_xerror) {
+                        spdlog::get("logger")->error("XAllocClassHint error");
+                    }
+                    s3 = XGetClassHint(_display, _window, classWindow);
+                    if (_xerror || s3) {
+                        std::string processName(classWindow->res_class);
+                        return std::make_tuple(windowName, processName);
+                    } else {
+                        spdlog::get("logger")->error("XGetClassHint error");
+                    }
+                } else {
+                    spdlog::get("logger")->error("XmbTextPropertyToTextList error");
+                }
+            } else {
+                spdlog::get("logger")->error("XGetWMName error");
+            }
         }
     }
+    return std::make_tuple(std::string(), std::string());
 }
-
-ContextAgent::ContextAgent() {
-    ca_instance = this;
-}
-
-ContextAgent::~ContextAgent() {}
 
 void ContextAgent::Run() {
-    _eventListener = std::make_unique<std::thread>(std::bind(&ContextAgent::EventListener, this));
+    setlocale(LC_ALL, "");
+    _display = XOpenDisplay(NULL);
+    if (_display == NULL) {
+        spdlog::get("logger")->error("Failed to connect to X Server");
+    }
+    if (_display != NULL) {
+        _eventListener = std::make_unique<std::thread>(std::bind(&ContextAgent::EventListener, this));
+    }
 }
 
 void ContextAgent::EventListener() {
-    WnckScreen *screen;
+    std::string oldProcessName;
+    std::string oldWindowsTitle;
 
-    gtk_init_check(NULL, NULL);
-    screen = wnck_screen_get_default();
-    while (gtk_events_pending()) {
-        gtk_main_iteration();
+    XSetErrorHandler(x11Errorhandler);
+
+    while (true) {
+        std::tuple<std::string, std::string> info = getWindowInfo();
+        std::string windowsTitle = std::get<0>(info);
+        std::string processName = std::get<1>(info);
+        if (oldProcessName != processName || oldWindowsTitle != windowsTitle) {
+            oldProcessName = processName;
+            oldWindowsTitle = windowsTitle;
+            OnContextChanged(processName, windowsTitle);
+        }
+        sleep(2);
     }
-    g_signal_connect(screen, "active-window-changed", G_CALLBACK(window_switch_handler), NULL);
-    gtk_main();
 }
 
 void ContextAgent::OnContextChanged(const std::string &processName, const std::string &windowTitle) const {
