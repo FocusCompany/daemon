@@ -19,7 +19,9 @@ Then simply run the generated executable depending on the platform where you hav
     - ZeroMQ (https://github.com/zeromq/libzmq)
     - Jwt-cpp (https://github.com/pokowaka/jwt-cpp)
 #### Linux
-    - wnck 3
+    - libx11-dev
+    - libxmu-dev
+    - libxss-dev
 #### MacOs
     - Carbon    
 ## Class Diagram

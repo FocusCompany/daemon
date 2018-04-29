@@ -11,6 +11,13 @@ find_package(PkgConfig)
 pkg_check_modules(X11 REQUIRED x11)
 pkg_check_modules(XMU REQUIRED xmu)
 
+find_library(XSS_LIBRARIES Xss)
+if(NOT XSS_LIBRARIES)
+    message(FATAL_ERROR "Xss library not found")
+else()
+    message(STATUS "Xss library found")
+endif()
+
 set(DEAMON_LINUX_SOURCE_FILES
         Sources/ContextAgent.cpp
         Sources/AfkListener.cpp
@@ -29,7 +36,7 @@ add_library(daemon_linux_lib STATIC ${DEAMON_LINUX_SOURCE_FILES})
 
 add_executable(daemon_linux ${MAIN_FILES})
 
-target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib ${PROTOBUF_LIBRARY} ${X11_LIBRARIES} ${XMU_LIBRARIES})
+target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib ${PROTOBUF_LIBRARY} ${X11_LIBRARIES} ${XSS_LIBRARIES} ${XMU_LIBRARIES})
 
 link_directories(${X11_LIBRARY_DIRS} ${XMU_LIBRARY_DIRS})
 
