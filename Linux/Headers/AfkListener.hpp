@@ -8,9 +8,12 @@
 #include <IAfkListener.hpp>
 #include <thread>
 #include <FocusEventEmitter.hpp>
+#include <X11/Xlib.h>
+#include <X11/extensions/scrnsaver.h>
 
 class AfkListener : public IAfkListener {
 private:
+    Display *_display;
     int _triggerAfkInSecond;
     std::unique_ptr<std::thread> _eventListener;
     std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();

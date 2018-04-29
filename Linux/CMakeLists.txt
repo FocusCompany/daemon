@@ -8,7 +8,15 @@ include(FindProtobuf)
 find_package(Protobuf REQUIRED)
 
 find_package(PkgConfig)
-pkg_check_modules(WNCK REQUIRED libwnck-3.0)
+pkg_check_modules(X11 REQUIRED x11)
+pkg_check_modules(XMU REQUIRED xmu)
+
+find_library(XSS_LIBRARIES Xss)
+if(NOT XSS_LIBRARIES)
+    message(FATAL_ERROR "Xss library not found")
+else()
+    message(STATUS "Xss library found")
+endif()
 
 set(DEAMON_LINUX_SOURCE_FILES
         Sources/ContextAgent.cpp
@@ -22,15 +30,15 @@ set(MAIN_FILES
         main.cpp
         )
 
-include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ../Shared/Proto/ProtoCompiled ${PROTOBUF_INCLUDE_DIR} ${WNCK_INCLUDE_DIRS})
+include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ../Shared/Proto/ProtoCompiled ${PROTOBUF_INCLUDE_DIR} ${X11_INCLUDE_DIRS} ${XMU_INCLUDE_DIRS})
 
 add_library(daemon_linux_lib STATIC ${DEAMON_LINUX_SOURCE_FILES})
 
 add_executable(daemon_linux ${MAIN_FILES})
 
-target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib ${PROTOBUF_LIBRARY} ${WNCK_LIBRARIES})
+target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib ${PROTOBUF_LIBRARY} ${X11_LIBRARIES} ${XSS_LIBRARIES} ${XMU_LIBRARIES})
 
-link_directories(${WNCK_LIBRARY_DIRS})
+link_directories(${X11_LIBRARY_DIRS} ${XMU_LIBRARY_DIRS})
 
 ####TESTS####
 

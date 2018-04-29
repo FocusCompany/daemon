@@ -36,7 +36,7 @@ void FocusNetworkManager::Run(const std::string &device_id, std::shared_ptr<Focu
         spdlog::get("console")->info("Trying to send envelope");
         std::string envelopeData;
         envelope.SerializeToString(&envelopeData);
-        if (_socket->Send(_device_id, envelopeData) == 0) {
+        if (_socket->Send(_device_id, envelopeData)) {
             spdlog::get("console")->info("Envelope send successfully");
             _eventEmitter->EmitMessage("FocusSendDataToBackend", "OK");
         } else {

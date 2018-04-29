@@ -6,15 +6,40 @@
 #include <spdlog/spdlog.h>
 #include <FocusAfkEventPayload.pb.h>
 #include <FocusSerializer.hpp>
+#include <iostream>
 
 void AfkListener::Run(int triggerAfkInSecond) {
     _triggerAfkInSecond = triggerAfkInSecond;
-    _eventListener = std::make_unique<std::thread>(std::bind(&AfkListener::EventListener, this));
+    setlocale(LC_ALL, "");
+    _display = XOpenDisplay(NULL);
+    if (_display == NULL) {
+        spdlog::get("logger")->error("Failed to connect to X Server");
+    }
+    if (_display != NULL) {
+        _eventListener = std::make_unique<std::thread>(std::bind(&AfkListener::EventListener, this));
+    }
 }
 
 void AfkListener::EventListener() {
-    //TODO: Implementing ContextAgent
-    std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::hours((std::numeric_limits<int>::max)()));
+    bool afk = false;
+    unsigned long lastInputSince = 0;
+    XScreenSaverInfo *info = XScreenSaverAllocInfo();
+
+    while (true) {
+        XScreenSaverQueryInfo(_display, DefaultRootWindow(_display), info);
+        lastInputSince = info->idle / 1000;
+        if (lastInputSince < _triggerAfkInSecond) {
+            afk = false;
+        } else {
+            if (!afk) {
+                spdlog::get("console")->info("AFK since {} seconds", _triggerAfkInSecond);
+                auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+                OnAfk(now - std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(_triggerAfkInSecond)));
+                afk = true;
+            }
+        }
+        sleep(2);
+    }
 }
 
 
