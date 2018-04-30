@@ -66,16 +66,8 @@ add_custom_command(TARGET daemon_shared_lib POST_BUILD COMMAND ${CMAKE_COMMAND} 
 
 IF (MSVC)
     target_link_libraries(daemon_shared_lib wsock32 ws2_32)
-
-	set(ZeroMQ_ROOT_DIR "C:/Program Files/Focus/zmq")
-    file(GLOB ZMQ_DLL "${ZeroMQ_ROOT_DIR}/bin/*.dll")
-	message(STATUS "ZMQ_DLL: " ${ZMQ_DLL})
-	foreach(DLL ${ZMQ_DLL})
-		add_custom_command(TARGET daemon_shared_lib POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${DLL}"
-            "$<TARGET_FILE_DIR:daemon_shared_lib>")
-	endforeach()
+	add_custom_command(TARGET daemon_shared_lib POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory "C:/Program Files/Focus/zmq/bin" "$<TARGET_FILE_DIR:daemon_shared_lib>")
+	add_custom_command(TARGET daemon_shared_lib POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory "C:/OpenSSL-Win32/bin/" "$<TARGET_FILE_DIR:daemon_shared_lib>")
 ELSE ()
     target_link_libraries(daemon_shared_lib pthread)
 ENDIF ()
