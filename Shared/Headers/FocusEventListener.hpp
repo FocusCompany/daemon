@@ -27,6 +27,8 @@ private:
         while (_isRunning) {
             zmq::message_t msg;
             if (socketSUB->recv(&msg)) {
+                if (!socketSUB->recv(&msg))
+                    continue;
                 std::string payload = std::string(static_cast<char *>(msg.data()), msg.size());
                 Focus::Event event;
                 if (!event.ParseFromString(payload))
@@ -40,6 +42,8 @@ private:
         while (_isRunning) {
             zmq::message_t msg;
             if (socketSUB->recv(&msg)) {
+                if (!socketSUB->recv(&msg))
+                    continue;
                 std::string payload = std::string(static_cast<char *>(msg.data()), msg.size());
                 Focus::Envelope envelope;
                 if (!envelope.ParseFromString(payload))
@@ -53,6 +57,8 @@ private:
         while (_isRunning) {
             zmq::message_t msg;
             if (socketSUB->recv(&msg)) {
+                if (!socketSUB->recv(&msg))
+                    continue;
                 std::string payload = std::string(static_cast<char *>(msg.data()), msg.size());
                 onMessage(payload);
             }
