@@ -10,6 +10,7 @@
 #include "FocusEventEmitter.hpp"
 #include <X11/Xlib.h>
 #include <X11/Xmu/WinUtil.h>
+#include <atomic>
 
 class ContextAgent : public IContextAgent {
 private:
@@ -17,6 +18,7 @@ private:
     Window _window;
     std::unique_ptr<std::thread> _eventListener;
     std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
+    std::atomic<bool> _isRunning;
 
     void EventListener() override final;
 
@@ -28,6 +30,10 @@ public:
     void Run() override final;
 
     void OnContextChanged(const std::string &processName, const std::string &windowTitle) const override final;
+
+    ContextAgent();
+
+    virtual ~ContextAgent();
 };
 
 #endif //FOCUS_CLIENT_WINDOWSCONTEXTAGENT_HPP

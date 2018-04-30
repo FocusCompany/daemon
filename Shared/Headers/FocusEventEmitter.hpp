@@ -17,6 +17,8 @@ private:
 public:
     FocusEventEmitter();
 
+    virtual ~FocusEventEmitter();
+
     void Emit(const std::string &dest, const Focus::Event &payload) const;
 
     void EmitEnvelope(const std::string &dest, const Focus::Envelope &envelope) const;

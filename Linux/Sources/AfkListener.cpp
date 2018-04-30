@@ -11,11 +11,11 @@
 void AfkListener::Run(int triggerAfkInSecond) {
     _triggerAfkInSecond = triggerAfkInSecond;
     setlocale(LC_ALL, "");
-    _display = XOpenDisplay(NULL);
-    if (_display == NULL) {
+    _display = XOpenDisplay(nullptr);
+    if (_display == nullptr) {
         spdlog::get("logger")->error("Failed to connect to X Server");
     }
-    if (_display != NULL) {
+    if (_display != nullptr) {
         _eventListener = std::make_unique<std::thread>(std::bind(&AfkListener::EventListener, this));
     }
 }
@@ -25,7 +25,7 @@ void AfkListener::EventListener() {
     unsigned long lastInputSince = 0;
     XScreenSaverInfo *info = XScreenSaverAllocInfo();
 
-    while (true) {
+    while (_isRunning) {
         XScreenSaverQueryInfo(_display, DefaultRootWindow(_display), info);
         lastInputSince = info->idle / 1000;
         if (lastInputSince < _triggerAfkInSecond) {
@@ -40,6 +40,7 @@ void AfkListener::EventListener() {
         }
         sleep(2);
     }
+    XFree(info);
 }
 
 
@@ -55,4 +56,14 @@ void AfkListener::OnAfk(const std::chrono::milliseconds &timeSinceEpoch) const {
     Focus::Event event = FocusSerializer::CreateEventFromContext("Afk", afk);
 
     _eventEmitter->Emit("NewEvent", event);
+}
+
+AfkListener::~AfkListener() {
+    _isRunning = false;
+    _eventListener->join();
+    XCloseDisplay(_display);
+}
+
+AfkListener::AfkListener() {
+    _isRunning = true;
 }

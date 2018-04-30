@@ -10,6 +10,7 @@
 #include <FocusEventEmitter.hpp>
 #include <X11/Xlib.h>
 #include <X11/extensions/scrnsaver.h>
+#include <atomic>
 
 class AfkListener : public IAfkListener {
 private:
@@ -17,6 +18,7 @@ private:
     int _triggerAfkInSecond;
     std::unique_ptr<std::thread> _eventListener;
     std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
+    std::atomic<bool> _isRunning;
 
     void EventListener() override final;
 
@@ -24,6 +26,10 @@ private:
 
 public:
     void Run(int triggerAfkInSecond) override final;
+
+    AfkListener();
+
+    virtual ~AfkListener();
 };
 
 

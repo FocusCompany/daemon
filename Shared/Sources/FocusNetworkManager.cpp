@@ -15,15 +15,12 @@ FocusNetworkManager::FocusNetworkManager() {
 }
 
 FocusNetworkManager::~FocusNetworkManager() {
-    _socket->Disconnect();
     _isRunning = false;
     _networkManagerThread->join();
-    spdlog::get("logger")->info("FocusNetworkManager is shutting down");
+    _socket->Disconnect();
 }
 
 void FocusNetworkManager::Run(const std::string &device_id, std::shared_ptr<FocusConfiguration> &config) {
-    spdlog::get("logger")->info("FocusNetworkManager is running");
-
     auto srv = config->getServer(serverType::BACKEND);
     std::string urlStr = "tcp://";
     urlStr += srv._ip;

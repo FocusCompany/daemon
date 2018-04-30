@@ -12,6 +12,8 @@ class IAfkListener {
 public:
     virtual void Run(int triggerAfkInSecond) = 0;
 
+    virtual ~IAfkListener() {}
+
 private:
     virtual void EventListener() = 0;
 

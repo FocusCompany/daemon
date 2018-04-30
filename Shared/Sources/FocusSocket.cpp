@@ -8,7 +8,7 @@
 zmq::context_t *FocusSocket::Context = new zmq::context_t();
 
 FocusSocket::FocusSocket() {
-    _socket = std::unique_ptr<zmq::socket_t>(new zmq::socket_t(*FocusSocket::Context, ZMQ_DEALER));
+    _socket = std::make_unique<zmq::socket_t>(*FocusSocket::Context, ZMQ_DEALER);
 }
 
 bool FocusSocket::Send(const std::string &deviceId, const std::string &payload) const {

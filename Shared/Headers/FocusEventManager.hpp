@@ -7,6 +7,7 @@
 
 #include <thread>
 #include <FocusSocket.hpp>
+#include <atomic>
 
 class FocusEventManager {
 private:

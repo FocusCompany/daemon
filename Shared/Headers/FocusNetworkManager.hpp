@@ -11,6 +11,7 @@
 #include <FocusEnvelope.pb.h>
 #include "FocusEventEmitter.hpp"
 #include "FocusConfiguration.hpp"
+#include <atomic>
 
 class FocusNetworkManager {
 private:

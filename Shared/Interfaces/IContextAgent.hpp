@@ -13,6 +13,8 @@ public:
 
 	virtual void OnContextChanged(const std::string &processName, const std::string &windowTitle) const = 0;
 
+	virtual ~IContextAgent() {}
+
 private:
     virtual void EventListener() = 0;
 };
