@@ -18,7 +18,7 @@ void AfkListener::EventListener() {
     LASTINPUTINFO li;
     li.cbSize = sizeof(LASTINPUTINFO);
 
-    while (true) {
+    while (_isRunning) {
         GetLastInputInfo(&li);
         DWORD te = ::GetTickCount();
         lastInputSince = (te - li.dwTime) / 1000;
@@ -50,4 +50,13 @@ void AfkListener::OnAfk(const std::chrono::milliseconds &timeSinceEpoch) const {
     Focus::Event event = FocusSerializer::CreateEventFromContext("Afk", afk);
 
     _eventEmitter->Emit("NewEvent", event);
+}
+
+AfkListener::~AfkListener() {
+	_isRunning = false;
+	_eventListener->join();
+}
+
+AfkListener::AfkListener() {
+	_isRunning = true;
 }

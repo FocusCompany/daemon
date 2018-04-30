@@ -8,11 +8,13 @@
 #include <IAfkListener.hpp>
 #include <thread>
 #include <FocusEventEmitter.hpp>
+#include <atomic>
 
 class AfkListener : public IAfkListener {
 private:
     int _triggerAfkInSecond;
     std::unique_ptr<std::thread> _eventListener;
+	std::atomic<bool> _isRunning;
     std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
 
     void EventListener() override final;
@@ -21,6 +23,10 @@ private:
 
 public:
     void Run(int triggerAfkInSecond) override final;
+
+	AfkListener();
+
+	virtual ~AfkListener();
 };
 
 

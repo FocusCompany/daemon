@@ -13,17 +13,16 @@
 #include <memory>
 #include "FocusEventEmitter.hpp"
 #include <thread>
+#include <atomic>
 
 class ContextAgent : public IContextAgent
 {
 private:
+	std::atomic<bool> _isRunning;
 	std::unique_ptr<std::thread> _eventListener;
 	std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
-	HWINEVENTHOOK hEvent;
 
 	void EventListener() override final;
-
-	static VOID CALLBACK WinEventProcCallback(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
 
 public:
 	ContextAgent();

@@ -26,5 +26,5 @@ void FocusDaemon::Run(const std::string &configFileName) {
         NetworkManager->Run(_device_id, _config);
         KeyLogger->Run(Authenticator, _config);
     }
-    std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(5));
+    std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(500));
 }

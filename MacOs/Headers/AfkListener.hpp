@@ -8,6 +8,7 @@
 #include <IAfkListener.hpp>
 #include <thread>
 #include <FocusEventEmitter.hpp>
+#include <atomic>
 
 class AfkListener : public IAfkListener {
 private:
