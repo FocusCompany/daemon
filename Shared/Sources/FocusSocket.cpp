@@ -3,7 +3,6 @@
 //
 
 #include <FocusSocket.hpp>
-#include <spdlog/spdlog.h>
 
 zmq::context_t *FocusSocket::Context = new zmq::context_t();
 

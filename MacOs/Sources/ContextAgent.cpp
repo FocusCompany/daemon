@@ -55,7 +55,6 @@ void ContextAgent::OnContextChanged(const std::string &processName, const std::s
 ContextAgent::~ContextAgent() {
     _isRunning = false;
     _eventListener->join();
-    spdlog::get("logger")->info("ContextAgent is shutting down");
 }
 
 ContextAgent::ContextAgent() {

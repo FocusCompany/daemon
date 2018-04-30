@@ -52,7 +52,6 @@ void AfkListener::OnAfk(const std::chrono::milliseconds &timeSinceEpoch) const {
 AfkListener::~AfkListener() {
     _isRunning = false;
     _eventListener->join();
-    spdlog::get("logger")->info("Afk Listener is shutting down");
 }
 
 AfkListener::AfkListener() {

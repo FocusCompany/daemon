@@ -4,7 +4,6 @@
 
 #include <FocusEventManager.hpp>
 #include <iostream>
-#include <spdlog/spdlog.h>
 
 FocusEventManager::FocusEventManager() {
     _isRunning = true;
