@@ -10,9 +10,9 @@
 
 class FocusEventManager {
 private:
-    std::shared_ptr<zmq::socket_t> _socketPUB;
-    std::shared_ptr<zmq::socket_t> _socketSUB;
-    std::atomic<bool> _isRunning = true;
+    std::unique_ptr<zmq::socket_t> _socketPUB;
+    std::unique_ptr<zmq::socket_t> _socketSUB;
+    std::atomic<bool> _isRunning;
     std::unique_ptr<std::thread> _eventManagerThread;
 
     void RunReceive() const;
@@ -20,7 +20,7 @@ private:
 public:
     FocusEventManager();
 
-    ~FocusEventManager();
+    virtual ~FocusEventManager();
 
     void Run();
 };

@@ -12,7 +12,7 @@
 
 class FocusEventEmitter {
 private:
-    std::shared_ptr<zmq::socket_t> _socketPUB = std::make_shared<zmq::socket_t>(*FocusSocket::Context, ZMQ_PUB);
+    std::unique_ptr<zmq::socket_t> _socketPUB = std::make_unique<zmq::socket_t>(*FocusSocket::Context, ZMQ_PUB);
 
 public:
     FocusEventEmitter();

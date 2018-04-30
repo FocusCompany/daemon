@@ -17,7 +17,7 @@ class FocusEventListener {
 private:
     std::function<void(TPayload &payload)> _onMessage;
     std::unique_ptr<std::thread> _eventListenerThread;
-    std::shared_ptr<zmq::socket_t> _socketSUB = std::make_shared<zmq::socket_t>(*FocusSocket::Context, ZMQ_SUB);
+    std::unique_ptr<zmq::socket_t> _socketSUB = std::make_unique<zmq::socket_t>(*FocusSocket::Context, ZMQ_SUB);
 
     static void RunReceive(zmq::socket_t *socketSUB, const std::function<void(TPayload &)> onMessage) {
         while (true) {

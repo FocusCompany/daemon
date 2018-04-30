@@ -7,8 +7,9 @@
 #include <spdlog/spdlog.h>
 
 FocusEventManager::FocusEventManager() {
-    _socketPUB = std::make_shared<zmq::socket_t>(*FocusSocket::Context, ZMQ_PUB);
-    _socketSUB = std::make_shared<zmq::socket_t>(*FocusSocket::Context, ZMQ_SUB);
+    _isRunning = true;
+    _socketPUB = std::make_unique<zmq::socket_t>(*FocusSocket::Context, ZMQ_PUB);
+    _socketSUB = std::make_unique<zmq::socket_t>(*FocusSocket::Context, ZMQ_SUB);
 }
 
 void FocusEventManager::Run() {
@@ -39,4 +40,5 @@ void FocusEventManager::RunReceive() const {
 FocusEventManager::~FocusEventManager() {
     _isRunning = false;
     _eventManagerThread->join();
+    spdlog::get("logger")->info("FocusEventManager is shutting down");
 }

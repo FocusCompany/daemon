@@ -10,6 +10,7 @@
 #include <spdlog/spdlog.h>
 
 FocusNetworkManager::FocusNetworkManager() {
+    _isRunning = true;
     _socket = std::static_pointer_cast<FocusSocket>(std::make_shared<FocusSecureSocket<Client>>("rq:rM>}U?@Lns47E1%kR.o@n%FcmmsL/@{H8]yf7", "Yne@$w-vo<fVvi]a<NY6T1ed:M$fCG*[IaLV{hID", "D:)Q[IlAW!ahhC2ac:9*A}h:p?([4%wOTJ%JR%cs"));
 }
 
@@ -17,6 +18,7 @@ FocusNetworkManager::~FocusNetworkManager() {
     _socket->Disconnect();
     _isRunning = false;
     _networkManagerThread->join();
+    spdlog::get("logger")->info("FocusNetworkManager is shutting down");
 }
 
 void FocusNetworkManager::Run(const std::string &device_id, std::shared_ptr<FocusConfiguration> &config) {
