@@ -19,7 +19,7 @@ void ContextAgent::EventListener() {
     std::string cmd = "osascript ./printAppTitle.scpt";
     std::string oldProcessName;
     std::string oldWindowsTitle;
-    while (true) {
+    while (_isRunning) {
         std::array<char, 256> buffer{};
         std::string result;
         std::shared_ptr<FILE> pipe(popen(cmd.c_str(), "r"), pclose);
@@ -50,4 +50,9 @@ void ContextAgent::OnContextChanged(const std::string &processName, const std::s
     Focus::Event event = FocusSerializer::CreateEventFromContext("ContextChanged", context);
 
     _eventEmitter->Emit("NewEvent", event);
+}
+
+ContextAgent::~ContextAgent() {
+    _isRunning = false;
+    _eventListener->join();
 }

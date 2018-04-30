@@ -17,7 +17,7 @@ void AfkListener::EventListener() {
     bool afk = false;
     double lastInputSince = 0;
 
-    while (true) {
+    while (_isRunning) {
         lastInputSince = CGEventSourceSecondsSinceLastEventType(kCGEventSourceStateHIDSystemState, kCGAnyInputEventType);
         if (lastInputSince < _triggerAfkInSecond) {
             afk = false;
@@ -47,4 +47,9 @@ void AfkListener::OnAfk(const std::chrono::milliseconds &timeSinceEpoch) const {
 
     _eventEmitter->Emit("NewEvent", event);
 
+}
+
+AfkListener::~AfkListener() {
+    _isRunning = false;
+    _eventListener->join();
 }

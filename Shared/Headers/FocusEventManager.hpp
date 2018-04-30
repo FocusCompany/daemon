@@ -11,12 +11,18 @@
 class FocusEventManager {
 private:
     std::shared_ptr<zmq::socket_t> _socketPUB;
-	std::shared_ptr<zmq::socket_t> _socketSUB;
-	std::unique_ptr<std::thread> _eventManagerThread;
-	void RunReceive() const;
+    std::shared_ptr<zmq::socket_t> _socketSUB;
+    std::atomic<bool> _isRunning = true;
+    std::unique_ptr<std::thread> _eventManagerThread;
+
+    void RunReceive() const;
+
 public:
-	FocusEventManager();
-	void Run() ;
+    FocusEventManager();
+
+    ~FocusEventManager();
+
+    void Run();
 };
 
 #endif //FOCUS_CLIENT_FOCUSEVENTMANAGER_HPP

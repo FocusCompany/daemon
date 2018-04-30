@@ -23,6 +23,8 @@ void FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator, std
 
     _contextAgent->Run();
     _afkListener->Run(std::stoi(config->getTriggerAfk()));
+
+    std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::hours((std::numeric_limits<int>::max)()));
 }
 
 void FocusKeyLogger::AddEvent(const Focus::Event &ev) {

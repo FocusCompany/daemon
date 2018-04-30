@@ -15,6 +15,8 @@ FocusNetworkManager::FocusNetworkManager() {
 
 FocusNetworkManager::~FocusNetworkManager() {
     _socket->Disconnect();
+    _isRunning = false;
+    _networkManagerThread->join();
 }
 
 void FocusNetworkManager::Run(const std::string &device_id, std::shared_ptr<FocusConfiguration> &config) {

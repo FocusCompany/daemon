@@ -22,7 +22,7 @@ void FocusEventManager::Run() {
 }
 
 void FocusEventManager::RunReceive() const {
-    while (true) {
+    while (_isRunning) {
         zmq::multipart_t rep;
         zmq::message_t msg;
         _socketSUB->recv(&msg);
@@ -34,4 +34,9 @@ void FocusEventManager::RunReceive() const {
         rep.addstr(ret);
         rep.send(*_socketPUB, 0);
     }
+}
+
+FocusEventManager::~FocusEventManager() {
+    _isRunning = false;
+    _eventManagerThread->join();
 }

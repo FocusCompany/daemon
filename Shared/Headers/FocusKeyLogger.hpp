@@ -18,6 +18,7 @@
 class FocusKeyLogger {
 private:
     std::unique_ptr<std::thread> _keyLoggerThread;
+    std::atomic<bool> _isRunning = true;
     std::unique_ptr<IContextAgent> _contextAgent = std::unique_ptr<IContextAgent>(std::make_unique<ContextAgent>());
     std::unique_ptr<IAfkListener> _afkListener = std::unique_ptr<IAfkListener>(std::make_unique<AfkListener>());
     std::unique_ptr<FocusEventListener<Focus::Event>> _eventListener = std::make_unique<FocusEventListener<Focus::Event>>();
