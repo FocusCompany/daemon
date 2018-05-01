@@ -4,6 +4,7 @@
 
 #include <spdlog/spdlog.h>
 #include "FocusDaemon.hpp"
+#include <condition_variable>
 
 std::mutex mtx;
 std::condition_variable cv;

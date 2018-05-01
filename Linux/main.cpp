@@ -3,6 +3,7 @@
 //
 
 #include <spdlog/spdlog.h>
+#include <condition_variable>
 #include "FocusDaemon.hpp"
 
 std::mutex mtx;
@@ -37,7 +38,7 @@ int main(const int ac, const char **av) {
     spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [thread %t] [%l]\t\t: %v");
 
     FocusDaemon daemon;
-    daemon.Run("daemon.config");
+    daemon.Run("daemon.config", sigReceived);
 
     std::unique_lock<std::mutex> lck(mtx);
     cv.wait(lck);
