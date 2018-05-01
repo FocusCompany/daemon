@@ -8,8 +8,9 @@
 #include <FocusSerializer.hpp>
 #include <iostream>
 
-void AfkListener::Run(int triggerAfkInSecond) {
+void AfkListener::Run(int triggerAfkInSecond, std::atomic<bool> &sigReceived) {
     _triggerAfkInSecond = triggerAfkInSecond;
+    _sigReceived = sigReceived.load();
     setlocale(LC_ALL, "");
     _display = XOpenDisplay(nullptr);
     if (_display == nullptr) {
@@ -25,7 +26,7 @@ void AfkListener::EventListener() {
     unsigned long lastInputSince = 0;
     XScreenSaverInfo *info = XScreenSaverAllocInfo();
 
-    while (_isRunning) {
+    while (_isRunning && !_sigReceived) {
         XScreenSaverQueryInfo(_display, DefaultRootWindow(_display), info);
         lastInputSince = info->idle / 1000;
         if (lastInputSince < _triggerAfkInSecond) {
@@ -38,7 +39,7 @@ void AfkListener::EventListener() {
                 afk = true;
             }
         }
-        sleep(2);
+        std::this_thread::sleep_for(std::chrono::seconds(2));
     }
     XFree(info);
 }

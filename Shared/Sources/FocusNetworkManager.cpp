@@ -20,7 +20,7 @@ FocusNetworkManager::~FocusNetworkManager() {
     _socket->Disconnect();
 }
 
-void FocusNetworkManager::Run(const std::string &device_id, std::shared_ptr<FocusConfiguration> &config) {
+void FocusNetworkManager::Run(const std::string &device_id, std::shared_ptr<FocusConfiguration> &config, std::atomic<bool> &sigReceived) {
     auto srv = config->getServer(serverType::BACKEND);
     std::string urlStr = "tcp://";
     urlStr += srv._ip;
@@ -28,6 +28,7 @@ void FocusNetworkManager::Run(const std::string &device_id, std::shared_ptr<Focu
     urlStr += std::to_string(srv._port);
 
     _device_id = device_id;
+    _sigReceived = sigReceived.load();
 
     _socket->Connect(urlStr);
 

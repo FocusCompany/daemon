@@ -14,6 +14,7 @@ private:
     std::unique_ptr<zmq::socket_t> _socketPUB;
     std::unique_ptr<zmq::socket_t> _socketSUB;
     std::atomic<bool> _isRunning;
+    std::atomic<bool> _sigReceived;
     std::unique_ptr<std::thread> _eventManagerThread;
 
     void RunReceive() const;
@@ -23,7 +24,7 @@ public:
 
     virtual ~FocusEventManager();
 
-    void Run();
+    void Run(std::atomic<bool> &sigReceived);
 };
 
 #endif //FOCUS_CLIENT_FOCUSEVENTMANAGER_HPP

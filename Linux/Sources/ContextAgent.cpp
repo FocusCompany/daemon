@@ -80,7 +80,8 @@ std::tuple<std::string, std::string> ContextAgent::getWindowInfo() {
     return std::make_tuple(std::string(), std::string());
 }
 
-void ContextAgent::Run() {
+void ContextAgent::Run(std::atomic<bool> &sigReceived) {
+    _sigReceived = sigReceived.load();
     setlocale(LC_ALL, "");
     _display = XOpenDisplay(nullptr);
     if (_display == nullptr) {
@@ -97,7 +98,7 @@ void ContextAgent::EventListener() {
 
     XSetErrorHandler(x11Errorhandler);
 
-    while (_isRunning) {
+    while (_isRunning && !_sigReceived) {
         std::tuple<std::string, std::string> info = getWindowInfo();
         std::string windowsTitle = std::get<0>(info);
         std::string processName = std::get<1>(info);
@@ -106,7 +107,7 @@ void ContextAgent::EventListener() {
             oldWindowsTitle = windowsTitle;
             OnContextChanged(processName, windowsTitle);
         }
-        sleep(2);
+        std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }
 

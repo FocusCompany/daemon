@@ -5,12 +5,12 @@
 #ifndef DAEMON_IAFKLISTENER_HPP
 #define DAEMON_IAFKLISTENER_HPP
 
-
+#include <atomic>
 #include <chrono>
 
 class IAfkListener {
 public:
-    virtual void Run(int triggerAfkInSecond) = 0;
+    virtual void Run(int triggerAfkInSecond, std::atomic<bool> &sigReceived) = 0;
 
     virtual ~IAfkListener() {}
 

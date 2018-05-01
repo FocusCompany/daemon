@@ -5,9 +5,9 @@
 #include <FocusDaemon.hpp>
 #include <spdlog/spdlog.h>
 
-void FocusDaemon::Run(const std::string &configFileName) {
+void FocusDaemon::Run(const std::string &configFileName, std::atomic<bool> &sigReceived) {
     spdlog::get("logger")->info("FocusDaemon is running");
-    EventManager->Run();
+    EventManager->Run(sigReceived);
     _config = std::make_shared<FocusConfiguration>(configFileName);
     auto usr = _config->getUser();
     Authenticator->Run(_config);
@@ -23,8 +23,7 @@ void FocusDaemon::Run(const std::string &configFileName) {
     }
     if (!_device_id.empty()) {
         spdlog::get("logger")->info("Device Id: {}", _device_id);
-        NetworkManager->Run(_device_id, _config);
-        KeyLogger->Run(Authenticator, _config);
+        NetworkManager->Run(_device_id, _config, sigReceived);
+        KeyLogger->Run(Authenticator, _config, sigReceived);
     }
-    std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(500));
 }

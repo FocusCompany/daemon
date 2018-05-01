@@ -13,13 +13,14 @@ class ContextAgent : public IContextAgent {
 private:
     std::unique_ptr<std::thread> _eventListener;
     std::atomic<bool> _isRunning;
+    std::atomic<bool> _sigReceived;
     std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
 
     void EventListener() override final;
 
 
 public:
-    void Run() override final;
+    void Run(std::atomic<bool> &sigReceived) override final;
 
     void OnContextChanged(const std::string &processName, const std::string &windowTitle) const override final;
 

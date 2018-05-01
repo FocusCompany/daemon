@@ -13,16 +13,16 @@ FocusEventManager::FocusEventManager() {
     _socketSUB->setsockopt(ZMQ_RCVTIMEO, &_socketTimeout, sizeof(_socketTimeout));
 }
 
-void FocusEventManager::Run() {
+void FocusEventManager::Run(std::atomic<bool> &sigReceived) {
     _socketPUB->bind("inproc:///tmp/EventEmitter");
     _socketSUB->bind("inproc:///tmp/EventListener");
     _socketSUB->setsockopt(ZMQ_SUBSCRIBE, "", 0);
-
+    _sigReceived = sigReceived.load();
     _eventManagerThread = std::make_unique<std::thread>(std::bind(&FocusEventManager::RunReceive, this));
 }
 
 void FocusEventManager::RunReceive() const {
-    while (_isRunning) {
+    while (_isRunning && !_sigReceived) {
         zmq::multipart_t rep;
         zmq::message_t msg;
         if (!_socketSUB->recv(&msg))
