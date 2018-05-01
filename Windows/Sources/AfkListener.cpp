@@ -7,8 +7,9 @@
 #include <FocusAfkEventPayload.pb.h>
 #include <FocusSerializer.hpp>
 
-void AfkListener::Run(int triggerAfkInSecond) {
+void AfkListener::Run(int triggerAfkInSecond, std::atomic<bool> &sigReceived) {
     _triggerAfkInSecond = triggerAfkInSecond;
+    _sigReceived = sigReceived.load();
     _eventListener = std::make_unique<std::thread>(std::bind(&AfkListener::EventListener, this));
 }
 
@@ -18,7 +19,7 @@ void AfkListener::EventListener() {
     LASTINPUTINFO li;
     li.cbSize = sizeof(LASTINPUTINFO);
 
-    while (_isRunning) {
+    while (_isRunning  && !_sigReceived) {
         GetLastInputInfo(&li);
         DWORD te = ::GetTickCount();
         lastInputSince = (te - li.dwTime) / 1000;
@@ -33,7 +34,7 @@ void AfkListener::EventListener() {
                 afk = true;
             }
         }
-        Sleep(2000);
+        std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }
 

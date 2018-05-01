@@ -16,14 +16,15 @@ ContextAgent::~ContextAgent() {
 	_eventListener->join();
 }
 
-void ContextAgent::Run() {
+void ContextAgent::Run(std::atomic<bool> &sigReceived) {
+	_sigReceived = sigReceived.load();
 	_eventListener = std::make_unique<std::thread>(std::bind(&ContextAgent::EventListener, this));
 }
 
 void ContextAgent::EventListener() {
 	std::string oldProcessName;
 	std::string oldWindowsTitle;
-	while (_isRunning) {
+	while (_isRunning && !_sigReceived) {
 		HWND hwnd = GetForegroundWindow();
 		DWORD processId = GetProcessId(hwnd);
 		char tmp[0xFF] = { 0 };
@@ -40,7 +41,7 @@ void ContextAgent::EventListener() {
 			oldWindowsTitle = windowsTitle;
 			OnContextChanged(processName, windowsTitle);
 		}
-		Sleep(2000);
+		std::this_thread::sleep_for(std::chrono::seconds(2));
 	}
 }
 
