@@ -37,3 +37,7 @@ IF (MSVC)
 ELSE ()
     add_test(NAME daemon_windows_tests COMMAND daemon_windows_tests)
 ENDIF ()
+
+####INSTALL####
+
+install(TARGETS daemon_windows DESTINATION bin)

@@ -50,3 +50,7 @@ IF (MSVC)
 ELSE ()
     add_test(NAME daemon_linux_tests COMMAND daemon_linux_tests)
 ENDIF ()
+
+####INSTALL####
+
+install(TARGETS daemon_linux DESTINATION bin)
