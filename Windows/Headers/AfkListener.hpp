@@ -8,11 +8,14 @@
 #include <IAfkListener.hpp>
 #include <thread>
 #include <FocusEventEmitter.hpp>
+#include <atomic>
 
 class AfkListener : public IAfkListener {
 private:
     int _triggerAfkInSecond;
     std::unique_ptr<std::thread> _eventListener;
+    std::atomic<bool> _isRunning;
+    std::atomic<bool> _sigReceived;
     std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
 
     void EventListener() override final;
@@ -20,7 +23,11 @@ private:
     void OnAfk(const std::chrono::milliseconds &timeSinceEpoch) const override final;
 
 public:
-    void Run(int triggerAfkInSecond) override final;
+    void Run(int triggerAfkInSecond, std::atomic<bool> &sigReceived) override final;
+
+    AfkListener();
+
+    virtual ~AfkListener();
 };
 
 

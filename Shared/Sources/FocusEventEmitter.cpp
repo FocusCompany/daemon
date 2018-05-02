@@ -30,3 +30,7 @@ void FocusEventEmitter::EmitMessage(const std::string &dest, const std::string &
     msg.addstr(message);
     msg.send(*_socketPUB);
 }
+
+FocusEventEmitter::~FocusEventEmitter() {
+    _socketPUB->close();
+}

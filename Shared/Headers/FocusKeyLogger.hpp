@@ -17,21 +17,18 @@
 
 class FocusKeyLogger {
 private:
-    std::unique_ptr<std::thread> _keyLoggerThread;
+    std::shared_ptr<FocusAuthenticator> _authenticator;
     std::unique_ptr<IContextAgent> _contextAgent = std::unique_ptr<IContextAgent>(std::make_unique<ContextAgent>());
     std::unique_ptr<IAfkListener> _afkListener = std::unique_ptr<IAfkListener>(std::make_unique<AfkListener>());
     std::unique_ptr<FocusEventListener<Focus::Event>> _eventListener = std::make_unique<FocusEventListener<Focus::Event>>();
     std::unique_ptr<FocusEventListener<const std::string &>> _messageListener = std::make_unique<FocusEventListener<const std::string &>>();
     std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
-    std::shared_ptr<FocusAuthenticator> _authenticator;
     std::vector<Focus::Event> _events;
 
     void AddEvent(const Focus::Event &event);
 
-    void RunKeyLogger();
-
 public:
-    void Run(std::shared_ptr<FocusAuthenticator> &authenticator, std::shared_ptr<FocusConfiguration> &config);
+    void Run(std::shared_ptr<FocusAuthenticator> &authenticator, std::shared_ptr<FocusConfiguration> &config, std::atomic<bool> &sigReceived);
 };
 
 #endif //FOCUS_CLIENT_FOCUSKEYLOGGER_HPP

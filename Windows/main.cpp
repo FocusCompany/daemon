@@ -8,13 +8,21 @@
 #include <signal.h>
 #include <spdlog/spdlog.h>
 #include "FocusDaemon.hpp"
+#include <condition_variable>
+
+std::mutex mtx;
+std::condition_variable cv;
+std::atomic<bool> sigReceived;
 
 void exitProgram()
 {
+	sigReceived = true;
 	spdlog::set_pattern("\t*****  %v  *****");
 	spdlog::get("logger")->info("End of program");
 	spdlog::get("logger")->flush();
 	spdlog::drop_all();
+	std::unique_lock<std::mutex> lck(mtx);
+	cv.notify_all();
 }
 
 BOOL WINAPI ConsoleHandler(DWORD CEvent)
@@ -28,7 +36,8 @@ int main(const int ac, const char** av)
 {
 	if (SetConsoleCtrlHandler((PHANDLER_ROUTINE)ConsoleHandler, TRUE) == FALSE)
 		return -1;
-
+	
+	sigReceived = false;
 	auto console = spdlog::stdout_color_mt("console");
 	std::vector<spdlog::sink_ptr> sinks;
 	sinks.push_back(std::make_shared<spdlog::sinks::stdout_sink_mt>());
@@ -41,8 +50,10 @@ int main(const int ac, const char** av)
 	spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [thread %t] [%l]\t\t: %v");
 
 	FocusDaemon daemon;
-	daemon.Run("daemon.config");
+	daemon.Run("daemon.config", sigReceived);
 
-	exitProgram();
+	std::unique_lock<std::mutex> lck(mtx);
+	cv.wait(lck);
+
 	return (0);
 }

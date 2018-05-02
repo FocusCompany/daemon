@@ -8,8 +8,9 @@
 #include <FocusAfkEventPayload.pb.h>
 #include <FocusSerializer.hpp>
 
-void AfkListener::Run(int triggerAfkInSecond) {
+void AfkListener::Run(int triggerAfkInSecond, std::atomic<bool> &sigReceived) {
     _triggerAfkInSecond = triggerAfkInSecond;
+    _sigReceived = sigReceived.load();
     _eventListener = std::make_unique<std::thread>(std::bind(&AfkListener::EventListener, this));
 }
 
@@ -17,7 +18,7 @@ void AfkListener::EventListener() {
     bool afk = false;
     double lastInputSince = 0;
 
-    while (true) {
+    while (_isRunning && !_sigReceived) {
         lastInputSince = CGEventSourceSecondsSinceLastEventType(kCGEventSourceStateHIDSystemState, kCGAnyInputEventType);
         if (lastInputSince < _triggerAfkInSecond) {
             afk = false;
@@ -29,7 +30,7 @@ void AfkListener::EventListener() {
                 afk = true;
             }
         }
-        sleep(2);
+        std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }
 
@@ -47,4 +48,13 @@ void AfkListener::OnAfk(const std::chrono::milliseconds &timeSinceEpoch) const {
 
     _eventEmitter->Emit("NewEvent", event);
 
+}
+
+AfkListener::~AfkListener() {
+    _isRunning = false;
+    _eventListener->join();
+}
+
+AfkListener::AfkListener() {
+    _isRunning = true;
 }

@@ -11,7 +11,8 @@
 #include <spdlog/spdlog.h>
 #include <array>
 
-void ContextAgent::Run() {
+void ContextAgent::Run(std::atomic<bool> &sigReceived) {
+    _sigReceived = sigReceived.load();
     _eventListener = std::make_unique<std::thread>(std::bind(&ContextAgent::EventListener, this));
 }
 
@@ -19,7 +20,7 @@ void ContextAgent::EventListener() {
     std::string cmd = "osascript ./printAppTitle.scpt";
     std::string oldProcessName;
     std::string oldWindowsTitle;
-    while (true) {
+    while (_isRunning && !_sigReceived) {
         std::array<char, 256> buffer{};
         std::string result;
         std::shared_ptr<FILE> pipe(popen(cmd.c_str(), "r"), pclose);
@@ -38,7 +39,7 @@ void ContextAgent::EventListener() {
                 OnContextChanged(processName, windowsTitle);
             }
         }
-        sleep(2);
+        std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }
 
@@ -50,4 +51,13 @@ void ContextAgent::OnContextChanged(const std::string &processName, const std::s
     Focus::Event event = FocusSerializer::CreateEventFromContext("ContextChanged", context);
 
     _eventEmitter->Emit("NewEvent", event);
+}
+
+ContextAgent::~ContextAgent() {
+    _isRunning = false;
+    _eventListener->join();
+}
+
+ContextAgent::ContextAgent() {
+    _isRunning = true;
 }

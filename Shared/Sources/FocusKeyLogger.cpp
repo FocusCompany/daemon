@@ -7,8 +7,7 @@
 #include <spdlog/spdlog.h>
 #include "FocusSerializer.hpp"
 
-void FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator, std::shared_ptr<FocusConfiguration> &config) {
-    spdlog::get("logger")->info("FocusKeyLogger is running");
+void FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator, std::shared_ptr<FocusConfiguration> &config, std::atomic<bool> &sigReceived) {
     _authenticator = authenticator;
 
     _eventListener->Register("NewEvent", [this](Focus::Event &newContext) {
@@ -21,8 +20,8 @@ void FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator, std
         _events.clear();
     });
 
-    _contextAgent->Run();
-    _afkListener->Run(std::stoi(config->getTriggerAfk()));
+    _contextAgent->Run(sigReceived);
+    _afkListener->Run(std::stoi(config->getTriggerAfk()), sigReceived);
 }
 
 void FocusKeyLogger::AddEvent(const Focus::Event &ev) {
