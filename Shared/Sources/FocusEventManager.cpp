@@ -24,17 +24,9 @@ void FocusEventManager::Run(std::atomic<bool> &sigReceived) {
 void FocusEventManager::RunReceive() const {
     while (_isRunning && !_sigReceived) {
         zmq::multipart_t rep;
-        zmq::message_t msg;
-        if (!_socketSUB->recv(&msg))
-            continue;
-        std::string ret = std::string(static_cast<char*>(msg.data()), msg.size());
-        rep.addstr(ret);
-        zmq::message_t msg2;
-        if (!_socketSUB->recv(&msg2))
-            continue;
-        ret = std::string(static_cast<char*>(msg2.data()), msg2.size());
-        rep.addstr(ret);
-        rep.send(*_socketPUB, 0);
+        if (rep.recv(*_socketSUB)) {
+            rep.send(*_socketPUB);
+        }
     }
 }
 
