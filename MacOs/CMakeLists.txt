@@ -44,4 +44,5 @@ ENDIF ()
 
 ####INSTALL####
 
-install(TARGETS daemon_mac DESTINATION bin)
+install(TARGETS daemon DESTINATION bin)
+install(FILES ${CMAKE_SOURCE_DIR}/MacOs/printAppTitle.scpt DESTINATION bin)
