@@ -38,6 +38,7 @@ FocusConfiguration::FocusConfiguration(const std::string &configFile) {
     lightconf::group config;
     _source = "";
     try {
+        spdlog::get("logger")->info("Loading configuration file from {0}", configFile);
         std::ifstream stream(_configFile, std::ios::in);
         if (stream) {
             _source = std::string(std::istreambuf_iterator<char>(stream),

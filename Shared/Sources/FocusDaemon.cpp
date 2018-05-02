@@ -4,11 +4,13 @@
 
 #include <FocusDaemon.hpp>
 #include <spdlog/spdlog.h>
+#include <FocusPlatformFolders.hpp>
 
 void FocusDaemon::Run(const std::string &configFileName, std::atomic<bool> &sigReceived) {
+    auto dir = sago::getDataHome() + "/Focus/" + configFileName;
     spdlog::get("logger")->info("FocusDaemon is running");
     EventManager->Run(sigReceived);
-    _config = std::make_shared<FocusConfiguration>(configFileName);
+    _config = std::make_shared<FocusConfiguration>(dir);
     auto usr = _config->getUser();
     Authenticator->Run(_config);
     if (Authenticator->Login(usr._email, usr._password, _config->getDeviceId())) {
