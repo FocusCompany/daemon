@@ -41,3 +41,6 @@ IF (MSVC)
 ELSE ()
     add_test(NAME daemon_mac_tests COMMAND daemon_mac_tests)
 ENDIF ()
+
+####INSTALL####
+
