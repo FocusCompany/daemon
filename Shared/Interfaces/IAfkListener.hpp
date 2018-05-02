@@ -10,6 +10,8 @@
 
 class IAfkListener {
 public:
+    virtual ~IAfkListener() = default;
+
     virtual void Run(int triggerAfkInSecond) = 0;
 
 private:

@@ -9,7 +9,9 @@
 
 class IContextAgent {
 public:
-    virtual void Run() = 0;
+	virtual ~IContextAgent() = default;
+
+	virtual void Run() = 0;
 
 	virtual void OnContextChanged(const std::string &processName, const std::string &windowTitle) const = 0;
 
