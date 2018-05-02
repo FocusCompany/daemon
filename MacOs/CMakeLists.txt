@@ -44,3 +44,4 @@ ENDIF ()
 
 ####INSTALL####
 
+install(TARGETS daemon_mac DESTINATION bin)
