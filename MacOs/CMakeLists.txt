@@ -25,7 +25,7 @@ include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ..
 
 add_library(daemon_mac_lib STATIC ${DEAMON_MAC_SOURCE_FILES})
 
-add_executable(daemon_mac ${MAIN_FILES})
+add_executable(daemon_mac MACOSX_BUNDLE ${MAIN_FILES})
 set_target_properties(daemon_mac PROPERTIES OUTPUT_NAME "focus-daemon")
 
 target_link_libraries(daemon_mac daemon_mac_lib daemon_shared_lib ${PROTOBUF_LIBRARY} ${CARBON_LIBRARY})
@@ -45,5 +45,13 @@ ENDIF ()
 
 ####INSTALL####
 
-install(TARGETS daemon_mac DESTINATION bin)
-install(FILES ${CMAKE_SOURCE_DIR}/MacOs/printAppTitle.scpt DESTINATION bin)
+install(TARGETS daemon_mac DESTINATION .)
+
+####PACKAGE####
+
+set(CPACK_GENERATOR "DragNDrop") # Setup package version
+
+set (CPACK PACKAGE VERSION MAJOR 0)
+set (CPACK PACKAGE VERSION MINOR 1)
+set (CPACK PACKAGE VERSION PATCH 0)
+include (CPack)
