@@ -29,6 +29,7 @@ set(DEAMON_SHARED_SOURCE_FILES
         Sources/FocusAuthenticator.cpp
         Sources/FocusSocket.cpp
         Sources/FocusConfiguration.cpp
+        Sources/FocusPlatformFolders.cpp
 
         Headers/FocusDaemon.hpp
         Headers/FocusEventManager.hpp
@@ -41,6 +42,7 @@ set(DEAMON_SHARED_SOURCE_FILES
         Headers/FocusSocket.hpp
         Headers/FocusSecureSocket.hpp
         Headers/FocusConfiguration.hpp
+        Headers/FocusPlatformFolders.hpp
 
         Interfaces/IContextAgent.hpp
         Interfaces/IAfkListener.hpp
