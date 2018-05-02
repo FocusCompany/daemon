@@ -35,6 +35,7 @@ include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ..
 add_library(daemon_linux_lib STATIC ${DEAMON_LINUX_SOURCE_FILES})
 
 add_executable(daemon_linux ${MAIN_FILES})
+set_target_properties(daemon_linux PROPERTIES OUTPUT_NAME "focus-daemon")
 
 target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib ${PROTOBUF_LIBRARY} ${X11_LIBRARIES} ${XSS_LIBRARIES} ${XMU_LIBRARIES})
 

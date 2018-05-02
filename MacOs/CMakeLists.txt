@@ -26,6 +26,7 @@ include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ..
 add_library(daemon_mac_lib STATIC ${DEAMON_MAC_SOURCE_FILES})
 
 add_executable(daemon_mac ${MAIN_FILES})
+set_target_properties(daemon_mac PROPERTIES OUTPUT_NAME "focus-daemon")
 
 target_link_libraries(daemon_mac daemon_mac_lib daemon_shared_lib ${PROTOBUF_LIBRARY} ${CARBON_LIBRARY})
 
