@@ -55,7 +55,7 @@ int main(const int ac, const char** av)
 		std::unique_lock<std::mutex> lck(mtx);
 		cv.wait(lck);
 	} else {
-		exitProgram(0);
+		exitProgram();
 	}
 	return (0);
 }

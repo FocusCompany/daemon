@@ -21,7 +21,7 @@ class FocusSecureSocket<Server> : public FocusSocket {
 public:
     FocusSecureSocket(const std::string &serverSecretKey) : FocusSocket() {
         _socket->setsockopt(ZMQ_CURVE_SERVER, 1);
-        _socket->setsockopt(ZMQ_CURVE_SECRETKEY, strdup(serverSecretKey.c_str()), serverSecretKey.size());
+        _socket->setsockopt(ZMQ_CURVE_SECRETKEY, serverSecretKey.c_str(), serverSecretKey.size());
     }
 };
 
