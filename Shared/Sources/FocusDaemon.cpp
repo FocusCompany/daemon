@@ -13,6 +13,14 @@
 #include <sys/types.h>
 #endif
 
+void create_directory(std::string const& path) {
+#ifdef MSVC
+    _mkdir(path.c_str());
+#else
+    mkdir(path.c_str(), 0733);
+#endif
+}
+
 bool FocusDaemon::Run(const std::string &configFileName, std::atomic<bool> &sigReceived) {
     spdlog::get("logger")->info("FocusDaemon is running");
 
@@ -41,14 +49,6 @@ bool FocusDaemon::Run(const std::string &configFileName, std::atomic<bool> &sigR
 }
 
 void FocusDaemon::bootstrap(std::string const &platform_name) {
-    auto create_directory = [] (std::string const& path) {
-#ifdef MSVC
-        _mkdir(path.c_str());
-#else
-        mkdir(path.c_str(), 0733);
-#endif
-    };
-
     create_directory(sago::getDataHome() + "/Focus");
     create_directory(sago::getCacheDir() + "/Focus");
     create_directory(sago::getConfigHome() + "/Focus");
