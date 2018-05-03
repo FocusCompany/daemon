@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
 
-project(daemon_windows)
-
 set(CMAKE_CXX_STANDARD 14)
 
 include(FindProtobuf)

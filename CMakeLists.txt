@@ -6,8 +6,8 @@ include(cmake/ucm.cmake)
 include(cmake/dependency.cmake)
 
 ### Set global build version
-get_git_last_commit_infos(GIT_SHA1 GIT_SHA1_ABBR GIT_DATE GIT_DESC)
-set(VERSION "${GIT_DATE}@${GIT_SHA1_ABBR}")
+get_git_last_commit_infos(GIT_SHA1 GIT_SHA1_ABBR GIT_DATE_YEAR GIT_DATE_MONTH GIT_DATE_DAY GIT_DESC)
+set(VERSION "${GIT_DATE_YEAR}-${GIT_DATE_MONTH}-${GIT_DATE_DAY}@${GIT_SHA1_ABBR}")
 message("Current version of Focus is: ${VERSION}")
 add_definitions(-DFOCUS_VERSION="${VERSION}" -DFOCUS_GIT_HASH="${GIT_SHA1_ABBR}" -DFOCUS_GIT_DATE="${GIT_DATE}")
 
@@ -62,6 +62,22 @@ if(MSVC)
 else()
     execute_process(COMMAND ./generate.sh WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Shared/Proto)
 endif()
+
+### Setting global CMake variables
+set(PROJECT_VERSION_MAJOR  ${GIT_DATE_YEAR})
+set(PROJECT_VERSION_MINOR  ${GIT_DATE_MONTH})
+set(PROJECT_VERSION_PATCH  ${GIT_DATE_DAY})
+set(PROJECT_DESCRIPTION "Focus does stuff... We don't know exactly what.")
+set(PROJECT_NAME "Focus")
+
+### Setting global CPack variables
+set(CPACK_PACKAGE_VERSION ${VERSION})
+set(CPACK_PACKAGE_NAME Focus)
+set(CPACK_PACKAGE_VENDOR "Focus inc.")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Focus does stuff... We don't know exactly what.")
+set(CPACK_PACKAGE_VERSION_MAJOR ${GIT_DATE_YEAR})
+set(CPACK_PACKAGE_VERSION_MINOR ${GIT_DATE_MONTH})
+set(CPACK_PACKAGE_VERSION_PATCH ${GIT_DATE_DAY})
 
 ### Subdirectory
 add_subdirectory(Shared)

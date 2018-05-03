@@ -1,6 +1,6 @@
 find_package(Git)
 
-function(get_git_last_commit_infos GIT_SHA1 GIT_SHA1_ABBR GIT_DATE GIT_DESC)
+function(get_git_last_commit_infos GIT_SHA1 GIT_SHA1_ABBR GIT_DATE_YEAR GIT_DATE_MONTH GIT_DATE_DAY GIT_DESC)
     # the commit's SHA1, and whether the building workspace was dirty or not
     execute_process(COMMAND
             "${GIT_EXECUTABLE}" describe --match=NeVeRmAtCh --always --dirty
@@ -19,12 +19,28 @@ function(get_git_last_commit_infos GIT_SHA1 GIT_SHA1_ABBR GIT_DATE GIT_DESC)
 
     # the date of the commit
     execute_process(COMMAND
-            "${GIT_EXECUTABLE}" log -1 --format=%ad --date=format:'%Y-%m-%d'
+            "${GIT_EXECUTABLE}" log -1 --format=%ad --date=format:'%Y'
             WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-            OUTPUT_VARIABLE GIT_DATEloc
+            OUTPUT_VARIABLE GIT_DATE_YEARloc
             ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
-    string(SUBSTRING ${GIT_DATEloc} 1 10 GIT_DATEloc)
-    set(${GIT_DATE} "${GIT_DATEloc}" PARENT_SCOPE)
+    string(SUBSTRING ${GIT_DATE_YEARloc} 1 4 GIT_DATE_YEARloc)
+    set(${GIT_DATE_YEAR} "${GIT_DATE_YEARloc}" PARENT_SCOPE)
+
+    execute_process(COMMAND
+            "${GIT_EXECUTABLE}" log -1 --format=%ad --date=format:'%m'
+            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+            OUTPUT_VARIABLE GIT_DATE_MONTHloc
+            ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(SUBSTRING ${GIT_DATE_MONTHloc} 1 2 GIT_DATE_MONTHloc)
+    set(${GIT_DATE_MONTH} "${GIT_DATE_MONTHloc}" PARENT_SCOPE)
+
+    execute_process(COMMAND
+            "${GIT_EXECUTABLE}" log -1 --format=%ad --date=format:'%d'
+            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+            OUTPUT_VARIABLE GIT_DATE_DAYloc
+            ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(SUBSTRING ${GIT_DATE_DAYloc} 1 2 GIT_DATE_DAYloc)
+    set(${GIT_DATE_DAY} "${GIT_DATE_DAYloc}" PARENT_SCOPE)
 
     # the subject of the commit
     execute_process(COMMAND

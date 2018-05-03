@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
 
-project(daemon_mac)
-
 set(CMAKE_CXX_STANDARD 14)
 
 include(FindProtobuf)
@@ -56,8 +54,4 @@ install(TARGETS daemon_mac DESTINATION .)
 ####PACKAGE####
 
 set(CPACK_GENERATOR "DragNDrop") # Setup package version
-
-set (CPACK PACKAGE VERSION MAJOR 0)
-set (CPACK PACKAGE VERSION MINOR 1)
-set (CPACK PACKAGE VERSION PATCH 0)
 include (CPack)
