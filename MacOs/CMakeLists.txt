@@ -45,6 +45,10 @@ ENDIF ()
 
 ####INSTALL####
 
+# On OSX, the install process is mixed with the PACKAGE step handled by CPack.
+# Because we generate a DMG/.app archive, the files that need to be included are declared via the TARGET attribute of
+# daemon_mac.
+# This is why we don't install printAppTitle.scpt because CPack will include it inside the .app as expected.
 install(TARGETS daemon_mac DESTINATION .)
 
 ####PACKAGE####

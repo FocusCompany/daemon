@@ -80,8 +80,3 @@ IF (MSVC)
 ELSE ()
     add_test(NAME daemon_shared_tests COMMAND daemon_shared_tests)
 ENDIF ()
-
-####INSTALL####
-
-install(FILES ${CMAKE_SOURCE_DIR}/daemon.config DESTINATION bin)
-install(DIRECTORY DESTINATION bin/logs)
