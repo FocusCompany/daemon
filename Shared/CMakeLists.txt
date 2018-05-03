@@ -10,9 +10,6 @@ find_package(OpenSSL REQUIRED)
 include(FindJWTCPP)
 find_package(JWTCPP REQUIRED)
 
-include(FindProtobuf)
-find_package(Protobuf REQUIRED)
-
 include(FindZeroMQ)
 find_package(ZeroMQ REQUIRED)
 
@@ -60,7 +57,7 @@ ENDIF ()
 
 add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER})
 
-target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
+target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZeroMQ_LIBRARIES})
 
 IF (MSVC)
     target_link_libraries(daemon_shared_lib wsock32 ws2_32)

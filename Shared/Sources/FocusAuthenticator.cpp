@@ -27,7 +27,7 @@ bool FocusAuthenticator::GetConnectionStatus() const {
 
 std::string FocusAuthenticator::GetToken() {
     ExpValidator exp;
-    RS256Validator signer(_rsa_pub_key);
+    RS256Validator signer(public_key);
     try {
         nlohmann::json header, payload;
         std::tie(header, payload) = JWT::Decode(_token, &signer, &exp);
@@ -57,7 +57,7 @@ bool FocusAuthenticator::Login(const std::string &email, const std::string &pass
         auto j = nlohmann::json::parse(res->body);
         if (j.find("token") != j.end()) {
             ExpValidator exp;
-            RS256Validator signer(_rsa_pub_key);
+            RS256Validator signer(public_key);
             try {
                 nlohmann::json header, payload;
                 std::tie(header, payload) = JWT::Decode(j["token"], &signer, &exp);
@@ -124,7 +124,7 @@ bool FocusAuthenticator::RenewToken() {
         auto j = nlohmann::json::parse(res->body);
         if (j.find("token") != j.end()) {
             ExpValidator exp;
-            RS256Validator signer(_rsa_pub_key);
+            RS256Validator signer(public_key);
             try {
                 nlohmann::json header, payload;
                 std::tie(header, payload) = JWT::Decode(j["token"], &signer, &exp);
