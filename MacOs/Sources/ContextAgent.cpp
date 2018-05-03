@@ -19,17 +19,7 @@ void ContextAgent::Run(std::atomic<bool> &sigReceived) {
 }
 
 void ContextAgent::EventListener() {
-    std::string path(PAGE_SIZE, '\0');
-    uint32_t size = static_cast<uint32_t>(path.size());
-    if (_NSGetExecutablePath(path.begin().base(), &size) != 0) {
-        spdlog::get("logger")->critical("Unable to locate Bundle location. Aborting.");
-        std::exit(1);
-    }
-    path = path.substr(0, path.find_last_of('/') + 1);
-    spdlog::get("logger")->critical("Successfully located Bundle at {0}", path);
-
-
-    std::string cmd = "osascript " + path + "printAppTitle.scpt";
+    std::string cmd = "osascript " + _appleScriptLocation;
     std::string oldProcessName;
     std::string oldWindowsTitle;
     while (_isRunning && !_sigReceived) {
@@ -79,5 +69,14 @@ ContextAgent::~ContextAgent() {
 }
 
 ContextAgent::ContextAgent() {
+    std::string path(PAGE_SIZE, '\0');
+    auto size = static_cast<uint32_t>(path.size());
+    if (_NSGetExecutablePath(path.begin().base(), &size) != 0) {
+        spdlog::get("logger")->critical("Unable to locate Bundle location. Aborting.");
+        std::exit(1);
+    }
+    path = path.substr(0, path.find_last_of('/') + 1);
+    spdlog::get("logger")->info("Successfully located Bundle at {0}", path);
+    _appleScriptLocation = path + "printAppTitle.scpt";
     _isRunning = false;
 }
