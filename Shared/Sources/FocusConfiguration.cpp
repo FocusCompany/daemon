@@ -9,6 +9,10 @@
 #include "lightconf/lightconf.hpp"
 #include "lightconf/config_format.hpp"
 
+#ifdef MSVC
+#include <Winsock2.h>
+#endif
+
 namespace lightconf {
     LIGHTCONF_BEGIN_ENUM(serverType)
                     LIGHTCONF_ENUM_VALUE(serverType::AUTHENTICATION, "AUTHENTICATION")
