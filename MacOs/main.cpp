@@ -6,7 +6,6 @@
 #include "FocusDaemon.hpp"
 #include <condition_variable>
 #include <FocusPlatformFolders.hpp>
-#include <ApplicationServices/ApplicationServices.h>
 
 std::mutex mtx;
 std::condition_variable cv;
