@@ -9,6 +9,7 @@
 #include <spdlog/spdlog.h>
 #include "FocusDaemon.hpp"
 #include <condition_variable>
+#include <FocusPlatformFolders.hpp>
 
 std::mutex mtx;
 std::condition_variable cv;
@@ -41,7 +42,7 @@ int main(const int ac, const char** av)
 	auto console = spdlog::stdout_color_mt("console");
 	std::vector<spdlog::sink_ptr> sinks;
 	sinks.push_back(std::make_shared<spdlog::sinks::stdout_sink_mt>());
-	sinks.push_back(std::make_shared<spdlog::sinks::rotating_file_sink_mt>("logs/logs.txt", 1048576 * 5, 3));
+	sinks.push_back(std::make_shared<spdlog::sinks::rotating_file_sink_mt>(sago::getDataHome() + "/Focus/logs.txt", 1048576 * 5, 3));
 	auto combined_logger = std::make_shared<spdlog::logger>("logger", begin(sinks), end(sinks));
 	spdlog::register_logger(combined_logger);
 

@@ -35,8 +35,11 @@ private:
     struct server _defaultServer;
     std::string _configFile;
     std::string _source;
+    std::string _deviceName;
 public:
     FocusConfiguration(const std::string &configFile);
+
+    void readConfiguration(const std::string &configFile, int attempt);
 
     bool isFilled() const;
 
@@ -51,6 +54,10 @@ public:
     void setTriggerAfk(const std::string &triggerAfk);
 
     std::string getTriggerAfk() const;
+
+    void generateConfigurationFile(const std::string &configFile);
+
+    const std::string &getDeviceName() const;
 };
 
 
