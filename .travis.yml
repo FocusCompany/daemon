@@ -44,7 +44,7 @@ matrix:
       skip_cleanup: true
       on:
         repo: FocusCompany/daemon
-        branch: hb_install_NIX
+        branch: development
 language: cpp
 cache:
   directories:

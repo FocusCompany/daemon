@@ -53,3 +53,8 @@ ENDIF ()
 ####INSTALL####
 
 install(TARGETS daemon_linux DESTINATION bin)
+
+####PACKAGE####
+
+set(CPACK_GENERATOR "RPM DEB") # Setup package version
+include (CPack)
