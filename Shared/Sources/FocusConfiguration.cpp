@@ -40,7 +40,7 @@ FocusConfiguration::FocusConfiguration(const std::string &configFile) {
 
     _configFile = configFile;
 
-    readConfiguration(_configFile, 1);
+    readConfiguration(_configFile, 0);
 }
 
 bool FocusConfiguration::isFilled() const {
@@ -172,5 +172,5 @@ void FocusConfiguration::readConfiguration(const std::string &configFile, int at
         _filled = false;
         spdlog::get("logger")->error("Failed to read configuration file");
     }
-    readConfiguration(configFile, attempt++);
+    readConfiguration(configFile, ++attempt);
 }
