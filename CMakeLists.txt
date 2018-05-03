@@ -13,6 +13,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/BUILD)
 ### Add useful cmake macros that help with compiler/linker flags especially in VS2017
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 include(cmake/ucm.cmake)
+include(cmake/dependency.cmake)
 ucm_set_runtime(STATIC)
 
 ### Turn on the ability to create folders to organize projects under VS2017

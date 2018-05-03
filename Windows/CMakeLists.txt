@@ -26,7 +26,7 @@ add_library(daemon_windows_lib STATIC ${DEAMON_WINDOWS_SOURCE_FILES})
 add_executable(daemon_windows ${MAIN_FILES})
 set_target_properties(daemon_windows PROPERTIES OUTPUT_NAME "focus-daemon")
 
-target_link_libraries(daemon_windows daemon_windows_lib daemon_shared_lib Psapi ${PROTOBUF_LIBRARY})
+target_link_libraries(daemon_windows daemon_windows_lib daemon_shared_lib Psapi)
 
 ####TESTS####
 

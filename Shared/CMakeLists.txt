@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
 
-project(daemon_shared_lib)
-
 set(CMAKE_CXX_STANDARD 14)
 
 include(FindOpenSSL)
@@ -9,6 +7,9 @@ find_package(OpenSSL REQUIRED)
 
 include(FindJWTCPP)
 find_package(JWTCPP REQUIRED)
+
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
 
 include(FindZeroMQ)
 find_package(ZeroMQ REQUIRED)
@@ -57,7 +58,7 @@ ENDIF ()
 
 add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER})
 
-target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZeroMQ_LIBRARIES})
+target_link_libraries(daemon_shared_lib  ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
 
 IF (MSVC)
     target_link_libraries(daemon_shared_lib wsock32 ws2_32)
