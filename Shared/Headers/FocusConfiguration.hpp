@@ -35,6 +35,7 @@ private:
     struct server _defaultServer;
     std::string _configFile;
     std::string _source;
+    std::string _deviceName;
 public:
     FocusConfiguration(const std::string &configFile);
 
@@ -55,6 +56,8 @@ public:
     std::string getTriggerAfk() const;
 
     void generateConfigurationFile(const std::string &configFile);
+
+    const std::string &getDeviceName() const;
 };
 
 

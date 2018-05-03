@@ -17,7 +17,7 @@ void FocusDaemon::Run(const std::string &configFileName, std::atomic<bool> &sigR
         _device_id = Authenticator->GetDeviceId();
         spdlog::get("logger")->info("User uuid: {}", Authenticator->GetUUID());
         if (_device_id.empty()) {
-            if (Authenticator->RegisterDevice("MacBook Pro de Etienne")) {
+            if (Authenticator->RegisterDevice(_config->getDeviceName())) {
                 Authenticator->Login(usr._email, usr._password, _config->getDeviceId());
                 _device_id = Authenticator->GetDeviceId();
             }

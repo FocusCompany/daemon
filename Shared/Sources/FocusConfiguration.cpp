@@ -119,6 +119,10 @@ void FocusConfiguration::generateConfigurationFile(const std::string &configFile
         config.set<std::string>("trigger_afk", "300");
         config.set<std::string>("id_device", "");
 
+        char host[512];
+        gethostname(host, sizeof(host));
+        config.set<std::string>("device_name", host);
+
         std::ofstream stream(configFile, std::ios::out);
         if (stream) {
             stream << lightconf::config_format::write(config, _source, 80);
@@ -133,7 +137,7 @@ void FocusConfiguration::generateConfigurationFile(const std::string &configFile
 
 void FocusConfiguration::readConfiguration(const std::string &configFile, int attempt) {
     if (attempt > 3) {
-        spdlog::get("logger")->critical("Failed to generate a default configuration file after {0} attempt", attempt);
+        spdlog::get("logger")->critical("Failed to read configuration file after {0} attempt", attempt);
         std::exit(1);
     }
 
@@ -150,13 +154,14 @@ void FocusConfiguration::readConfiguration(const std::string &configFile, int at
             _triggerAfk = config.get<std::string>("trigger_afk", "300");
             _deviceId = config.get<std::string>("id_device", "");
             _serversInfo = config.get<std::vector<server>>("servers", {});
+            _deviceName = config.get<std::string>("device_name", "");
             _filled = true;
             spdlog::get("logger")->info("Reading configuration file successfully");
+            return;
         } else {
             _filled = false;
             spdlog::get("logger")->warn("Missing configuration file");
             generateConfigurationFile(configFile);
-            readConfiguration(configFile, attempt++);
 
         }
     } catch (const lightconf::parse_error &e) {
@@ -166,4 +171,9 @@ void FocusConfiguration::readConfiguration(const std::string &configFile, int at
         _filled = false;
         spdlog::get("logger")->error("Failed to read configuration file");
     }
+    readConfiguration(configFile, attempt++);
+}
+
+const std::string &FocusConfiguration::getDeviceName() const {
+    return _deviceName;
 }
