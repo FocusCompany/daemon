@@ -13,12 +13,39 @@
 #include <sys/types.h>
 #endif
 
-void create_directory(std::string const& path) {
+int create_directory(std::string const& path) {
 #ifdef MSVC
-    _mkdir(path.c_str());
+    return _mkdir(path.c_str());
 #else
-    mkdir(path.c_str(), 0733);
+    return mkdir(path.c_str(), 0733);
 #endif
+}
+
+bool create_directories(std::string const& path)
+{
+    bool bSuccess = false;
+    int nRC = create_directory(path);
+    if( nRC == -1 )
+    {
+        switch( errno )
+        {
+            case ENOENT:
+                //parent didn't exist, try to create it
+                if(create_directories( path.substr(0, path.find_last_of('/')) ) )
+                    create_directory(path);
+                break;
+            case EEXIST:
+                //Done!
+                bSuccess = true;
+                break;
+            default:
+                bSuccess = false;
+                break;
+        }
+    }
+    else
+        bSuccess = true;
+    return bSuccess;
 }
 
 bool FocusDaemon::Run(const std::string &configFileName, std::atomic<bool> &sigReceived) {
@@ -49,9 +76,9 @@ bool FocusDaemon::Run(const std::string &configFileName, std::atomic<bool> &sigR
 }
 
 void FocusDaemon::bootstrap(std::string const &platform_name) {
-    create_directory(sago::getDataHome() + "/Focus");
-    create_directory(sago::getCacheDir() + "/Focus");
-    create_directory(sago::getConfigHome() + "/Focus");
+    create_directories(sago::getDataHome() + "/Focus/");
+    create_directories(sago::getCacheDir() + "/Focus/");
+    create_directories(sago::getConfigHome() + "/Focus/");
 
     auto console = spdlog::stdout_color_mt("console");
     std::vector<spdlog::sink_ptr> sinks;
