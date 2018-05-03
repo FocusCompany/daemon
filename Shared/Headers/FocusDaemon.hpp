@@ -23,6 +23,8 @@ private:
     std::string _device_id = "";
 public:
     bool Run(const std::string &configFileName, std::atomic<bool> &sigReceived);
+
+    static void bootstrap(std::string const& platform_name);
 };
 
 #endif //FOCUS_CLIENT_FOCUSDAEMON_HPP

@@ -30,17 +30,7 @@ int main(const int ac, const char **av) {
     signal(SIGKILL, &exitProgram);
     sigReceived = false;
 
-    auto console = spdlog::stdout_color_mt("console");
-    std::vector<spdlog::sink_ptr> sinks;
-    sinks.push_back(std::make_shared<spdlog::sinks::stdout_sink_mt>());
-    sinks.push_back(std::make_shared<spdlog::sinks::rotating_file_sink_mt>(sago::getDataHome() + "/Focus/logs.txt", 1048576 * 5, 3));
-    auto combined_logger = std::make_shared<spdlog::logger>("logger", begin(sinks), end(sinks));
-    spdlog::register_logger(combined_logger);
-
-    spdlog::set_pattern("\t*****  %v  *****");
-    spdlog::get("logger")->info("Starting Focus daemon on MacOs Platform");
-    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [thread %t] [%l]\t\t: %v");
-
+    FocusDaemon::bootstrap("macOS");
     FocusDaemon daemon;
     if (daemon.Run("daemon.config", sigReceived)) {
         std::unique_lock<std::mutex> lck(mtx);
