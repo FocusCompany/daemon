@@ -13,6 +13,7 @@
 
 void ContextAgent::Run(std::atomic<bool> &sigReceived) {
     _sigReceived = sigReceived.load();
+    _isRunning = true;
     _eventListener = std::make_unique<std::thread>(std::bind(&ContextAgent::EventListener, this));
 }
 
@@ -54,10 +55,12 @@ void ContextAgent::OnContextChanged(const std::string &processName, const std::s
 }
 
 ContextAgent::~ContextAgent() {
-    _isRunning = false;
-    _eventListener->join();
+    if (_isRunning) {
+        _isRunning = false;
+        _eventListener->join();
+    }
 }
 
 ContextAgent::ContextAgent() {
-    _isRunning = true;
+    _isRunning = false;
 }

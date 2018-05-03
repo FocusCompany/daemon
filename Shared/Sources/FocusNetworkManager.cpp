@@ -10,13 +10,15 @@
 #include <spdlog/spdlog.h>
 
 FocusNetworkManager::FocusNetworkManager() {
-    _isRunning = true;
+    _isRunning = false;
     _socket = std::static_pointer_cast<FocusSocket>(std::make_shared<FocusSecureSocket<Client>>("rq:rM>}U?@Lns47E1%kR.o@n%FcmmsL/@{H8]yf7", "Yne@$w-vo<fVvi]a<NY6T1ed:M$fCG*[IaLV{hID", "D:)Q[IlAW!ahhC2ac:9*A}h:p?([4%wOTJ%JR%cs"));
 }
 
 FocusNetworkManager::~FocusNetworkManager() {
-    _isRunning = false;
-    _networkManagerThread->join();
+    if (_isRunning) {
+        _isRunning = false;
+        _networkManagerThread->join();
+    }
     _socket->Disconnect();
 }
 
@@ -32,6 +34,7 @@ void FocusNetworkManager::Run(const std::string &device_id, std::shared_ptr<Focu
 
     _socket->Connect(urlStr);
 
+    _isRunning = true;
     _networkManagerThread = std::make_unique<std::thread>(std::bind(&FocusNetworkManager::RunReceive, this));
 
     _eventListener->RegisterEnvelope("FocusNetworkManager", [this](Focus::Envelope &envelope) {

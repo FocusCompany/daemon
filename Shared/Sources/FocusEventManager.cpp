@@ -6,7 +6,7 @@
 #include <iostream>
 
 FocusEventManager::FocusEventManager() {
-    _isRunning = true;
+    _isRunning = false;
     _socketPUB = std::make_unique<zmq::socket_t>(*FocusSocket::Context, ZMQ_PUB);
     _socketSUB = std::make_unique<zmq::socket_t>(*FocusSocket::Context, ZMQ_SUB);
     int _socketTimeout = 1000; //milliseconds
@@ -18,6 +18,7 @@ void FocusEventManager::Run(std::atomic<bool> &sigReceived) {
     _socketSUB->bind("inproc:///tmp/EventListener");
     _socketSUB->setsockopt(ZMQ_SUBSCRIBE, "", 0);
     _sigReceived = sigReceived.load();
+    _isRunning = true;
     _eventManagerThread = std::make_unique<std::thread>(std::bind(&FocusEventManager::RunReceive, this));
 }
 
@@ -31,8 +32,10 @@ void FocusEventManager::RunReceive() const {
 }
 
 FocusEventManager::~FocusEventManager() {
-    _isRunning = false;
-    _eventManagerThread->join();
+    if (_isRunning) {
+        _isRunning = false;
+        _eventManagerThread->join();
+    }
     _socketSUB->close();
     _socketPUB->close();
 }
