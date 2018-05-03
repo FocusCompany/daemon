@@ -10,6 +10,7 @@
 #include "FocusContextEventPayload.pb.h"
 #include <spdlog/spdlog.h>
 #include <array>
+#include <mach-o/dyld.h>
 
 void ContextAgent::Run(std::atomic<bool> &sigReceived) {
     _sigReceived = sigReceived.load();
@@ -18,13 +19,28 @@ void ContextAgent::Run(std::atomic<bool> &sigReceived) {
 }
 
 void ContextAgent::EventListener() {
-    std::string cmd = "osascript ./printAppTitle.scpt";
+    std::string path(PAGE_SIZE, '\0');
+    uint32_t size = static_cast<uint32_t>(path.size());
+    if (_NSGetExecutablePath(path.begin().base(), &size) != 0) {
+        spdlog::get("logger")->critical("Unable to locate Bundle location. Aborting.");
+        std::exit(1);
+    }
+    path = path.substr(0, path.find_last_of('/') + 1);
+    spdlog::get("logger")->critical("Successfully located Bundle at {0}", path);
+
+
+    std::string cmd = "osascript " + path + "printAppTitle.scpt";
     std::string oldProcessName;
     std::string oldWindowsTitle;
     while (_isRunning && !_sigReceived) {
         std::array<char, 256> buffer{};
         std::string result;
-        std::shared_ptr<FILE> pipe(popen(cmd.c_str(), "r"), pclose);
+        auto process = popen(cmd.c_str(), "r");
+        if (process == nullptr) {
+            spdlog::get("logger")->critical("Unable to invoke AppleScript. Aborting.");
+            std::exit(1);
+        }
+        std::shared_ptr<FILE> pipe(process, pclose);
         if (!pipe) {
             spdlog::get("logger")->error("Failed to retrieve current AppName");
         } else {
@@ -41,6 +57,7 @@ void ContextAgent::EventListener() {
             }
         }
         std::this_thread::sleep_for(std::chrono::seconds(2));
+
     }
 }
 
