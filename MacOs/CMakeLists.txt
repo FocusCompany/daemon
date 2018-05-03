@@ -23,12 +23,12 @@ include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ..
 
 add_library(daemon_mac_lib STATIC ${DEAMON_MAC_SOURCE_FILES})
 
-add_executable(daemon_mac MACOSX_BUNDLE ${MAIN_FILES})
+add_executable(daemon_mac ${MAIN_FILES})
 set_target_properties(daemon_mac PROPERTIES OUTPUT_NAME "focus-daemon")
 
 target_link_libraries(daemon_mac daemon_mac_lib daemon_shared_lib ${CARBON_LIBRARY})
 
-add_custom_command(TARGET daemon_mac POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/MacOs/printAppTitle.scpt" "$<TARGET_FILE_DIR:daemon_mac>")
+add_custom_command(TARGET daemon_mac POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/MacOs/printAppTitle.scpt" "$<TARGET_FILE_DIR:daemon_mac>/bin/printAppTitle.scpt")
 
 include_target_dependency_in_target_package(daemon_shared_lib daemon_mac)
 
@@ -49,9 +49,17 @@ ENDIF ()
 # Because we generate a DMG/.app archive, the files that need to be included are declared via the TARGET attribute of
 # daemon_mac.
 # This is why we don't install printAppTitle.scpt because CPack will include it inside the .app as expected.
-install(TARGETS daemon_mac DESTINATION .)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/BUILD/lib DESTINATION .)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/BUILD/bin DESTINATION .)
+install(TARGETS daemon_mac DESTINATION ./bin)
 
 ####PACKAGE####
 
-set(CPACK_GENERATOR "DragNDrop") # Setup package version
+set(CPACK_BUNDLE_NAME "Focus")
+set(CPACK_PACKAGE_FILE_NAME "Focus-${VERSION}-Darwin")
+set(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/assets/icon_daemon.png")
+set(CPACK_BUNDLE_ICON "${PROJECT_SOURCE_DIR}/assets/icon_daemon.png")
+set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Info.plist")
+set(CPACK_BUNDLE_STARTUP_COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/start-daemon-osx.sh")
+set(CPACK_GENERATOR "Bundle") # Setup package version
 include (CPack)

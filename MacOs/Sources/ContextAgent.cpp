@@ -19,7 +19,7 @@ void ContextAgent::Run(std::atomic<bool> &sigReceived) {
 }
 
 void ContextAgent::EventListener() {
-    std::string cmd = "osascript " + _appleScriptLocation;
+    std::string cmd = "osascript \"" + _appleScriptLocation + "\"";
     std::string oldProcessName;
     std::string oldWindowsTitle;
     while (_isRunning && !_sigReceived) {
