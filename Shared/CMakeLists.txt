@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.8)
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(OPENSSL_USE_STATIC_LIBS TRUE)
 include(FindOpenSSL)
 find_package(OpenSSL REQUIRED)
 
@@ -47,7 +46,7 @@ set(DEAMON_SHARED_SOURCE_FILES
         Interfaces/IAfkListener.hpp
         )
 
-include_directories(Headers Interfaces ${Protobuf_INCLUDE_DIRS} Proto/ProtoCompiled ${ZeroMQ_INCLUDE_DIR})
+include_directories(Headers Interfaces ${OPENSSL_INCLUDE_DIR} ${JWTCPP_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ${ZeroMQ_INCLUDE_DIR})
 
 IF (MSVC)
     include_directories(../Windows/Headers)
@@ -57,9 +56,9 @@ ELSEIF (UNIX)
     include_directories(../Linux/Headers)
 ENDIF ()
 
-add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER})
+add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER} ${OPENSSL_INCLUDE_DIR})
 
-target_link_libraries(daemon_shared_lib OpenSSL::Crypto ${JWTCPP_LIBRARIES} ${ZeroMQ_LIBRARIES} ${Protobuf_LIBRARIES})
+target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
 
 IF (MSVC)
     target_link_libraries(daemon_shared_lib wsock32 ws2_32)
