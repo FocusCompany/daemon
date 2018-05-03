@@ -62,10 +62,6 @@ add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} 
 
 target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
 
-add_custom_command(TARGET daemon_shared_lib POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/keys/" "$<TARGET_FILE_DIR:daemon_shared_lib>/keys")
-add_custom_command(TARGET daemon_shared_lib POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/logs/" "$<TARGET_FILE_DIR:daemon_shared_lib>/logs")
-add_custom_command(TARGET daemon_shared_lib POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/daemon.config" "$<TARGET_FILE_DIR:daemon_shared_lib>")
-
 IF (MSVC)
     target_link_libraries(daemon_shared_lib wsock32 ws2_32)
 	add_custom_command(TARGET daemon_shared_lib POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory "C:/Program Files/Focus/zmq/bin" "$<TARGET_FILE_DIR:daemon_shared_lib>")

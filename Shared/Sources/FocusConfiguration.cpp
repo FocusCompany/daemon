@@ -9,10 +9,6 @@
 #include "lightconf/lightconf.hpp"
 #include "lightconf/config_format.hpp"
 
-#ifdef MSVC
-#include <Winsock2.h>
-#endif
-
 namespace lightconf {
     LIGHTCONF_BEGIN_ENUM(serverType)
                     LIGHTCONF_ENUM_VALUE(serverType::AUTHENTICATION, "AUTHENTICATION")
@@ -20,11 +16,15 @@ namespace lightconf {
     LIGHTCONF_END_ENUM()
 
     LIGHTCONF_BEGIN_TYPE(user)
-        LIGHTCONF_TYPE_MEMBER_OPT(std::string, _first_name, "first_name", "foo")
-        LIGHTCONF_TYPE_MEMBER_OPT(std::string, _last_name, "last_name", "bar")
         LIGHTCONF_TYPE_MEMBER_REQ(std::string, _email, "email")
         LIGHTCONF_TYPE_MEMBER_REQ(std::string, _password, "password")
     LIGHTCONF_END_TYPE()
+
+    LIGHTCONF_BEGIN_TYPE(device)
+        LIGHTCONF_TYPE_MEMBER_REQ(std::string, _id, "id_device")
+        LIGHTCONF_TYPE_MEMBER_REQ(std::string, _name, "device_name")
+    LIGHTCONF_END_TYPE()
+
 
     LIGHTCONF_BEGIN_TYPE(server)
         LIGHTCONF_TYPE_MEMBER_REQ(std::string, _ip, "ip")
@@ -62,10 +62,10 @@ struct server FocusConfiguration::getServer(const serverType type) const {
 
 void FocusConfiguration::setDeviceId(const std::string &deviceId) {
     if (_filled && !_source.empty()) {
-        _deviceId = deviceId;
+        _device._id = deviceId;
         lightconf::group config;
         config = lightconf::config_format::read(_source);
-        config.set<std::string>("id_device", deviceId);
+        config.set<device>("device", _device);
         std::ofstream stream(_configFile, std::ios::out);
         if (stream) {
             stream << lightconf::config_format::write(config, _source, 80);
@@ -74,8 +74,8 @@ void FocusConfiguration::setDeviceId(const std::string &deviceId) {
     }
 }
 
-std::string FocusConfiguration::getDeviceId() const {
-    return _deviceId;
+struct device FocusConfiguration::getDevice() const {
+    return _device;
 }
 
 std::string FocusConfiguration::getTriggerAfk() const {
@@ -110,8 +110,6 @@ void FocusConfiguration::generateConfigurationFile(const std::string &configFile
     try {
         config = lightconf::config_format::read(_source);
         config.set<user>("user", user {
-                askStdin("First name"),
-                askStdin("Last name"),
                 askStdin("Email"),
                 askStdin("Password")
         });
@@ -121,11 +119,11 @@ void FocusConfiguration::generateConfigurationFile(const std::string &configFile
                 "backend.thefocuscompany.me", 5555, serverType::BACKEND
         }});
         config.set<std::string>("trigger_afk", "300");
-        config.set<std::string>("id_device", "");
 
-        char host[512];
-        gethostname(host, sizeof(host));
-        config.set<std::string>("device_name", host);
+        config.set<device>("device", device {
+                "",
+                askStdin("Device Name")
+        });
 
         std::ofstream stream(configFile, std::ios::out);
         if (stream) {
@@ -155,10 +153,9 @@ void FocusConfiguration::readConfiguration(const std::string &configFile, int at
                                   std::istreambuf_iterator<char>());
             config = lightconf::config_format::read(_source);
             _userInfo = config.get<user>("user");
+            _device = config.get<device>("device");
             _triggerAfk = config.get<std::string>("trigger_afk", "300");
-            _deviceId = config.get<std::string>("id_device", "");
             _serversInfo = config.get<std::vector<server>>("servers", {});
-            _deviceName = config.get<std::string>("device_name", "");
             _filled = true;
             spdlog::get("logger")->info("Reading configuration file successfully");
             return;
@@ -176,8 +173,4 @@ void FocusConfiguration::readConfiguration(const std::string &configFile, int at
         spdlog::get("logger")->error("Failed to read configuration file");
     }
     readConfiguration(configFile, attempt++);
-}
-
-const std::string &FocusConfiguration::getDeviceName() const {
-    return _deviceName;
 }

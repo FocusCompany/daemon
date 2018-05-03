@@ -17,6 +17,7 @@ void AfkListener::Run(int triggerAfkInSecond, std::atomic<bool> &sigReceived) {
         spdlog::get("logger")->error("Failed to connect to X Server");
     }
     if (_display != nullptr) {
+        _isRunning = true;
         _eventListener = std::make_unique<std::thread>(std::bind(&AfkListener::EventListener, this));
     }
 }
@@ -60,11 +61,15 @@ void AfkListener::OnAfk(const std::chrono::milliseconds &timeSinceEpoch) const {
 }
 
 AfkListener::~AfkListener() {
-    _isRunning = false;
-    _eventListener->join();
-    XCloseDisplay(_display);
+    if (_isRunning) {
+        _isRunning = false;
+        _eventListener->join();
+    }
+    if (_display == nullptr) {
+        XCloseDisplay(_display);
+    }
 }
 
 AfkListener::AfkListener() {
-    _isRunning = true;
+    _isRunning = false;
 }

@@ -8,16 +8,19 @@
 
 
 ContextAgent::ContextAgent() {
-	_isRunning = true;
+	_isRunning = false;
 }
 
 ContextAgent::~ContextAgent() {
-	_isRunning = false;
-	_eventListener->join();
+	if (_isRunning) {
+		_isRunning = false;
+		_eventListener->join();
+	}
 }
 
 void ContextAgent::Run(std::atomic<bool> &sigReceived) {
 	_sigReceived = sigReceived.load();
+	_isRunning = true;
 	_eventListener = std::make_unique<std::thread>(std::bind(&ContextAgent::EventListener, this));
 }
 
@@ -36,7 +39,6 @@ void ContextAgent::EventListener() {
 		GetWindowText(hwnd, tmp, 0xFF);
 		std::string windowsTitle = std::string(tmp);
 		if (oldProcessName != processName || oldWindowsTitle != windowsTitle) {
-			std::cout << "Process Name: " << processName << " Window Name: " << windowsTitle << std::endl;
 			oldProcessName = processName;
 			oldWindowsTitle = windowsTitle;
 			OnContextChanged(processName, windowsTitle);

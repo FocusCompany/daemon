@@ -88,6 +88,7 @@ void ContextAgent::Run(std::atomic<bool> &sigReceived) {
         spdlog::get("logger")->error("Failed to connect to X Server");
     }
     if (_display != nullptr) {
+        _isRunning = true;
         _eventListener = std::make_unique<std::thread>(std::bind(&ContextAgent::EventListener, this));
     }
 }
@@ -122,11 +123,15 @@ void ContextAgent::OnContextChanged(const std::string &processName, const std::s
 }
 
 ContextAgent::~ContextAgent() {
-    _isRunning = false;
-    _eventListener->join();
-    XCloseDisplay(_display);
+    if (_isRunning) {
+        _isRunning = false;
+        _eventListener->join();
+    }
+    if (_display == nullptr) {
+        XCloseDisplay(_display);
+    }
 }
 
 ContextAgent::ContextAgent() {
-    _isRunning = true;
+    _isRunning = false;
 }

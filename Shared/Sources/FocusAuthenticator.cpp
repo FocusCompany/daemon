@@ -27,20 +27,14 @@ bool FocusAuthenticator::GetConnectionStatus() const {
 
 std::string FocusAuthenticator::GetToken() {
     ExpValidator exp;
-    std::ifstream rsa_pub_file("keys/public_key");
-    if (!rsa_pub_file.is_open()) {
-        spdlog::get("logger")->error("Can not find rsa public key to verify the token signature");
-    } else {
-        std::string rsa_pub_key{std::istreambuf_iterator<char>(rsa_pub_file), std::istreambuf_iterator<char>()};
-        RS256Validator signer(rsa_pub_key);
-        try {
-            nlohmann::json header, payload;
-            std::tie(header, payload) = JWT::Decode(_token, &signer, &exp);
-            spdlog::get("logger")->info("Token is valid");
-        } catch (InvalidTokenError &tfe) {
-            spdlog::get("logger")->error("Renewing token");
-            RenewToken();
-        }
+    RS256Validator signer(_rsa_pub_key);
+    try {
+        nlohmann::json header, payload;
+        std::tie(header, payload) = JWT::Decode(_token, &signer, &exp);
+        spdlog::get("logger")->info("Token is valid");
+    } catch (InvalidTokenError &tfe) {
+        spdlog::get("logger")->error("Renewing token");
+        RenewToken();
     }
     return _token;
 }
@@ -63,33 +57,30 @@ bool FocusAuthenticator::Login(const std::string &email, const std::string &pass
         auto j = nlohmann::json::parse(res->body);
         if (j.find("token") != j.end()) {
             ExpValidator exp;
-            std::ifstream rsa_pub_file("keys/public_key");
-            if (!rsa_pub_file.is_open()) {
-                spdlog::get("logger")->error("Can not find rsa public key to verify the token signature");
-            } else {
-                std::string rsa_pub_key{std::istreambuf_iterator<char>(rsa_pub_file), std::istreambuf_iterator<char>()};
-                RS256Validator signer(rsa_pub_key);
-                try {
-                    nlohmann::json header, payload;
-                    std::tie(header, payload) = JWT::Decode(j["token"], &signer, &exp);
-                    auto pl = nlohmann::json::parse(payload.dump());
-                    if (pl.find("uuid") != pl.end()) {
-                        if (pl.find("device_id") != pl.end()) {
-                            _deviceId = std::to_string(static_cast<int>(pl["device_id"]));
-                        }
-                        _uuid = pl["uuid"];
-                        _token = j["token"];
-                        _connected = true;
-                        spdlog::get("logger")->info("Successfully connected");
-                        return true;
+            RS256Validator signer(_rsa_pub_key);
+            try {
+                nlohmann::json header, payload;
+                std::tie(header, payload) = JWT::Decode(j["token"], &signer, &exp);
+                auto pl = nlohmann::json::parse(payload.dump());
+                if (pl.find("uuid") != pl.end()) {
+                    if (pl.find("device_id") != pl.end()) {
+                        _deviceId = std::to_string(static_cast<int>(pl["device_id"]));
                     }
-                } catch (InvalidTokenError &tfe) {
-                    spdlog::get("logger")->error("Invalid token");
-                    _connected = false;
-                    return false;
+                    _uuid = pl["uuid"];
+                    _token = j["token"];
+                    _connected = true;
+                    spdlog::get("logger")->info("Successfully connected");
+                    return true;
                 }
+            } catch (InvalidTokenError &tfe) {
+                spdlog::get("logger")->error("Invalid token");
+                _connected = false;
+                return false;
             }
+
         }
+    } else {
+        spdlog::get("logger")->error("Authentication failed");
     }
     _connected = false;
     return false;
@@ -114,6 +105,8 @@ bool FocusAuthenticator::RegisterDevice(const std::string &name) {
             spdlog::get("logger")->info("Device successfully registered");
             return true;
         }
+    } else {
+        spdlog::get("logger")->error("Registration failed");
     }
     return false;
 }
@@ -131,33 +124,30 @@ bool FocusAuthenticator::RenewToken() {
         auto j = nlohmann::json::parse(res->body);
         if (j.find("token") != j.end()) {
             ExpValidator exp;
-            std::ifstream rsa_pub_file("keys/public_key");
-            if (!rsa_pub_file.is_open()) {
-                spdlog::get("logger")->error("Can not find rsa public key to verify the token signature");
-            } else {
-                std::string rsa_pub_key{std::istreambuf_iterator<char>(rsa_pub_file), std::istreambuf_iterator<char>()};
-                RS256Validator signer(rsa_pub_key);
-                try {
-                    nlohmann::json header, payload;
-                    std::tie(header, payload) = JWT::Decode(j["token"], &signer, &exp);
-                    auto pl = nlohmann::json::parse(payload.dump());
-                    if (pl.find("uuid") != pl.end()) {
-                        if (pl.find("device_id") != pl.end()) {
-                            _deviceId = std::to_string(static_cast<int>(pl["device_id"]));
-                        }
-                        _uuid = pl["uuid"];
-                        _token = j["token"];
-                        _connected = true;
-                        spdlog::get("logger")->info("Token successfully renewed");
-                        return true;
+            RS256Validator signer(_rsa_pub_key);
+            try {
+                nlohmann::json header, payload;
+                std::tie(header, payload) = JWT::Decode(j["token"], &signer, &exp);
+                auto pl = nlohmann::json::parse(payload.dump());
+                if (pl.find("uuid") != pl.end()) {
+                    if (pl.find("device_id") != pl.end()) {
+                        _deviceId = std::to_string(static_cast<int>(pl["device_id"]));
                     }
-                } catch (InvalidTokenError &tfe) {
-                    spdlog::get("logger")->error("Invalid token signature");
-                    _connected = false;
-                    return false;
+                    _uuid = pl["uuid"];
+                    _token = j["token"];
+                    _connected = true;
+                    spdlog::get("logger")->info("Token successfully renewed");
+                    return true;
                 }
+            } catch (InvalidTokenError &tfe) {
+                spdlog::get("logger")->error("Invalid token signature");
+                _connected = false;
+                return false;
             }
+
         }
+    } else {
+        spdlog::get("logger")->error("Renewing token failed");
     }
     _connected = false;
     return false;
@@ -179,6 +169,8 @@ bool FocusAuthenticator::Disconnect() {
         _connected = false;
         spdlog::get("logger")->info("Successfully disconnected");
         return true;
+    } else {
+        spdlog::get("logger")->error("Disconnection failed");
     }
     return false;
 }

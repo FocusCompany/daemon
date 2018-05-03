@@ -22,7 +22,7 @@ private:
     std::unique_ptr<FocusEventManager> EventManager = std::make_unique<FocusEventManager>();
     std::string _device_id = "";
 public:
-    void Run(const std::string &configFileName, std::atomic<bool> &sigReceived);
+    bool Run(const std::string &configFileName, std::atomic<bool> &sigReceived);
 };
 
 #endif //FOCUS_CLIENT_FOCUSDAEMON_HPP
