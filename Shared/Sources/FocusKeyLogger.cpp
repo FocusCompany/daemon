@@ -26,7 +26,8 @@ void FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator, std
 
 void FocusKeyLogger::AddEvent(const Focus::Event &ev) {
     _events.push_back(ev);
-    spdlog::get("console")->info("Adding new event to cache");
+    spdlog::get("console")->info("Adding new event of type {0} to cache", ev.payloadtype());
+    spdlog::get("logger")->flush();
     if (_events.size() > 5) {
         Focus::Envelope envelope;
 

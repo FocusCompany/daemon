@@ -6,6 +6,7 @@
 #include "FocusDaemon.hpp"
 #include <condition_variable>
 #include <FocusPlatformFolders.hpp>
+#include <ApplicationServices/ApplicationServices.h>
 
 std::mutex mtx;
 std::condition_variable cv;
@@ -25,6 +26,8 @@ int main(const int ac, const char **av) {
     signal(SIGABRT, &exitProgram);
     signal(SIGTERM, &exitProgram);
     signal(SIGINT, &exitProgram);
+    signal(SIGQUIT, &exitProgram);
+    signal(SIGKILL, &exitProgram);
     sigReceived = false;
 
     auto console = spdlog::stdout_color_mt("console");
