@@ -93,7 +93,7 @@ void FocusConfiguration::setTriggerAfk(const std::string &triggerAfk) {
 }
 
 void FocusConfiguration::generateConfigurationFile(const std::string &configFile) {
-    auto askStdin = [] (std::string_view const &value) {
+    auto askStdin = [] (std::string const &value) {
         std::string in;
         std::cout << value << ": ";
         std::cin >> in;
