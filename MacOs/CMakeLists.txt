@@ -32,6 +32,8 @@ target_link_libraries(daemon_mac daemon_mac_lib daemon_shared_lib ${CARBON_LIBRA
 
 add_custom_command(TARGET daemon_mac POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/MacOs/printAppTitle.scpt" "$<TARGET_FILE_DIR:daemon_mac>")
 
+include_target_dependency_in_target_package(daemon_shared_lib daemon_mac)
+
 ####TESTS####
 
 add_subdirectory(UnitTests)
