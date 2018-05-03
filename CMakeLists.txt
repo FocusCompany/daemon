@@ -1,6 +1,15 @@
 cmake_minimum_required(VERSION 2.6)
 
 project(daemon)
+include(cmake/git.cmake)
+include(cmake/ucm.cmake)
+include(cmake/dependency.cmake)
+
+### Set global build version
+get_git_last_commit_infos(GIT_SHA1 GIT_SHA1_ABBR GIT_DATE GIT_DESC)
+set(VERSION "${GIT_DATE}@${GIT_SHA1_ABBR}")
+message("Current version of Focus is: ${VERSION}")
+add_definitions(-DFOCUS_VERSION="${VERSION}" -DFOCUS_GIT_HASH="${GIT_SHA1_ABBR}" -DFOCUS_GIT_DATE="${GIT_DATE}")
 
 ### Set Cmake to compile with CPP 14
 set (CMAKE_CXX_STANDARD 14)
@@ -12,8 +21,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/BUILD)
 
 ### Add useful cmake macros that help with compiler/linker flags especially in VS2017
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
-include(cmake/ucm.cmake)
-include(cmake/dependency.cmake)
 ucm_set_runtime(STATIC)
 
 ### Turn on the ability to create folders to organize projects under VS2017

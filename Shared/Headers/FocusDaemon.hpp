@@ -14,6 +14,9 @@
 #include "FocusConfiguration.hpp"
 
 class FocusDaemon {
+public:
+    static constexpr auto version = FOCUS_VERSION;
+
 private:
     std::shared_ptr<FocusAuthenticator> Authenticator = std::make_shared<FocusAuthenticator>();
     std::shared_ptr<FocusConfiguration> _config;

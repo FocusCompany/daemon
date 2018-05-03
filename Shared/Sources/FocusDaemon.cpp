@@ -61,6 +61,6 @@ void FocusDaemon::bootstrap(std::string const &platform_name) {
     spdlog::register_logger(combined_logger);
 
     spdlog::set_pattern("\t*****  %v  *****");
-    spdlog::get("logger")->info("Starting Focus daemon on {0} Platform", platform_name);
+    spdlog::get("logger")->info("Starting Focus daemon (ver. {1}) on {0} Platform", platform_name, std::string(FocusDaemon::version));
     spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [thread %t] [%l]\t\t: %v");
 }
