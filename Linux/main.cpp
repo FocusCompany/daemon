@@ -25,6 +25,8 @@ int main() {
     signal(SIGABRT, &exitProgram);
     signal(SIGTERM, &exitProgram);
     signal(SIGINT, &exitProgram);
+    signal(SIGQUIT, &exitProgram);
+    signal(SIGKILL, &exitProgram);
     sigReceived = false;
 
     FocusDaemon::bootstrap("Linux");

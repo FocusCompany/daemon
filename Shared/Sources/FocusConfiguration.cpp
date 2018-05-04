@@ -2,9 +2,6 @@
 // Created by Etienne Pasteur on 27/03/2018.
 //
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Weffc++"
-
 #include <iostream>
 #include <fstream>
 #include <spdlog/spdlog.h>
@@ -36,13 +33,15 @@ namespace lightconf {
     LIGHTCONF_END_TYPE()
 }
 
-FocusConfiguration::FocusConfiguration(const std::string &configFile) {
-    _defaultServer._ip = "127.0.0.1";
-    _defaultServer._port = 4242;
-    _defaultServer._type = serverType::DEFAULT;
-
-    _configFile = configFile;
-
+FocusConfiguration::FocusConfiguration(const std::string &configFile) :
+        _userInfo(),
+        _device(),
+        _triggerAfk(),
+        _serversInfo(),
+        _filled(false),
+        _defaultServer({std::string("127.0.0.1"), 4242, serverType::DEFAULT}),
+        _configFile(configFile),
+        _source() {
     readConfiguration(_configFile, 0);
 }
 
@@ -55,7 +54,8 @@ struct user FocusConfiguration::getUser() const {
 }
 
 struct server FocusConfiguration::getServer(const serverType type) const {
-    auto it = std::find_if(_serversInfo.begin(), _serversInfo.end(), [type](const server &srv) { return srv._type == type; });
+    auto it = std::find_if(_serversInfo.begin(), _serversInfo.end(),
+                           [type](const server &srv) { return srv._type == type; });
     if (it != _serversInfo.end())
         return (*it);
     else {
@@ -100,7 +100,7 @@ void FocusConfiguration::setTriggerAfk(const std::string &triggerAfk) {
 }
 
 void FocusConfiguration::generateConfigurationFile(const std::string &configFile) {
-    auto askStdin = [] (std::string const &value) {
+    auto askStdin = [](std::string const &value) {
         std::string in;
         std::cout << value << ": ";
         std::getline(std::cin, in);
@@ -116,7 +116,7 @@ void FocusConfiguration::generateConfigurationFile(const std::string &configFile
                 askStdin("Email"),
                 askStdin("Password")
         });
-        config.set<std::vector<server>>("servers", { server {
+        config.set<std::vector<server>>("servers", {server {
                 "auth.thefocuscompany.me", 3000, serverType::AUTHENTICATION
         }, server {
                 "backend.thefocuscompany.me", 5555, serverType::BACKEND
@@ -178,5 +178,3 @@ void FocusConfiguration::readConfiguration(const std::string &configFile, int at
     }
     readConfiguration(configFile, ++attempt);
 }
-
-#pragma GCC diagnostic pop
