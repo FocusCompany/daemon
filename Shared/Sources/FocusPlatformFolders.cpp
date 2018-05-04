@@ -79,6 +79,9 @@ static std::string GetAppDataLocal() {
 #elif defined(__APPLE__)
 #include <CoreServices/CoreServices.h>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 static std::string GetMacFolder(OSType folderType, const char* errorMsg) {
 	std::string ret;
 	FSRef ref;
@@ -91,6 +94,8 @@ static std::string GetMacFolder(OSType folderType, const char* errorMsg) {
 	ret = path;
 	return ret;
 }
+
+#pragma GCC diagnostic pop
 
 #else
 #include <map>
@@ -208,6 +213,9 @@ namespace sago {
 #endif
     }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
     void appendAdditionalDataDirectories(std::vector<std::string>& homes) {
 #if defined(_WIN32)
         homes.push_back(GetAppDataCommon());
@@ -225,6 +233,9 @@ namespace sago {
         appendExtraFolders("XDG_CONFIG_DIRS", "/etc/xdg", homes);
 #endif
     }
+
+#pragma GCC diagnostic pop
+
 
 #if defined(_WIN32)
 #elif defined(__APPLE__)
