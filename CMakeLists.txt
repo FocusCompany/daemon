@@ -13,7 +13,6 @@ add_definitions(-DFOCUS_VERSION="${VERSION}" -DFOCUS_GIT_HASH="${GIT_SHA1_ABBR}"
 
 ### Set Cmake to compile with CPP 14
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wuninitialized -Winit-self -Weffc++")
 
 ### Output everything inside of a BUILD directory to avoir issue with library linking.
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/BUILD)
@@ -39,9 +38,11 @@ elseif(APPLE)
     add_definitions(-DAPPLE)
     set(CMAKE_INCLUDE_PATH "/usr/local/opt/openssl@1.1/include")
     set(CMAKE_LIBRARY_PATH "/usr/local/opt/openssl@1.1/lib")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wuninitialized -Winit-self -Weffc++")
 elseif(UNIX)
     add_definitions(-DUNIX)
     add_definitions(-DWNCK_I_KNOW_THIS_IS_UNSTABLE)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wuninitialized -Winit-self -Weffc++")
 endif()
 
 ### Adding GoogleTest for unit testing and enable testing for ctest command.
