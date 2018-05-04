@@ -45,10 +45,7 @@ ENDIF ()
 
 ####INSTALL####
 
-# On OSX, the install process is mixed with the PACKAGE step handled by CPack.
-# Because we generate a DMG/.app archive, the files that need to be included are declared via the TARGET attribute of
-# daemon_mac.
-# This is why we don't install printAppTitle.scpt because CPack will include it inside the .app as expected.
+### On OSX, we need to copy dependencies to the bundle
 install(DIRECTORY ${CMAKE_BINARY_DIR}/BUILD/lib DESTINATION .)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/BUILD/bin DESTINATION .)
 install(TARGETS daemon_mac DESTINATION ./bin)
