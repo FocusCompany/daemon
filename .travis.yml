@@ -5,11 +5,12 @@ matrix:
     sudo: required
     compiler: gcc
     before_deploy:
+    - git pull --tags
     - export TAG="$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)"
     - echo "Tagging release with tag ${TAG}"
     - git config --local user.name "`git log -1 --format=%an`"
     - git config --local user.email "`git log -1 --format=%ae`"
-    - if [[ git rev-parse $1 >/dev/null 2>&1 ]]; then echo "Tag §{TAG} exist, skipping"; else git tag ${TAG} fi
+    - if git rev-parse ${TAG} >/dev/null 2>&1; then echo "Tag §{TAG} exist, skipping tagging"; else git tag ${TAG}; fi
     - export RELEASE_RPM_FILE=$(ls $HOME/build/FocusCompany/daemon/build/*.rpm)
     - export RELEASE_DEB_FILE=$(ls $HOME/build/FocusCompany/daemon/build/*.deb)
     - echo "deploying $RELEASE_RPM_FILE and $$RELEASE_DEB_FILE to GitHub releases"
@@ -54,11 +55,12 @@ matrix:
     env:
     - MATRIX_EVAL="brew install openssl@1.1 && brew install zmq"
     before_deploy:
+    - git pull --tags
     - export TAG="$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)"
     - echo "Tagging release with tag ${TAG}"
     - git config --local user.name "`git log -1 --format=%an`"
     - git config --local user.email "`git log -1 --format=%ae`"
-    - if [[ git rev-parse $1 >/dev/null 2>&1 ]]; then echo "Tag §{TAG} exist, skipping"; else git tag ${TAG} fi
+    - if git rev-parse ${TAG} >/dev/null 2>&1; then echo "Tag §{TAG} exist, skipping tagging"; else git tag ${TAG}; fi
     - export RELEASE_DMG_FILE=$(ls $HOME/build/FocusCompany/daemon/build/*.dmg)
     - echo "deploying $RELEASE_DMG_FILE to GitHub releases"
     deploy:
