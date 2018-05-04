@@ -12,7 +12,7 @@ void AfkListener::Run(int triggerAfkInSecond, std::atomic<bool> &sigReceived) {
     _triggerAfkInSecond = triggerAfkInSecond;
     _sigReceived = sigReceived.load();
     setlocale(LC_ALL, "");
-    _display = std::unique_ptr<Display, std::function<void(Display *)>>(XOpenDisplay(nullptr), [](Display *ptr) {
+    _display = std::unique_ptr<Display, std::function<void(Display * )>>(XOpenDisplay(nullptr), [](Display *ptr) {
         if (ptr != nullptr) {
             XCloseDisplay(ptr);
         }
@@ -39,10 +39,8 @@ void AfkListener::EventListener() {
         } else {
             if (!afk) {
                 spdlog::get("console")->info("AFK since {} seconds", _triggerAfkInSecond);
-                auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
-                        std::chrono::system_clock::now().time_since_epoch());
-                OnAfk(now -
-                      std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(_triggerAfkInSecond)));
+                auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+                OnAfk(now - std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(_triggerAfkInSecond)));
                 afk = true;
             }
         }

@@ -54,8 +54,7 @@ struct user FocusConfiguration::getUser() const {
 }
 
 struct server FocusConfiguration::getServer(const serverType type) const {
-    auto it = std::find_if(_serversInfo.begin(), _serversInfo.end(),
-                           [type](const server &srv) { return srv._type == type; });
+    auto it = std::find_if(_serversInfo.begin(), _serversInfo.end(), [type](const server &srv) { return srv._type == type; });
     if (it != _serversInfo.end())
         return (*it);
     else {

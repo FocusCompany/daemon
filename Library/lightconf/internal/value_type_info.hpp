@@ -93,7 +93,7 @@ bool value_type_info<tyname>::convert(const value *inval, const tyname *inty, gr
 
 #define LIGHTCONF_END_TYPE() \
     return true; \
-};
+}
 
 
 

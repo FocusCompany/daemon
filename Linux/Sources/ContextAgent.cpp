@@ -83,7 +83,7 @@ std::tuple<std::string, std::string> ContextAgent::getWindowInfo() {
 void ContextAgent::Run(std::atomic<bool> &sigReceived) {
     _sigReceived = sigReceived.load();
     setlocale(LC_ALL, "");
-    _display = std::unique_ptr<Display, std::function<void(Display *)>>(XOpenDisplay(nullptr), [](Display *ptr) {
+    _display = std::unique_ptr<Display, std::function<void(Display * )>>(XOpenDisplay(nullptr), [](Display *ptr) {
         if (ptr != nullptr) {
             XCloseDisplay(ptr);
         }
