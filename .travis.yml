@@ -73,6 +73,9 @@ matrix:
       on:
         repo: FocusCompany/daemon
         branch: hb_install_NIX
+    cache:
+      directories:
+        - $HOME/Library/Caches/Homebrew
 language: cpp
 cache:
   directories:
