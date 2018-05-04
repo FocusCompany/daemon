@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 2.6)
-
-set(CMAKE_CXX_STANDARD 14)
-
 set(DEAMON_WINDOWS_SOURCE_FILES
         Sources/ContextAgent.cpp
         Sources/AfkListener.cpp

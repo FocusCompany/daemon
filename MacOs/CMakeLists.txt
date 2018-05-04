@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 2.6)
-
-set(CMAKE_CXX_STANDARD 14)
-
 find_library(CARBON_LIBRARY Carbon)
 
 set(DEAMON_MAC_SOURCE_FILES
