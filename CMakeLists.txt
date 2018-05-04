@@ -42,7 +42,7 @@ elseif(APPLE)
 elseif(UNIX)
     add_definitions(-DUNIX)
     add_definitions(-DWNCK_I_KNOW_THIS_IS_UNSTABLE)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wuninitialized -Winit-self -Weffc++")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -pedantic -Wuninitialized -Winit-self -Weffc++")
 endif()
 
 ### Adding GoogleTest for unit testing and enable testing for ctest command.
