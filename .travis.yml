@@ -10,7 +10,7 @@ matrix:
     - echo "Tagging release with tag ${TAG}"
     - git config --local user.name "`git log -1 --format=%an`"
     - git config --local user.email "`git log -1 --format=%ae`"
-    - if git rev-parse ${TAG} >/dev/null 2>&1; then echo "Tag §{TAG} exist, skipping tagging"; else git tag ${TAG}; fi
+    - git tag ${TAG}
     - export RELEASE_RPM_FILE=$(ls $HOME/build/FocusCompany/daemon/build/*.rpm)
     - export RELEASE_DEB_FILE=$(ls $HOME/build/FocusCompany/daemon/build/*.deb)
     - echo "deploying $RELEASE_RPM_FILE and $$RELEASE_DEB_FILE to GitHub releases"
@@ -60,7 +60,7 @@ matrix:
     - echo "Tagging release with tag ${TAG}"
     - git config --local user.name "`git log -1 --format=%an`"
     - git config --local user.email "`git log -1 --format=%ae`"
-    - if git rev-parse ${TAG} >/dev/null 2>&1; then echo "Tag §{TAG} exist, skipping tagging"; else git tag ${TAG}; fi
+    - git tag ${TAG}
     - export RELEASE_DMG_FILE=$(ls $HOME/build/FocusCompany/daemon/build/*.dmg)
     - echo "deploying $RELEASE_DMG_FILE to GitHub releases"
     deploy:
