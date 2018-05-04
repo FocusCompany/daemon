@@ -58,6 +58,8 @@ AfkListener::~AfkListener() {
     }
 }
 
-AfkListener::AfkListener() {
-    _isRunning = false;
-}
+AfkListener::AfkListener() : _triggerAfkInSecond(),
+                             _eventListener(),
+                             _isRunning(false),
+                             _sigReceived(false),
+                             _eventEmitter(std::make_unique<FocusEventEmitter>()) {}

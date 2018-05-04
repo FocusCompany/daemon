@@ -14,7 +14,7 @@ private:
     std::unique_ptr<std::thread> _eventListener;
     std::atomic<bool> _isRunning;
     std::atomic<bool> _sigReceived;
-    std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
+    std::unique_ptr<FocusEventEmitter> _eventEmitter;
     std::string _appleScriptLocation;
 
     void EventListener() override final;

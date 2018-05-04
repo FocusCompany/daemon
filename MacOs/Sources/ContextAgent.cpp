@@ -68,7 +68,11 @@ ContextAgent::~ContextAgent() {
     }
 }
 
-ContextAgent::ContextAgent() {
+ContextAgent::ContextAgent() : _eventListener(),
+                               _isRunning(false),
+                               _sigReceived(false),
+                               _eventEmitter(std::make_unique<FocusEventEmitter>()),
+                               _appleScriptLocation() {
     std::string path(PAGE_SIZE, '\0');
     auto size = static_cast<uint32_t>(path.size());
     if (_NSGetExecutablePath(path.begin().base(), &size) != 0) {
@@ -78,5 +82,4 @@ ContextAgent::ContextAgent() {
     path = path.substr(0, path.find_last_of('/') + 1);
     spdlog::get("logger")->info("Successfully located Bundle at {0}", path);
     _appleScriptLocation = path + "printAppTitle.scpt";
-    _isRunning = false;
 }

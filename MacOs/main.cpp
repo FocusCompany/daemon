@@ -11,7 +11,7 @@ std::mutex mtx;
 std::condition_variable cv;
 std::atomic<bool> sigReceived;
 
-void exitProgram(int sig) {
+void exitProgram(__attribute__((__unused__)) int sig) {
     (void)sig;
     sigReceived = true;
     spdlog::set_pattern("\t*****  %v  *****");
