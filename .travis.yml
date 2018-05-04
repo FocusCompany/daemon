@@ -10,7 +10,7 @@ matrix:
     - echo "Tagging release with tag ${TAG}"
     - git config --local user.name "`git log -1 --format=%an`"
     - git config --local user.email "`git log -1 --format=%ae`"
-    - git tag ${TAG}
+    - if git rev-parse ${TAG} >/dev/null 2>&1; then echo "Tag §{TAG} exist, skipping tagging" && TRAVIS_TAG=${TAG}; else git tag ${TAG}; fi
     - export RELEASE_RPM_FILE=$(ls $HOME/build/FocusCompany/daemon/build/*.rpm)
     - export RELEASE_DEB_FILE=$(ls $HOME/build/FocusCompany/daemon/build/*.deb)
     - echo "deploying $RELEASE_RPM_FILE and $$RELEASE_DEB_FILE to GitHub releases"
@@ -50,6 +50,10 @@ matrix:
         - checkinstall
     env:
     - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+    cache:
+      directories:
+        - "$HOME/protobuf"
+        - "$HOME/jwt-cpp"
   - os: osx
     compiler: clang
     env:
@@ -60,7 +64,7 @@ matrix:
     - echo "Tagging release with tag ${TAG}"
     - git config --local user.name "`git log -1 --format=%an`"
     - git config --local user.email "`git log -1 --format=%ae`"
-    - git tag ${TAG}
+    - if git rev-parse ${TAG} >/dev/null 2>&1; then echo "Tag §{TAG} exist, skipping tagging" && TRAVIS_TAG=${TAG}; else git tag ${TAG}; fi
     - export RELEASE_DMG_FILE=$(ls $HOME/build/FocusCompany/daemon/build/*.dmg)
     - echo "deploying $RELEASE_DMG_FILE to GitHub releases"
     deploy:
@@ -76,11 +80,9 @@ matrix:
     cache:
       directories:
         - $HOME/Library/Caches/Homebrew
+        - "$HOME/protobuf"
+        - "$HOME/jwt-cpp"
 language: cpp
-cache:
-  directories:
-  - "$HOME/protobuf"
-  - "$HOME/jwt-cpp"
 before_install:
 - eval "${MATRIX_EVAL}"
 - bash travis_jwt-cpp.sh
