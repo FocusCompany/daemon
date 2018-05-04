@@ -14,6 +14,9 @@
 #include "FocusConfiguration.hpp"
 
 class FocusDaemon {
+public:
+    static constexpr auto version = FOCUS_VERSION;
+
 private:
     std::shared_ptr<FocusAuthenticator> Authenticator = std::make_shared<FocusAuthenticator>();
     std::shared_ptr<FocusConfiguration> _config;
@@ -23,6 +26,8 @@ private:
     std::string _device_id = "";
 public:
     bool Run(const std::string &configFileName, std::atomic<bool> &sigReceived);
+
+    static void bootstrap(std::string const& platform_name);
 };
 
 #endif //FOCUS_CLIENT_FOCUSDAEMON_HPP

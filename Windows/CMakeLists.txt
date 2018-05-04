@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
-project(daemon_windows)
-
 set(CMAKE_CXX_STANDARD 14)
-
-include(FindProtobuf)
-find_package(Protobuf REQUIRED)
 
 set(DEAMON_WINDOWS_SOURCE_FILES
         Sources/ContextAgent.cpp
@@ -19,13 +14,14 @@ set(MAIN_FILES
         main.cpp
         )
 
-include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ../Shared/Proto/ProtoCompiled ${PROTOBUF_INCLUDE_DIR})
+include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ../Shared/Proto/ProtoCompiled)
 
 add_library(daemon_windows_lib STATIC ${DEAMON_WINDOWS_SOURCE_FILES})
 
 add_executable(daemon_windows ${MAIN_FILES})
+set_target_properties(daemon_windows PROPERTIES OUTPUT_NAME "focus-daemon")
 
-target_link_libraries(daemon_windows daemon_windows_lib daemon_shared_lib Psapi ${PROTOBUF_LIBRARY})
+target_link_libraries(daemon_windows daemon_windows_lib daemon_shared_lib Psapi)
 
 ####TESTS####
 
@@ -37,3 +33,7 @@ IF (MSVC)
 ELSE ()
     add_test(NAME daemon_windows_tests COMMAND daemon_windows_tests)
 ENDIF ()
+
+####INSTALL####
+
+install(TARGETS daemon_windows DESTINATION bin)

@@ -40,7 +40,7 @@ FocusConfiguration::FocusConfiguration(const std::string &configFile) {
 
     _configFile = configFile;
 
-    readConfiguration(_configFile, 1);
+    readConfiguration(_configFile, 0);
 }
 
 bool FocusConfiguration::isFilled() const {
@@ -100,7 +100,7 @@ void FocusConfiguration::generateConfigurationFile(const std::string &configFile
     auto askStdin = [] (std::string const &value) {
         std::string in;
         std::cout << value << ": ";
-        std::cin >> in;
+        std::getline(std::cin, in);
         return in;
     };
 
@@ -129,7 +129,8 @@ void FocusConfiguration::generateConfigurationFile(const std::string &configFile
         if (stream) {
             stream << lightconf::config_format::write(config, _source, 80);
         } else {
-            spdlog::get("logger")->error("Unable to create config file");
+            spdlog::get("logger")->critical("Unable to create config file");
+            std::exit(1);
         }
         spdlog::get("logger")->info("Written configuration file successfully");
     } catch (const std::exception &e) {
@@ -172,5 +173,5 @@ void FocusConfiguration::readConfiguration(const std::string &configFile, int at
         _filled = false;
         spdlog::get("logger")->error("Failed to read configuration file");
     }
-    readConfiguration(configFile, attempt++);
+    readConfiguration(configFile, ++attempt);
 }

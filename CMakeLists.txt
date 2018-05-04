@@ -1,6 +1,15 @@
 cmake_minimum_required(VERSION 2.6)
 
 project(daemon)
+include(cmake/git.cmake)
+include(cmake/ucm.cmake)
+include(cmake/dependency.cmake)
+
+### Set global build version
+get_git_last_commit_infos(GIT_SHA1 GIT_SHA1_ABBR GIT_DATE_YEAR GIT_DATE_MONTH GIT_DATE_DAY GIT_DESC)
+set(VERSION "${GIT_DATE_YEAR}-${GIT_DATE_MONTH}-${GIT_DATE_DAY}-${GIT_SHA1_ABBR}")
+message("Current version of Focus is: ${VERSION}")
+add_definitions(-DFOCUS_VERSION="${VERSION}" -DFOCUS_GIT_HASH="${GIT_SHA1_ABBR}" -DFOCUS_GIT_DATE="${GIT_DATE}")
 
 ### Set Cmake to compile with CPP 14
 set (CMAKE_CXX_STANDARD 14)
@@ -12,7 +21,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/BUILD)
 
 ### Add useful cmake macros that help with compiler/linker flags especially in VS2017
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
-include(cmake/ucm.cmake)
 ucm_set_runtime(STATIC)
 
 ### Turn on the ability to create folders to organize projects under VS2017
@@ -54,6 +62,23 @@ if(MSVC)
 else()
     execute_process(COMMAND ./generate.sh WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Shared/Proto)
 endif()
+
+### Setting global CMake variables
+set(PROJECT_VERSION_MAJOR  ${GIT_DATE_YEAR})
+set(PROJECT_VERSION_MINOR  ${GIT_DATE_MONTH})
+set(PROJECT_VERSION_PATCH  ${GIT_DATE_DAY})
+set(PROJECT_DESCRIPTION "Focus does stuff... We don't know exactly what.")
+set(PROJECT_NAME "Focus")
+
+### Setting global CPack variables
+set(CPACK_PACKAGE_VERSION ${VERSION})
+set(CPACK_PACKAGE_NAME Focus)
+set(CPACK_PACKAGE_VENDOR "Focus inc.")
+set(CPACK_PACKAGE_CONTACT "focus@epitechfr.onmicrosoft.com")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Focus does stuff... We don't know exactly what.")
+set(CPACK_PACKAGE_VERSION_MAJOR ${GIT_DATE_YEAR})
+set(CPACK_PACKAGE_VERSION_MINOR ${GIT_DATE_MONTH})
+set(CPACK_PACKAGE_VERSION_PATCH ${GIT_DATE_DAY})
 
 ### Subdirectory
 add_subdirectory(Shared)

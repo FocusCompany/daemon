@@ -1,6 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
-
-project(daemon_shared_lib)
+cmake_minimum_required(VERSION 3.8)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -58,7 +56,7 @@ ELSEIF (UNIX)
     include_directories(../Linux/Headers)
 ENDIF ()
 
-add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER})
+add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER} ${OPENSSL_INCLUDE_DIR})
 
 target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
 
