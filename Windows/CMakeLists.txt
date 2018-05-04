@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 2.6)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include(FindProtobuf)
-find_package(Protobuf REQUIRED)
-
 set(DEAMON_WINDOWS_SOURCE_FILES
         Sources/ContextAgent.cpp
         Sources/AfkListener.cpp
@@ -17,7 +14,7 @@ set(MAIN_FILES
         main.cpp
         )
 
-include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ../Shared/Proto/ProtoCompiled ${PROTOBUF_INCLUDE_DIR})
+include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ../Shared/Proto/ProtoCompiled)
 
 add_library(daemon_windows_lib STATIC ${DEAMON_WINDOWS_SOURCE_FILES})
 

@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 2.6)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include(FindProtobuf)
-find_package(Protobuf REQUIRED)
-
 find_library(CARBON_LIBRARY Carbon)
 
 set(DEAMON_MAC_SOURCE_FILES
@@ -19,7 +16,7 @@ set(MAIN_FILES
         main.cpp
         )
 
-include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ../Shared/Proto/ProtoCompiled ${PROTOBUF_INCLUDE_DIR})
+include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ../Shared/Proto/ProtoCompiled)
 
 add_library(daemon_mac_lib STATIC ${DEAMON_MAC_SOURCE_FILES})
 
