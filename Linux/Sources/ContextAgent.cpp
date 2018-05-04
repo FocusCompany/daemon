@@ -13,7 +13,7 @@
 
 bool _xerror = false;
 
-int ContextAgent::x11Errorhandler(Display *display, XErrorEvent *error) {
+int ContextAgent::x11Errorhandler(__attribute__((__unused__)) Display *display, __attribute__((__unused__)) XErrorEvent *error) {
     _xerror = true;
     spdlog::get("logger")->error("X11 Error");
     return 1;
@@ -21,7 +21,7 @@ int ContextAgent::x11Errorhandler(Display *display, XErrorEvent *error) {
 
 std::tuple<std::string, std::string> ContextAgent::getWindowInfo() {
     int tmp;
-    XGetInputFocus(_display, &_window, &tmp);
+    XGetInputFocus(_display.get(), &_window, &tmp);
     if (!_xerror) {
         if (_window == None) {
             spdlog::get("logger")->error("No windows on focus");
@@ -33,7 +33,7 @@ std::tuple<std::string, std::string> ContextAgent::getWindowInfo() {
             Status s1;
             while (parent != root) {
                 _window = parent;
-                s1 = XQueryTree(_display, _window, &root, &parent, &children, &nchild);
+                s1 = XQueryTree(_display.get(), _window, &root, &parent, &children, &nchild);
                 if (s1)
                     XFree(children);
                 if (_xerror) {
@@ -41,15 +41,15 @@ std::tuple<std::string, std::string> ContextAgent::getWindowInfo() {
                     return std::make_tuple(std::string(), std::string());
                 }
             }
-            _window = XmuClientWindow(_display, _window);
+            _window = XmuClientWindow(_display.get(), _window);
             XTextProperty prop;
             Status s2;
-            s2 = XGetWMName(_display, _window, &prop);
+            s2 = XGetWMName(_display.get(), _window, &prop);
             if (!_xerror && s2) {
                 int count = 0;
                 int result;
                 char **list = nullptr;
-                result = XmbTextPropertyToTextList(_display, &prop, &list, &count);
+                result = XmbTextPropertyToTextList(_display.get(), &prop, &list, &count);
                 if (result == Success) {
                     std::string windowName(list[0]);
                     XFreeStringList(list);
@@ -59,7 +59,7 @@ std::tuple<std::string, std::string> ContextAgent::getWindowInfo() {
                     if (_xerror) {
                         spdlog::get("logger")->error("XAllocClassHint error");
                     }
-                    s3 = XGetClassHint(_display, _window, classWindow);
+                    s3 = XGetClassHint(_display.get(), _window, classWindow);
                     if (_xerror || s3) {
                         std::string processName(classWindow->res_class);
                         XFree(classWindow->res_class);
@@ -83,11 +83,15 @@ std::tuple<std::string, std::string> ContextAgent::getWindowInfo() {
 void ContextAgent::Run(std::atomic<bool> &sigReceived) {
     _sigReceived = sigReceived.load();
     setlocale(LC_ALL, "");
-    _display = XOpenDisplay(nullptr);
-    if (_display == nullptr) {
+    _display = std::unique_ptr<Display, std::function<void(Display *)>>(XOpenDisplay(nullptr), [](Display *ptr) {
+        if (ptr != nullptr) {
+            XCloseDisplay(ptr);
+        }
+    });
+    if (_display.get() == nullptr) {
         spdlog::get("logger")->error("Failed to connect to X Server");
     }
-    if (_display != nullptr) {
+    if (_display.get() != nullptr) {
         _isRunning = true;
         _eventListener = std::make_unique<std::thread>(std::bind(&ContextAgent::EventListener, this));
     }
@@ -127,11 +131,11 @@ ContextAgent::~ContextAgent() {
         _isRunning = false;
         _eventListener->join();
     }
-    if (_display == nullptr) {
-        XCloseDisplay(_display);
-    }
 }
 
-ContextAgent::ContextAgent() {
-    _isRunning = false;
-}
+ContextAgent::ContextAgent() : _isRunning(false),
+                               _sigReceived(false),
+                               _window(),
+                               _display(),
+                               _eventListener(),
+                               _eventEmitter(std::make_unique<FocusEventEmitter>()) {}

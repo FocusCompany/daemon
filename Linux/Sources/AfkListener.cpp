@@ -12,11 +12,15 @@ void AfkListener::Run(int triggerAfkInSecond, std::atomic<bool> &sigReceived) {
     _triggerAfkInSecond = triggerAfkInSecond;
     _sigReceived = sigReceived.load();
     setlocale(LC_ALL, "");
-    _display = XOpenDisplay(nullptr);
-    if (_display == nullptr) {
+    _display = std::unique_ptr<Display, std::function<void(Display *)>>(XOpenDisplay(nullptr), [](Display *ptr) {
+        if (ptr != nullptr) {
+            XCloseDisplay(ptr);
+        }
+    });
+    if (_display.get() == nullptr) {
         spdlog::get("logger")->error("Failed to connect to X Server");
     }
-    if (_display != nullptr) {
+    if (_display.get() != nullptr) {
         _isRunning = true;
         _eventListener = std::make_unique<std::thread>(std::bind(&AfkListener::EventListener, this));
     }
@@ -24,19 +28,21 @@ void AfkListener::Run(int triggerAfkInSecond, std::atomic<bool> &sigReceived) {
 
 void AfkListener::EventListener() {
     bool afk = false;
-    unsigned long lastInputSince = 0;
+    long lastInputSince = 0;
     XScreenSaverInfo *info = XScreenSaverAllocInfo();
 
     while (_isRunning && !_sigReceived) {
-        XScreenSaverQueryInfo(_display, DefaultRootWindow(_display), info);
+        XScreenSaverQueryInfo(_display.get(), DefaultRootWindow(_display.get()), info);
         lastInputSince = info->idle / 1000;
         if (lastInputSince < _triggerAfkInSecond) {
             afk = false;
         } else {
             if (!afk) {
                 spdlog::get("console")->info("AFK since {} seconds", _triggerAfkInSecond);
-                auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-                OnAfk(now - std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(_triggerAfkInSecond)));
+                auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+                        std::chrono::system_clock::now().time_since_epoch());
+                OnAfk(now -
+                      std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(_triggerAfkInSecond)));
                 afk = true;
             }
         }
@@ -65,11 +71,11 @@ AfkListener::~AfkListener() {
         _isRunning = false;
         _eventListener->join();
     }
-    if (_display == nullptr) {
-        XCloseDisplay(_display);
-    }
 }
 
-AfkListener::AfkListener() {
-    _isRunning = false;
-}
+AfkListener::AfkListener() : _triggerAfkInSecond(),
+                             _isRunning(false),
+                             _sigReceived(false),
+                             _display(),
+                             _eventListener(),
+                             _eventEmitter(std::make_unique<FocusEventEmitter>()) {}

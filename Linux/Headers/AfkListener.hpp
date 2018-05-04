@@ -14,12 +14,12 @@
 
 class AfkListener : public IAfkListener {
 private:
-    Display *_display;
     int _triggerAfkInSecond;
-    std::unique_ptr<std::thread> _eventListener;
-    std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
     std::atomic<bool> _isRunning;
     std::atomic<bool> _sigReceived;
+    std::unique_ptr<Display, std::function<void(Display *)>> _display;
+    std::unique_ptr<std::thread> _eventListener;
+    std::unique_ptr<FocusEventEmitter> _eventEmitter;
 
     void EventListener() override final;
 

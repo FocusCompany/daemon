@@ -2,6 +2,9 @@
 // Created by Etienne Pasteur on 27/03/2018.
 //
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
+
 #include <iostream>
 #include <fstream>
 #include <spdlog/spdlog.h>
@@ -175,3 +178,5 @@ void FocusConfiguration::readConfiguration(const std::string &configFile, int at
     }
     readConfiguration(configFile, ++attempt);
 }
+
+#pragma GCC diagnostic pop

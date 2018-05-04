@@ -25,6 +25,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
+
 #include "FocusPlatformFolders.hpp"
 #include <iostream>
 #include <stdexcept>
@@ -376,3 +379,5 @@ namespace sago {
 
 
 }  //namespace sago
+
+#pragma GCC diagnostic pop

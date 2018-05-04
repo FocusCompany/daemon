@@ -9,10 +9,17 @@
 #include <FocusEnvelope.pb.h>
 #include <spdlog/spdlog.h>
 
-FocusNetworkManager::FocusNetworkManager() {
-    _isRunning = false;
-    _socket = std::static_pointer_cast<FocusSocket>(std::make_shared<FocusSecureSocket<Client>>("rq:rM>}U?@Lns47E1%kR.o@n%FcmmsL/@{H8]yf7", "Yne@$w-vo<fVvi]a<NY6T1ed:M$fCG*[IaLV{hID", "D:)Q[IlAW!ahhC2ac:9*A}h:p?([4%wOTJ%JR%cs"));
-}
+FocusNetworkManager::FocusNetworkManager() :
+        _socket(std::static_pointer_cast<FocusSocket>(
+                std::make_shared<FocusSecureSocket<Client>>("rq:rM>}U?@Lns47E1%kR.o@n%FcmmsL/@{H8]yf7",
+                                                            "Yne@$w-vo<fVvi]a<NY6T1ed:M$fCG*[IaLV{hID",
+                                                            "D:)Q[IlAW!ahhC2ac:9*A}h:p?([4%wOTJ%JR%cs"))),
+        _networkManagerThread(),
+        _isRunning(false),
+        _sigReceived(false),
+        _eventListener(std::make_unique<FocusEventListener<Focus::Envelope>>()),
+        _eventEmitter(std::make_unique<FocusEventEmitter>()),
+        _device_id() {}
 
 FocusNetworkManager::~FocusNetworkManager() {
     if (_isRunning) {
@@ -22,7 +29,8 @@ FocusNetworkManager::~FocusNetworkManager() {
     _socket->Disconnect();
 }
 
-void FocusNetworkManager::Run(const std::string &device_id, std::shared_ptr<FocusConfiguration> &config, std::atomic<bool> &sigReceived) {
+void FocusNetworkManager::Run(const std::string &device_id, std::shared_ptr<FocusConfiguration> &config,
+                              std::atomic<bool> &sigReceived) {
     auto srv = config->getServer(serverType::BACKEND);
     std::string urlStr = "tcp://";
     urlStr += srv._ip;

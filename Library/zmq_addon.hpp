@@ -24,6 +24,9 @@
 #ifndef __ZMQ_ADDON_HPP_INCLUDED__
 #define __ZMQ_ADDON_HPP_INCLUDED__
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
+
 #include "zmq.hpp"
 #include <deque>
 #include <iomanip>
@@ -587,5 +590,7 @@ private:
 #endif
 
 }
+
+#pragma GCC diagnostic pop
 
 #endif

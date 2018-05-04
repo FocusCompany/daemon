@@ -17,10 +17,10 @@
 template<class TPayload>
 class FocusEventListener {
 private:
-    int _socketTimeout = 1000; //milliseconds
+    int _socketTimeout; //milliseconds
     std::function<void(TPayload &payload)> _onMessage;
     std::unique_ptr<std::thread> _eventListenerThread;
-    std::unique_ptr<zmq::socket_t> _socketSUB = std::make_unique<zmq::socket_t>(*FocusSocket::Context, ZMQ_SUB);
+    std::unique_ptr<zmq::socket_t> _socketSUB;
     std::atomic<bool> _isRunning;
 
     void RunReceive() {
@@ -60,10 +60,13 @@ private:
     }
 
 public:
-    FocusEventListener() {
+    FocusEventListener() : _socketTimeout(1000),
+                           _onMessage(),
+                           _eventListenerThread(),
+                           _socketSUB(std::make_unique<zmq::socket_t>(*FocusSocket::Context, ZMQ_SUB)),
+                           _isRunning(false) {
         _socketSUB->connect("inproc:///tmp/EventEmitter");
         _socketSUB->setsockopt(ZMQ_RCVTIMEO, &_socketTimeout, sizeof(_socketTimeout));
-        _isRunning = false;
     }
 
     virtual ~FocusEventListener() {

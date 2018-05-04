@@ -11,7 +11,7 @@ std::mutex mtx;
 std::condition_variable cv;
 std::atomic<bool> sigReceived;
 
-void exitProgram(int sig) {
+void exitProgram(__attribute__((__unused__)) int sig) {
     sigReceived = true;
     spdlog::set_pattern("\t*****  %v  *****");
     spdlog::get("logger")->info("End of program");
@@ -21,7 +21,7 @@ void exitProgram(int sig) {
     cv.notify_all();
 }
 
-int main(const int ac, const char **av) {
+int main() {
     signal(SIGABRT, &exitProgram);
     signal(SIGTERM, &exitProgram);
     signal(SIGINT, &exitProgram);

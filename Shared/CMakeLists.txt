@@ -13,7 +13,7 @@ find_package(ZeroMQ REQUIRED)
 file(GLOB PROTO_SRC "Proto/ProtoCompiled/*.pb.cc")
 file(GLOB PROTO_HEADER "Proto/ProtoCompiled/*.pb.h")
 
-#set_source_files_properties(${PROTO_SRC} ${PROTO_HEADER} PROPERTIES COMPILE_FLAGS -Wno-effc++)
+set_source_files_properties(${PROTO_SRC} ${PROTO_HEADER} PROPERTIES COMPILE_FLAGS -Wno-error)
 
 set(DEAMON_SHARED_SOURCE_FILES
         Sources/FocusDaemon.cpp

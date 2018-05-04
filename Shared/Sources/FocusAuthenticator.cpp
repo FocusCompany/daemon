@@ -174,3 +174,10 @@ bool FocusAuthenticator::Disconnect() {
     }
     return false;
 }
+
+FocusAuthenticator::FocusAuthenticator() : _cli(),
+                                           _config(),
+                                           _token(),
+                                           _uuid(),
+                                           _deviceId(),
+                                           _connected(false) {}

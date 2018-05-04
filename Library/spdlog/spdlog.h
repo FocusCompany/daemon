@@ -7,6 +7,9 @@
 
 #pragma once
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
+
 #define SPDLOG_VERSION "0.16.3"
 
 #include "tweakme.h"
@@ -190,3 +193,5 @@ void drop_all();
 }
 
 #include "details/spdlog_impl.h"
+
+#pragma GCC diagnostic pop
