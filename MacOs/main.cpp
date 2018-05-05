@@ -2,7 +2,7 @@
 // Created by Etienne Pasteur on 17/10/2017.
 //
 
-#include <spdlog/spdlog.h>
+#include <spdlog_pragma.hpp>
 #include "FocusDaemon.hpp"
 #include <condition_variable>
 #include <FocusPlatformFolders.hpp>
@@ -15,10 +15,10 @@ std::atomic<bool> sigReceived;
 
 void exitProgram(int sig) {
     sigReceived = true;
-    std::string name(sys_signame[sig]);
+    std::string name(strsignal(sig));
     std::transform(name.begin(), name.end(), name.begin(), ::toupper);
     spdlog::set_pattern("\t*****  %v  *****");
-    spdlog::get("logger")->info("End of program : SIG{}", name);
+    spdlog::get("logger")->info("End of program : SIG {}", name);
     spdlog::get("logger")->flush();
     spdlog::drop_all();
     std::unique_lock<std::mutex> lck(mtx);

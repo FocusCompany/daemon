@@ -8,7 +8,7 @@
 #include <FocusSerializer.hpp>
 #include "ContextAgent.hpp"
 #include "FocusContextEventPayload.pb.h"
-#include <spdlog/spdlog.h>
+#include <spdlog_pragma.hpp>
 #include <array>
 #include <mach-o/dyld.h>
 

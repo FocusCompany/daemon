@@ -17,7 +17,7 @@ void exitProgram(int sig) {
     std::string name(strsignal(sig));
     std::transform(name.begin(), name.end(), name.begin(), ::toupper);
     spdlog::set_pattern("\t*****  %v  *****");
-    spdlog::get("logger")->info("End of program : SIG{}", name);
+    spdlog::get("logger")->info("End of program : SIG {}", name);
     spdlog::get("logger")->flush();
     spdlog::drop_all();
     std::unique_lock<std::mutex> lck(mtx);
