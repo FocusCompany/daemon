@@ -36,14 +36,14 @@ if(MSVC)
 	set(CMAKE_LIBRARY_PATH "C:/Program Files/Focus/protobuf/lib;C:/Program Files/Focus/jwt-cpp/lib;C:/Program Files/Focus/zmq/lib")
 elseif(APPLE)
     add_definitions(-DAPPLE)
-    set(CMAKE_INCLUDE_PATH "/usr/local/opt/openssl@1.1/include")
-    set(CMAKE_LIBRARY_PATH "/usr/local/opt/openssl@1.1/lib")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -pedantic -Wuninitialized -Winit-self -Weffc++")
+    set(COMPILE_FLAGS "-Wall -Wextra -Werror -pedantic -Wuninitialized -Winit-self -Weffc++")
 elseif(UNIX)
     add_definitions(-DUNIX)
-    add_definitions(-DWNCK_I_KNOW_THIS_IS_UNSTABLE)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -pedantic -Wuninitialized -Winit-self -Weffc++")
+	set(COMPILE_FLAGS "-Wall -Wextra -Werror -pedantic -Wuninitialized -Winit-self -Weffc++")
 endif()
+
+### Adding CXX FLAGS
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMPILE_FLAGS}")
 
 ### Adding GoogleTest for unit testing and enable testing for ctest command.
 enable_testing()

@@ -92,8 +92,7 @@ void ContextAgent::Run(std::atomic<bool> &sigReceived) {
     });
     if (!_display) {
         spdlog::get("logger")->error("Failed to connect to X Server");
-    }
-    if (_display) {
+    } else {
         _isRunning = true;
         _eventListener = std::make_unique<std::thread>(std::bind(&ContextAgent::EventListener, this));
     }
