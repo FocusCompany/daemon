@@ -5,7 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <FocusSerializer.hpp>
-#include <spdlog/spdlog.h>
+#include <spdlog_pragma.hpp>
 #include <iostream>
 #include <X11/Xutil.h>
 #include "ContextAgent.hpp"
@@ -17,7 +17,7 @@ int ContextAgent::x11Errorhandler(Display *display, XErrorEvent *error) {
     _xerror = true;
     char msg[80];
     XGetErrorText(display, error->error_code, msg, sizeof(msg));
-    spdlog::get("logger")->error("X11 Error {} ({}): request {}.{}", e->error_code, std::string(msg), e->request_code, e->minor_code);
+    spdlog::get("logger")->error("X11 Error {} ({}): request {}.{}", error->error_code, std::string(msg), error->request_code, error->minor_code);
     return 1;
 }
 

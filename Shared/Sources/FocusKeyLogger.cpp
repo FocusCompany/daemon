@@ -4,7 +4,7 @@
 
 #include <FocusKeyLogger.hpp>
 #include <FocusEnvelope.pb.h>
-#include <spdlog/spdlog.h>
+#include <spdlog_pragma.hpp>
 #include "FocusSerializer.hpp"
 
 void
@@ -16,9 +16,8 @@ FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator, std::sha
         AddEvent(newContext);
     });
 
-    _messageListener->RegisterMessage("FocusSendDataToBackend", [this](const std::string &msg) {
+    _messageListener->RegisterMessage("FocusSendDataToBackend", [this](const std::string &) {
         //TODO: Ensure is thread safe to clear the vector here
-        (void) msg;
         spdlog::get("console")->info("Clear events cached");
         _events.clear();
     });

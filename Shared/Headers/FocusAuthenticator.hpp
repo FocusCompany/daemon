@@ -8,7 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
-#include <httplib.h>
+#include <httplib_pragma.hpp>
 #include "FocusConfiguration.hpp"
 #include "FocusEventListener.hpp"
 

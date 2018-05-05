@@ -4,10 +4,9 @@
 
 #include <iostream>
 #include <fstream>
-#include <spdlog/spdlog.h>
+#include <spdlog_pragma.hpp>
 #include "FocusConfiguration.hpp"
-#include "lightconf/lightconf.hpp"
-#include "lightconf/config_format.hpp"
+#include <lightconf_pragma.hpp>
 
 namespace lightconf {
     LIGHTCONF_BEGIN_ENUM(serverType)

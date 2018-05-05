@@ -7,7 +7,7 @@
 #include <FocusSecureSocket.hpp>
 #include <iostream>
 #include <FocusEnvelope.pb.h>
-#include <spdlog/spdlog.h>
+#include <spdlog_pragma.hpp>
 
 FocusNetworkManager::FocusNetworkManager() :
         _socket(std::static_pointer_cast<FocusSocket>(std::make_shared<FocusSecureSocket<Client>>("rq:rM>}U?@Lns47E1%kR.o@n%FcmmsL/@{H8]yf7", "Yne@$w-vo<fVvi]a<NY6T1ed:M$fCG*[IaLV{hID", "D:)Q[IlAW!ahhC2ac:9*A}h:p?([4%wOTJ%JR%cs"))),

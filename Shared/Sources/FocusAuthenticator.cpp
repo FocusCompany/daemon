@@ -5,7 +5,7 @@
 #include "FocusAuthenticator.hpp"
 #include <json.hpp>
 #include <jwt/jwt_all.h>
-#include <spdlog/spdlog.h>
+#include <spdlog_pragma.hpp>
 
 void FocusAuthenticator::Run(std::shared_ptr<FocusConfiguration> &config) {
     _config = config;
