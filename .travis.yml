@@ -59,7 +59,7 @@ matrix:
   - os: osx
     compiler: clang
     env:
-    - MATRIX_EVAL="brew install openssl@1.1 && brew install zmq"
+    - MATRIX_EVAL="brew install openssl && brew install zmq"
     before_deploy:
     - git pull --tags
     - export TAG="$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)"
@@ -87,7 +87,7 @@ matrix:
         - "$HOME/protobuf"
         - "$HOME/jwt-cpp"
 language: cpp
-before_install:
+before_install:f
 - eval "${MATRIX_EVAL}"
 - bash travis_jwt-cpp.sh
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bash travis_protobuf.sh osx; fi
