@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 3.8)
-
-set(CMAKE_CXX_STANDARD 14)
-
 include(FindOpenSSL)
 find_package(OpenSSL REQUIRED)
 
@@ -16,6 +12,10 @@ find_package(ZeroMQ REQUIRED)
 
 file(GLOB PROTO_SRC "Proto/ProtoCompiled/*.pb.cc")
 file(GLOB PROTO_HEADER "Proto/ProtoCompiled/*.pb.h")
+
+if(NOT MSVC)
+	set_source_files_properties(${PROTO_SRC} ${PROTO_HEADER} PROPERTIES COMPILE_FLAGS "-Wno-effc++ -Wno-unused-parameter")
+endif()
 
 set(DEAMON_SHARED_SOURCE_FILES
         Sources/FocusDaemon.cpp

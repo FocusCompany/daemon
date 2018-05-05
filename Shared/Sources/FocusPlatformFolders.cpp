@@ -25,6 +25,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#if defined(MSVC)
+#else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
 #include "FocusPlatformFolders.hpp"
 #include <iostream>
 #include <stdexcept>
@@ -79,6 +85,9 @@ static std::string GetAppDataLocal() {
 #elif defined(__APPLE__)
 #include <CoreServices/CoreServices.h>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 static std::string GetMacFolder(OSType folderType, const char* errorMsg) {
 	std::string ret;
 	FSRef ref;
@@ -91,6 +100,8 @@ static std::string GetMacFolder(OSType folderType, const char* errorMsg) {
 	ret = path;
 	return ret;
 }
+
+#pragma GCC diagnostic pop
 
 #else
 #include <map>
@@ -208,6 +219,9 @@ namespace sago {
 #endif
     }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
     void appendAdditionalDataDirectories(std::vector<std::string>& homes) {
 #if defined(_WIN32)
         homes.push_back(GetAppDataCommon());
@@ -225,6 +239,9 @@ namespace sago {
         appendExtraFolders("XDG_CONFIG_DIRS", "/etc/xdg", homes);
 #endif
     }
+
+#pragma GCC diagnostic pop
+
 
 #if defined(_WIN32)
 #elif defined(__APPLE__)
@@ -365,3 +382,8 @@ namespace sago {
 
 
 }  //namespace sago
+
+#if defined(MSVC)
+#else
+#pragma GCC diagnostic pop
+#endif

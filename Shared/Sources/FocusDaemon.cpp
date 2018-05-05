@@ -3,7 +3,7 @@
 //
 
 #include <FocusDaemon.hpp>
-#include <spdlog/spdlog.h>
+#include <spdlog_pragma.hpp>
 #include <FocusPlatformFolders.hpp>
 
 #ifdef MSVC

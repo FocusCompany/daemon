@@ -3,7 +3,7 @@
 //
 
 #include "AfkListener.hpp"
-#include <spdlog/spdlog.h>
+#include <spdlog_pragma.hpp>
 #include <FocusAfkEventPayload.pb.h>
 #include <FocusSerializer.hpp>
 
@@ -20,7 +20,7 @@ void AfkListener::EventListener() {
     LASTINPUTINFO li;
     li.cbSize = sizeof(LASTINPUTINFO);
 
-    while (_isRunning  && !_sigReceived) {
+    while (_isRunning && !_sigReceived) {
         GetLastInputInfo(&li);
         DWORD te = ::GetTickCount();
         lastInputSince = (te - li.dwTime) / 1000;
@@ -30,7 +30,8 @@ void AfkListener::EventListener() {
         } else {
             if (!afk) {
                 spdlog::get("console")->info("AFK since {} seconds", _triggerAfkInSecond);
-                auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+                auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+                        std::chrono::system_clock::now().time_since_epoch());
                 OnAfk(now - std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(_triggerAfkInSecond)));
                 afk = true;
             }
@@ -61,6 +62,8 @@ AfkListener::~AfkListener() {
     }
 }
 
-AfkListener::AfkListener() {
-	_isRunning = false;
-}
+AfkListener::AfkListener() : _triggerAfkInSecond(),
+                             _eventListener(),
+                             _isRunning(false),
+                             _sigReceived(false),
+                             _eventEmitter(std::make_unique<FocusEventEmitter>()) {}

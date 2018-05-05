@@ -14,12 +14,12 @@
 
 class ContextAgent : public IContextAgent {
 private:
-    Display *_display;
-    Window _window;
-    std::unique_ptr<std::thread> _eventListener;
-    std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
     std::atomic<bool> _isRunning;
     std::atomic<bool> _sigReceived;
+    Window _window;
+    std::unique_ptr<Display, std::function<void(Display *)>> _display;
+    std::unique_ptr<std::thread> _eventListener;
+    std::unique_ptr<FocusEventEmitter> _eventEmitter;
 
     void EventListener() override final;
 

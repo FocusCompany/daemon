@@ -5,10 +5,11 @@
 #include <FocusEventManager.hpp>
 #include <iostream>
 
-FocusEventManager::FocusEventManager() {
-    _isRunning = false;
-    _socketPUB = std::make_unique<zmq::socket_t>(*FocusSocket::Context, ZMQ_PUB);
-    _socketSUB = std::make_unique<zmq::socket_t>(*FocusSocket::Context, ZMQ_SUB);
+FocusEventManager::FocusEventManager() : _socketPUB(std::make_unique<zmq::socket_t>(*FocusSocket::Context, ZMQ_PUB)),
+                                         _socketSUB(std::make_unique<zmq::socket_t>(*FocusSocket::Context, ZMQ_SUB)),
+                                         _isRunning(false),
+                                         _sigReceived(false),
+                                         _eventManagerThread() {
     int _socketTimeout = 1000; //milliseconds
     _socketSUB->setsockopt(ZMQ_RCVTIMEO, &_socketTimeout, sizeof(_socketTimeout));
 }

@@ -6,7 +6,7 @@
 #define DAEMON_FOCUSSOCKET_HPP
 
 #include <memory>
-#include <zmq_addon.hpp>
+#include <zmq_pragma.hpp>
 
 class FocusSocket {
 protected:

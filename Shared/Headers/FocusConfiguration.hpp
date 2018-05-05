@@ -13,19 +13,19 @@ enum class serverType {
 };
 
 struct user {
-    std::string _email;
-    std::string _password;
+    std::string _email = "";
+    std::string _password = "";
 };
 
 struct device {
-    std::string _id;
-    std::string _name;
+    std::string _id = "";
+    std::string _name = "";
 };
 
 struct server {
-    std::string _ip;
-    int _port;
-    serverType _type;
+    std::string _ip = "";
+    int _port = 0;
+    serverType _type = serverType::DEFAULT;
 };
 
 class FocusConfiguration {
@@ -34,7 +34,7 @@ private:
     device _device;
     std::string _triggerAfk;
     std::vector<server> _serversInfo;
-    bool _filled = false;
+    bool _filled;
     struct server _defaultServer;
     std::string _configFile;
     std::string _source;

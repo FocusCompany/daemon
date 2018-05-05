@@ -4,10 +4,9 @@
 
 #include <iostream>
 #include <fstream>
-#include <spdlog/spdlog.h>
+#include <spdlog_pragma.hpp>
 #include "FocusConfiguration.hpp"
-#include "lightconf/lightconf.hpp"
-#include "lightconf/config_format.hpp"
+#include <lightconf_pragma.hpp>
 
 namespace lightconf {
     LIGHTCONF_BEGIN_ENUM(serverType)
@@ -33,13 +32,15 @@ namespace lightconf {
     LIGHTCONF_END_TYPE()
 }
 
-FocusConfiguration::FocusConfiguration(const std::string &configFile) {
-    _defaultServer._ip = "127.0.0.1";
-    _defaultServer._port = 4242;
-    _defaultServer._type = serverType::DEFAULT;
-
-    _configFile = configFile;
-
+FocusConfiguration::FocusConfiguration(const std::string &configFile) :
+        _userInfo(),
+        _device(),
+        _triggerAfk(),
+        _serversInfo(),
+        _filled(false),
+        _defaultServer({std::string("127.0.0.1"), 4242, serverType::DEFAULT}),
+        _configFile(configFile),
+        _source() {
     readConfiguration(_configFile, 0);
 }
 
@@ -97,7 +98,7 @@ void FocusConfiguration::setTriggerAfk(const std::string &triggerAfk) {
 }
 
 void FocusConfiguration::generateConfigurationFile(const std::string &configFile) {
-    auto askStdin = [] (std::string const &value) {
+    auto askStdin = [](std::string const &value) {
         std::string in;
         std::cout << value << ": ";
         std::getline(std::cin, in);
@@ -113,7 +114,7 @@ void FocusConfiguration::generateConfigurationFile(const std::string &configFile
                 askStdin("Email"),
                 askStdin("Password")
         });
-        config.set<std::vector<server>>("servers", { server {
+        config.set<std::vector<server>>("servers", {server {
                 "auth.thefocuscompany.me", 3000, serverType::AUTHENTICATION
         }, server {
                 "backend.thefocuscompany.me", 5555, serverType::BACKEND
@@ -133,7 +134,7 @@ void FocusConfiguration::generateConfigurationFile(const std::string &configFile
             std::exit(1);
         }
         spdlog::get("logger")->info("Written configuration file successfully");
-    } catch (const std::exception &e) {
+    } catch (const std::exception &) {
         spdlog::get("logger")->error("Failed to write configuration file");
     }
 }
@@ -166,10 +167,10 @@ void FocusConfiguration::readConfiguration(const std::string &configFile, int at
             generateConfigurationFile(configFile);
 
         }
-    } catch (const lightconf::parse_error &e) {
+    } catch (const lightconf::parse_error &) {
         _filled = false;
         spdlog::get("logger")->error("Parsing configuration file error");
-    } catch (const std::exception &e) {
+    } catch (const std::exception &) {
         _filled = false;
         spdlog::get("logger")->error("Failed to read configuration file");
     }

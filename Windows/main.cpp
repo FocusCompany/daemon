@@ -6,7 +6,7 @@
 #include <tchar.h>
 #include <iostream>
 #include <signal.h>
-#include <spdlog/spdlog.h>
+#include <spdlog_pragma.hpp>
 #include "FocusDaemon.hpp"
 #include <condition_variable>
 #include <FocusPlatformFolders.hpp>
@@ -33,7 +33,7 @@ BOOL WINAPI ConsoleHandler(DWORD CEvent)
 	return TRUE;
 }
 
-int main(const int ac, const char** av)
+int main()
 {
 	if (SetConsoleCtrlHandler((PHANDLER_ROUTINE)ConsoleHandler, TRUE) == FALSE)
 		return -1;

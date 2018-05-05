@@ -8,7 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
-#include <httplib.h>
+#include <httplib_pragma.hpp>
 #include "FocusConfiguration.hpp"
 #include "FocusEventListener.hpp"
 
@@ -20,10 +20,10 @@ private:
 
     std::unique_ptr<httplib::Client> _cli;
     std::shared_ptr<FocusConfiguration> _config;
-    std::string _token = "";
-    std::string _uuid = "";
-    std::string _deviceId = "";
-    bool _connected = false;
+    std::string _token;
+    std::string _uuid;
+    std::string _deviceId;
+    bool _connected;
 
 public:
     void Run(std::shared_ptr<FocusConfiguration> &config);
@@ -43,6 +43,8 @@ public:
     bool Disconnect();
 
     bool RenewToken();
+
+    FocusAuthenticator();
 };
 
 

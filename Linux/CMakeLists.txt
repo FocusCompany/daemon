@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 2.6)
-
-set(CMAKE_CXX_STANDARD 14)
-
 find_package(PkgConfig)
 pkg_check_modules(X11 REQUIRED x11)
 pkg_check_modules(XMU REQUIRED xmu)
