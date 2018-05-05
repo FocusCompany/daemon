@@ -13,9 +13,11 @@
 
 bool _xerror = false;
 
-int ContextAgent::x11Errorhandler(__attribute__((__unused__)) Display *display, __attribute__((__unused__)) XErrorEvent *error) {
+int ContextAgent::x11Errorhandler(Display *display, XErrorEvent *error) {
     _xerror = true;
-    spdlog::get("logger")->error("X11 Error");
+    char msg[80];
+    XGetErrorText(display, error->error_code, msg, sizeof(msg));
+    spdlog::get("logger")->error("X11 Error {} ({}): request {}.{}", e->error_code, std::string(msg), e->request_code, e->minor_code);
     return 1;
 }
 
@@ -88,10 +90,10 @@ void ContextAgent::Run(std::atomic<bool> &sigReceived) {
             XCloseDisplay(ptr);
         }
     });
-    if (_display.get() == nullptr) {
+    if (!_display) {
         spdlog::get("logger")->error("Failed to connect to X Server");
     }
-    if (_display.get() != nullptr) {
+    if (_display) {
         _isRunning = true;
         _eventListener = std::make_unique<std::thread>(std::bind(&ContextAgent::EventListener, this));
     }

@@ -6,15 +6,19 @@
 #include "FocusDaemon.hpp"
 #include <condition_variable>
 #include <FocusPlatformFolders.hpp>
+#include <algorithm>
+#include <string>
 
 std::mutex mtx;
 std::condition_variable cv;
 std::atomic<bool> sigReceived;
 
-void exitProgram(__attribute__((__unused__)) int sig) {
+void exitProgram(int sig) {
     sigReceived = true;
+    std::string name(sys_signame[sig]);
+    std::transform(name.begin(), name.end(), name.begin(), ::toupper);
     spdlog::set_pattern("\t*****  %v  *****");
-    spdlog::get("logger")->info("End of program");
+    spdlog::get("logger")->info("End of program : SIG{}", name);
     spdlog::get("logger")->flush();
     spdlog::drop_all();
     std::unique_lock<std::mutex> lck(mtx);

@@ -17,10 +17,10 @@ void AfkListener::Run(int triggerAfkInSecond, std::atomic<bool> &sigReceived) {
             XCloseDisplay(ptr);
         }
     });
-    if (_display.get() == nullptr) {
+    if (!_display) {
         spdlog::get("logger")->error("Failed to connect to X Server");
     }
-    if (_display.get() != nullptr) {
+    if (_display) {
         _isRunning = true;
         _eventListener = std::make_unique<std::thread>(std::bind(&AfkListener::EventListener, this));
     }

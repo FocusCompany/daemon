@@ -18,10 +18,9 @@ FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator, std::sha
 
     _messageListener->RegisterMessage("FocusSendDataToBackend", [this](const std::string &msg) {
         //TODO: Ensure is thread safe to clear the vector here
-        if (msg == "OK") {
-            spdlog::get("console")->info("Clear events cached");
-            _events.clear();
-        }
+        (void) msg;
+        spdlog::get("console")->info("Clear events cached");
+        _events.clear();
     });
 
     _contextAgent->Run(sigReceived);
