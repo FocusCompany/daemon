@@ -134,7 +134,7 @@ void FocusConfiguration::generateConfigurationFile(const std::string &configFile
             std::exit(1);
         }
         spdlog::get("logger")->info("Written configuration file successfully");
-    } catch (const std::exception &e) {
+    } catch (const std::exception &) {
         spdlog::get("logger")->error("Failed to write configuration file");
     }
 }
@@ -167,10 +167,10 @@ void FocusConfiguration::readConfiguration(const std::string &configFile, int at
             generateConfigurationFile(configFile);
 
         }
-    } catch (const lightconf::parse_error &e) {
+    } catch (const lightconf::parse_error &) {
         _filled = false;
         spdlog::get("logger")->error("Parsing configuration file error");
-    } catch (const std::exception &e) {
+    } catch (const std::exception &) {
         _filled = false;
         spdlog::get("logger")->error("Failed to read configuration file");
     }

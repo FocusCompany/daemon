@@ -32,7 +32,7 @@ std::string FocusAuthenticator::GetToken() {
         nlohmann::json header, payload;
         std::tie(header, payload) = JWT::Decode(_token, &signer, &exp);
         spdlog::get("logger")->info("Token is valid");
-    } catch (InvalidTokenError &tfe) {
+    } catch (InvalidTokenError &) {
         spdlog::get("logger")->error("Renewing token");
         RenewToken();
     }
@@ -72,7 +72,7 @@ bool FocusAuthenticator::Login(const std::string &email, const std::string &pass
                     spdlog::get("logger")->info("Successfully connected");
                     return true;
                 }
-            } catch (InvalidTokenError &tfe) {
+            } catch (InvalidTokenError &) {
                 spdlog::get("logger")->error("Invalid token");
                 _connected = false;
                 return false;
@@ -139,7 +139,7 @@ bool FocusAuthenticator::RenewToken() {
                     spdlog::get("logger")->info("Token successfully renewed");
                     return true;
                 }
-            } catch (InvalidTokenError &tfe) {
+            } catch (InvalidTokenError &) {
                 spdlog::get("logger")->error("Invalid token signature");
                 _connected = false;
                 return false;

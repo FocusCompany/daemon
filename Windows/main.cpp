@@ -6,7 +6,7 @@
 #include <tchar.h>
 #include <iostream>
 #include <signal.h>
-#include <spdlog/spdlog.h>
+#include <spdlog_pragma.hpp>
 #include "FocusDaemon.hpp"
 #include <condition_variable>
 #include <FocusPlatformFolders.hpp>

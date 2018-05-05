@@ -3,7 +3,7 @@
 //
 
 #include "AfkListener.hpp"
-#include <spdlog/spdlog.h>
+#include <spdlog_pragma.hpp>
 #include <FocusAfkEventPayload.pb.h>
 #include <FocusSerializer.hpp>
 
