@@ -58,7 +58,7 @@ ENDIF ()
 
 add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER} ${OPENSSL_INCLUDE_DIR})
 
-target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
+target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARY} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
 
 IF (MSVC)
     target_link_libraries(daemon_shared_lib wsock32 ws2_32)
