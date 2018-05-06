@@ -6,6 +6,7 @@ matrix:
     compiler: gcc
     before_deploy:
     - git pull --tags
+    - make package
     - export TAG="$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)"
     - echo "Tagging release with tag ${TAG}"
     - git config --local user.name "`git log -1 --format=%an`"
@@ -23,7 +24,7 @@ matrix:
       - "${RELEASE_RPM_FILE}"
       - "${RELEASE_DEB_FILE}"
       skip_cleanup: true
-      name: Focus daemon v.$TRAVIS_TAG
+      name: Focus daemon v.§TAG
       body: Automated development pseudo-stable release from CI.
       on:
         repo: FocusCompany/daemon
@@ -62,6 +63,7 @@ matrix:
     - MATRIX_EVAL="brew install openssl@1.1 && brew install zmq"
     before_deploy:
     - git pull --tags
+    - make package
     - export TAG="$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)"
     - echo "Tagging release with tag ${TAG}"
     - git config --local user.name "`git log -1 --format=%an`"
@@ -76,7 +78,7 @@ matrix:
         secure: mBzpwgHJ4j9ij+Nob5osKTLxQaAMoR1xL97PltHyg+EjqVTUfLEr5VMjO3a++X4h+HqjaDXQ41AljiPLh4VTNJU4U16rQrZrKR5qprFTRoQ42QTKzivBFq/MNR3tFjCfbS8kNORXmnvn8Jps5EA6io4FJZ7F2uzEIU9IDqY3eyM71o4VfhpIrk2QULl7yKIv81OhH0TDx77AieLj3q2uLsPHwGo40UPMoq65HxEAbqlW0fGhvLDekUj7sIIYxm6AzT9HS0R/ZaFfoMzkfbFdbg+Zv7C0S/boiHORm5pVD8i4pZvaZhlEKfAkY/RWsOaYOyz+LKGZe0b8uGu2ZzmMVRxIkNVegIDDTKz/KwaGaD4r0+CYQWzR2TOnmXjfEps13jTtCE+xJUheDkvJChanv2hJnWupChMF7m6rVASHapl/+KbmHLVzABmWBYt5Pf9QoMXlxuUxOt9hL4W1/HU+HgVJ0TTRWmh9G6T4ObtEoDvkIcDWowsut5I2UgapZJxH8bnN6/6LTBXwVbo0LDCx+LaA6h/7fIulzgDYrZ2AW9RVmUSr3JyuU+1WvKNoZiwcUNM/7dtEUK12WDR4jtRrDg4qa9+N+1Qx9Bh41RR6u+5JBUcXsYqGHvqBjnxwpAWdXYq3LCW04uGOJXbyauc8vaBxvfDznGPG8IlIh/2UKCk=
       file: "${RELEASE_DMG_FILE}"
       skip_cleanup: true
-      name: Focus daemon v.$TRAVIS_TAG
+      name: Focus daemon v.§TAG
       body: Automated development pseudo-stable release from CI.
       on:
         repo: FocusCompany/daemon
@@ -103,4 +105,3 @@ script:
 - cd build
 - cmake .. && make
 - ctest --verbose
-- make package
