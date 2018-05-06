@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.8)
 
 project(daemon)
 include(cmake/git.cmake)
@@ -11,10 +11,10 @@ set(VERSION "${GIT_DATE_YEAR}-${GIT_DATE_MONTH}-${GIT_DATE_DAY}-${GIT_SHA1_ABBR}
 message("Current version of Focus is: ${VERSION}")
 add_definitions(-DFOCUS_VERSION="${VERSION}" -DFOCUS_GIT_HASH="${GIT_SHA1_ABBR}" -DFOCUS_GIT_DATE="${GIT_DATE}")
 
-### Set Cmake to compile with CPP 14
-set(CMAKE_CXX_STANDARD 14)
+### Set Focus build options
+option(ENABLE_TESTING "Build tests" OFF)
 
-### Output everything inside of a BUILD directory to avoir issue with library linking.
+### Output everything inside of a BUILD directory to avoid issue with library linking.
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/BUILD)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/BUILD)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/BUILD)
@@ -26,7 +26,7 @@ ucm_set_runtime(STATIC)
 ### Turn on the ability to create folders to organize projects under VS2017
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-### Define some useful pre-processor for cross-compatibility
+### Define some useful pre-processor variables
 if(MSVC)
     add_definitions(-DMSVC)
 	add_definitions(-DWIN32_LEAN_AND_MEAN)
@@ -37,18 +37,25 @@ if(MSVC)
 elseif(APPLE)
     add_definitions(-DAPPLE)
     set(OPENSSL_ROOT_DIR "/usr/local/opt/openssl@1.1")
-    set(COMPILE_FLAGS "-Wall -Wextra -Werror -pedantic -Wuninitialized -Winit-self -Weffc++")
 elseif(UNIX)
     add_definitions(-DUNIX)
-	set(COMPILE_FLAGS "-Wall -Wextra -Werror -pedantic -Wuninitialized -Winit-self -Weffc++")
 endif()
 
 ### Adding CXX FLAGS
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMPILE_FLAGS}")
 
-### Adding GoogleTest for unit testing and enable testing for ctest command.
-enable_testing()
-add_subdirectory(UnitTests)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(WARNING "The current build type is ${CMAKE_BUILD_TYPE}, optimizations are disabled")
+endif()
+
+set(CMAKE_CXX_STANDARD 14)
+string(APPEND COMPILE_FLAGS
+        "$<IF:$<CXX_COMPILER_ID:MSVC>,"
+            "/W4;$<$<CONFIG:RELEASE>:/O2;>,"
+            "-Wall;-Wextra;-Werror;-pedantic;-Wuninitialized;-Winit-self;-Weffc++;"
+                "$<$<CONFIG:RELEASE>:-O3;>"
+                "$<$<CXX_COMPILER_ID:Clang>:-stdlib=libc++;>"
+        ">"
+)
 
 ### Include directories
 include_directories(${CMAKE_INCLUDE_PATH})
@@ -84,6 +91,13 @@ set(CPACK_PACKAGE_VERSION_MINOR ${GIT_DATE_MONTH})
 set(CPACK_PACKAGE_VERSION_PATCH ${GIT_DATE_DAY})
 
 ### Subdirectory
+
+if (ENABLE_TESTING)
+    message("Building tests using Google Tests")
+    enable_testing()
+    add_subdirectory(UnitTests)
+endif()
+
 add_subdirectory(Shared)
 
 if(MSVC)

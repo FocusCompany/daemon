@@ -58,7 +58,7 @@ ENDIF ()
 
 add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER} ${OPENSSL_INCLUDE_DIR})
 
-target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
+target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARY} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
 
 IF (MSVC)
     target_link_libraries(daemon_shared_lib wsock32 ws2_32)
@@ -68,13 +68,17 @@ ELSE ()
     target_link_libraries(daemon_shared_lib pthread)
 ENDIF ()
 
+target_compile_options(daemon_shared_lib PRIVATE "${COMPILE_FLAGS}")
+
 ####TESTS####
 
-add_subdirectory(UnitTests)
+if (ENABLE_TESTING)
+    add_subdirectory(UnitTests)
 
-enable_testing()
-IF (MSVC)
-    add_test(NAME daemon_shared_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_shared_tests.exe)
-ELSE ()
-    add_test(NAME daemon_shared_tests COMMAND daemon_shared_tests)
-ENDIF ()
+    enable_testing()
+    IF (MSVC)
+        add_test(NAME daemon_shared_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_shared_tests.exe)
+    ELSE ()
+        add_test(NAME daemon_shared_tests COMMAND daemon_shared_tests)
+    ENDIF ()
+endif()
