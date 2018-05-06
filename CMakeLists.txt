@@ -5,6 +5,10 @@ include(cmake/git.cmake)
 include(cmake/ucm.cmake)
 include(cmake/dependency.cmake)
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(WARNING "The current build type is ${CMAKE_BUILD_TYPE}, optimizations are disabled")
+endif()
+
 ### Set global build version
 get_git_last_commit_infos(GIT_SHA1 GIT_SHA1_ABBR GIT_DATE_YEAR GIT_DATE_MONTH GIT_DATE_DAY GIT_DESC)
 set(VERSION "${GIT_DATE_YEAR}-${GIT_DATE_MONTH}-${GIT_DATE_DAY}-${GIT_SHA1_ABBR}")
