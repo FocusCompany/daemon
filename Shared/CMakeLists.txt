@@ -1,9 +1,6 @@
 include(FindOpenSSL)
 find_package(OpenSSL REQUIRED)
 
-include(FindJWTCPP)
-find_package(JWTCPP REQUIRED)
-
 include(FindProtobuf)
 find_package(Protobuf REQUIRED)
 
@@ -46,7 +43,7 @@ set(DEAMON_SHARED_SOURCE_FILES
         Interfaces/IAfkListener.hpp
         )
 
-include_directories(Headers Interfaces ${OPENSSL_INCLUDE_DIR} ${JWTCPP_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ${ZeroMQ_INCLUDE_DIR})
+include_directories(Headers Interfaces ${OPENSSL_INCLUDE_DIR} ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ${ZeroMQ_INCLUDE_DIR})
 
 IF (MSVC)
     include_directories(../Windows/Headers)
@@ -58,7 +55,7 @@ ENDIF ()
 
 add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER} ${OPENSSL_INCLUDE_DIR})
 
-target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARY} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
+target_link_libraries(daemon_shared_lib ${OPENSSL_CRYPTO_LIBRARY} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
 
 IF (MSVC)
     target_link_libraries(daemon_shared_lib wsock32 ws2_32)

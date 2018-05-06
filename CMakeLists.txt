@@ -42,7 +42,6 @@ elseif(UNIX)
 endif()
 
 ### Adding CXX FLAGS
-
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(WARNING "The current build type is ${CMAKE_BUILD_TYPE}, optimizations are disabled")
 endif()
