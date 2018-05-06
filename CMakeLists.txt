@@ -5,10 +5,6 @@ include(cmake/git.cmake)
 include(cmake/ucm.cmake)
 include(cmake/dependency.cmake)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message(WARNING "The current build type is ${CMAKE_BUILD_TYPE}, optimizations are disabled")
-endif()
-
 ### Set global build version
 get_git_last_commit_infos(GIT_SHA1 GIT_SHA1_ABBR GIT_DATE_YEAR GIT_DATE_MONTH GIT_DATE_DAY GIT_DESC)
 set(VERSION "${GIT_DATE_YEAR}-${GIT_DATE_MONTH}-${GIT_DATE_DAY}-${GIT_SHA1_ABBR}")
@@ -45,10 +41,13 @@ elseif(UNIX)
     add_definitions(-DUNIX)
 endif()
 
-### Set Cmake to compile with CPP 14
-set(CMAKE_CXX_STANDARD 14)
-
 ### Adding CXX FLAGS
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(WARNING "The current build type is ${CMAKE_BUILD_TYPE}, optimizations are disabled")
+endif()
+
+set(CMAKE_CXX_STANDARD 14)
 string(APPEND COMPILE_FALGS
         "$<IF:$<CXX_COMPILER_ID:MSVC>,"
             "/W4;$<$<CONFIG:RELEASE>:/O2>,"
@@ -93,7 +92,9 @@ set(CPACK_PACKAGE_VERSION_MINOR ${GIT_DATE_MONTH})
 set(CPACK_PACKAGE_VERSION_PATCH ${GIT_DATE_DAY})
 
 ### Subdirectory
+
 if (ENABLE_TESTING)
+    message("Building tests using Google Tests")
     enable_testing()
     add_subdirectory(UnitTests)
 endif()
