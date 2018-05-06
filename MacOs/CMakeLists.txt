@@ -26,8 +26,8 @@ add_custom_command(TARGET daemon_mac POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
 
 include_target_dependency_in_target_package(daemon_shared_lib daemon_mac)
 
-target_compile_options(daemon_mac_lib PRIVATE "${COMPILE_FALGS}")
-target_compile_options(daemon_mac PRIVATE "${COMPILE_FALGS}")
+target_compile_options(daemon_mac_lib PRIVATE "${COMPILE_FLAGS}")
+target_compile_options(daemon_mac PRIVATE "${COMPILE_FLAGS}")
 
 ####TESTS####
 

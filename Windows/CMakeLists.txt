@@ -19,8 +19,8 @@ set_target_properties(daemon_windows PROPERTIES OUTPUT_NAME "focus-daemon")
 
 target_link_libraries(daemon_windows daemon_windows_lib daemon_shared_lib Psapi)
 
-target_compile_options(daemon_windows_lib PRIVATE "${COMPILE_FALGS}")
-target_compile_options(daemon_windows PRIVATE "${COMPILE_FALGS}")
+target_compile_options(daemon_windows_lib PRIVATE "${COMPILE_FLAGS}")
+target_compile_options(daemon_windows PRIVATE "${COMPILE_FLAGS}")
 
 ####TESTS####
 

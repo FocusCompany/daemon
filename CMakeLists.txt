@@ -48,7 +48,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 set(CMAKE_CXX_STANDARD 14)
-string(APPEND COMPILE_FALGS
+string(APPEND COMPILE_FLAGS
         "$<IF:$<CXX_COMPILER_ID:MSVC>,"
             "/W4;$<$<CONFIG:RELEASE>:/O2;>,"
             "-Wall;-Wextra;-Werror;-pedantic;-Wuninitialized;-Winit-self;-Weffc++;"

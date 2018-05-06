@@ -32,8 +32,8 @@ target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib ${X11_LIBR
 
 link_directories(${X11_LIBRARY_DIRS} ${XMU_LIBRARY_DIRS})
 
-target_compile_options(daemon_linux_lib PRIVATE "${COMPILE_FALGS}")
-target_compile_options(daemon_linux PRIVATE "${COMPILE_FALGS}")
+target_compile_options(daemon_linux_lib PRIVATE "${COMPILE_FLAGS}")
+target_compile_options(daemon_linux PRIVATE "${COMPILE_FLAGS}")
 
 ####TESTS####
 
