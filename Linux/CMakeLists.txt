@@ -34,14 +34,16 @@ link_directories(${X11_LIBRARY_DIRS} ${XMU_LIBRARY_DIRS})
 
 ####TESTS####
 
-add_subdirectory(UnitTests)
+if (ENABLE_TESTING)
+    add_subdirectory(UnitTests)
 
-enable_testing()
-IF (MSVC)
-    add_test(NAME daemon_linux_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_linux_tests.exe)
-ELSE ()
-    add_test(NAME daemon_linux_tests COMMAND daemon_linux_tests)
-ENDIF ()
+    enable_testing()
+    IF (MSVC)
+        add_test(NAME daemon_linux_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_linux_tests.exe)
+    ELSE ()
+        add_test(NAME daemon_linux_tests COMMAND daemon_linux_tests)
+    ENDIF ()
+endif()
 
 ####INSTALL####
 

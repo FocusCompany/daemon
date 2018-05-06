@@ -21,14 +21,16 @@ target_link_libraries(daemon_windows daemon_windows_lib daemon_shared_lib Psapi)
 
 ####TESTS####
 
-add_subdirectory(UnitTests)
+if (ENABLE_TESTING)
+    add_subdirectory(UnitTests)
 
-enable_testing()
-IF (MSVC)
-    add_test(NAME daemon_windows_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_windows_tests.exe)
-ELSE ()
-    add_test(NAME daemon_windows_tests COMMAND daemon_windows_tests)
-ENDIF ()
+    enable_testing()
+    IF (MSVC)
+        add_test(NAME daemon_windows_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_windows_tests.exe)
+    ELSE ()
+        add_test(NAME daemon_windows_tests COMMAND daemon_windows_tests)
+    ENDIF ()
+endif()
 
 ####INSTALL####
 

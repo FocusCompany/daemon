@@ -11,6 +11,9 @@ set(VERSION "${GIT_DATE_YEAR}-${GIT_DATE_MONTH}-${GIT_DATE_DAY}-${GIT_SHA1_ABBR}
 message("Current version of Focus is: ${VERSION}")
 add_definitions(-DFOCUS_VERSION="${VERSION}" -DFOCUS_GIT_HASH="${GIT_SHA1_ABBR}" -DFOCUS_GIT_DATE="${GIT_DATE}")
 
+### Set Focus build options
+option(ENABLE_TESTING "Build tests" OFF)
+
 ### Output everything inside of a BUILD directory to avoid issue with library linking.
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/BUILD)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/BUILD)
@@ -52,10 +55,6 @@ string(APPEND COMPILE_FALGS
 )
 add_compile_options("${COMPILE_FALGS}")
 
-### Adding GoogleTest for unit testing and enable testing for ctest command.
-enable_testing()
-add_subdirectory(UnitTests)
-
 ### Include directories
 include_directories(${CMAKE_INCLUDE_PATH})
 include_directories(Library)
@@ -90,6 +89,11 @@ set(CPACK_PACKAGE_VERSION_MINOR ${GIT_DATE_MONTH})
 set(CPACK_PACKAGE_VERSION_PATCH ${GIT_DATE_DAY})
 
 ### Subdirectory
+if (ENABLE_TESTING)
+    enable_testing()
+    add_subdirectory(UnitTests)
+endif()
+
 add_subdirectory(Shared)
 
 if(MSVC)

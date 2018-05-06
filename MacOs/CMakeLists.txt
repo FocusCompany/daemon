@@ -28,14 +28,16 @@ include_target_dependency_in_target_package(daemon_shared_lib daemon_mac)
 
 ####TESTS####
 
-add_subdirectory(UnitTests)
+if (ENABLE_TESTING)
+    add_subdirectory(UnitTests)
 
-enable_testing()
-IF (MSVC)
-    add_test(NAME daemon_mac_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_mac_tests.exe)
-ELSE ()
-    add_test(NAME daemon_mac_tests COMMAND daemon_mac_tests)
-ENDIF ()
+    enable_testing()
+    IF (MSVC)
+        add_test(NAME daemon_mac_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_mac_tests.exe)
+    ELSE ()
+        add_test(NAME daemon_mac_tests COMMAND daemon_mac_tests)
+    ENDIF ()
+endif()
 
 ####INSTALL####
 

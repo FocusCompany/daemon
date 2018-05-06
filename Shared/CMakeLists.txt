@@ -70,11 +70,13 @@ ENDIF ()
 
 ####TESTS####
 
-add_subdirectory(UnitTests)
+if (ENABLE_TESTING)
+    add_subdirectory(UnitTests)
 
-enable_testing()
-IF (MSVC)
-    add_test(NAME daemon_shared_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_shared_tests.exe)
-ELSE ()
-    add_test(NAME daemon_shared_tests COMMAND daemon_shared_tests)
-ENDIF ()
+    enable_testing()
+    IF (MSVC)
+        add_test(NAME daemon_shared_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_shared_tests.exe)
+    ELSE ()
+        add_test(NAME daemon_shared_tests COMMAND daemon_shared_tests)
+    ENDIF ()
+endif()
