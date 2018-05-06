@@ -56,7 +56,6 @@ string(APPEND COMPILE_FALGS
                 "$<$<CXX_COMPILER_ID:Clang>:-stdlib=libc++;>"
         ">"
 )
-add_compile_options("${COMPILE_FALGS}")
 
 ### Include directories
 include_directories(${CMAKE_INCLUDE_PATH})

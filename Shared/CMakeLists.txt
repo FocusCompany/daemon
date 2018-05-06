@@ -68,6 +68,8 @@ ELSE ()
     target_link_libraries(daemon_shared_lib pthread)
 ENDIF ()
 
+target_compile_options(daemon_shared_lib PRIVATE "${COMPILE_FALGS}")
+
 ####TESTS####
 
 if (ENABLE_TESTING)
