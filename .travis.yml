@@ -103,5 +103,5 @@ script:
 - cd $HOME/build/FocusCompany/daemon/
 - mkdir build
 - cd build
-- cmake .. && make
+- cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=ON .. && make
 - ctest --verbose
