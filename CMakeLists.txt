@@ -50,10 +50,10 @@ endif()
 set(CMAKE_CXX_STANDARD 14)
 string(APPEND COMPILE_FALGS
         "$<IF:$<CXX_COMPILER_ID:MSVC>,"
-            "/W4;$<$<CONFIG:RELEASE>:/O2>,"
+            "/W4;$<$<CONFIG:RELEASE>:/O2;>,"
             "-Wall;-Wextra;-Werror;-pedantic;-Wuninitialized;-Winit-self;-Weffc++;"
-                "$<$<CONFIG:RELEASE>:-O3>"
-                "$<$<CXX_COMPILER_ID:Clang>:-stdlib=libc++>"
+                "$<$<CONFIG:RELEASE>:-O3;>"
+                "$<$<CXX_COMPILER_ID:Clang>:-stdlib=libc++;>"
         ">"
 )
 add_compile_options("${COMPILE_FALGS}")
