@@ -12,6 +12,8 @@
     #pragma GCC diagnostic ignored "-Weffc++"
     #pragma GCC diagnostic ignored "-Wsign-compare"
     #pragma GCC diagnostic ignored "-Wunused-parameter"
+    #pragma GCC diagnostic ignored "-Wreturn-type"
+    #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
         #include "jwt/jwt.hpp"
     #pragma GCC diagnostic pop
 #endif

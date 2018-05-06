@@ -2,7 +2,7 @@
 // Created by Etienne Pasteur on 16/12/2017.
 //
 
-#include "json.hpp"
+#include "json_pragma.hpp"
 #include "FocusAuthenticator.hpp"
 #include "jwt_pragma.hpp"
 #include <spdlog_pragma.hpp>
