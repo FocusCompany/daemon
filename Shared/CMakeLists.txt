@@ -59,8 +59,6 @@ target_link_libraries(daemon_shared_lib ${OPENSSL_CRYPTO_LIBRARY} ${ZeroMQ_LIBRA
 
 IF (MSVC)
     target_link_libraries(daemon_shared_lib wsock32 ws2_32)
-	add_custom_command(TARGET daemon_shared_lib POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory "C:/Program Files/Focus/zmq/bin" "$<TARGET_FILE_DIR:daemon_shared_lib>")
-	add_custom_command(TARGET daemon_shared_lib POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory "C:/OpenSSL-Win32/bin/" "$<TARGET_FILE_DIR:daemon_shared_lib>")
 ELSE ()
     target_link_libraries(daemon_shared_lib pthread)
 ENDIF ()

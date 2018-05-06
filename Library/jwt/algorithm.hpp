@@ -30,6 +30,11 @@ SOFTWARE.
  * https://github.com/benmcollins/libjwt/tree/master/libjwt
  */
 
+#if defined(MSVC)
+	#define strncasecmp _strnicmp
+	#define strcasecmp _stricmp
+#endif
+
 #include <cassert>
 #include <memory>
 #include <system_error>

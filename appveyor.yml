@@ -1,39 +1,39 @@
-os: Visual Studio 2017
-
-init:
-  - git config --global core.autocrlf input
-  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
-  - mkdir "C:\Program Files\Focus\"
-
 clone_folder: C:\projects\daemon
 
-cache:
-  - C:\projects\daemon\protobuf-3.5.1\
-  - C:\projects\daemon\libzmq-4.2.3\
-  - C:\projects\daemon\jwt-cpp\
-
-install:
-  - CALL appveyor_protobuf.bat
-  - CALL appveyor_jwt-cpp.bat
-  - CALL appveyor_zmq.bat
+cache: C:\tools\vcpkg\installed\
 
 environment:
   matrix:
-  - configuration: Debug
-    platform: Win32
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    CMAKE_GENERATOR: 'Visual Studio 15 2017 Win64'
+    VCVARSALL_DIR: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build'
+    ADDITIONAL_CMAKE_ARGS: '-DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake'
+    CONFIGURATION: Release
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    CMAKE_GENERATOR: 'Visual Studio 15 2017'
+    VCVARSALL_DIR: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build'
+    ADDITIONAL_CMAKE_ARGS: '-DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake'
+    CONFIGURATION: Release
 
 before_build:
+  - echo [VCPKG]
+  - cd c:\tools\vcpkg
+  - vcpkg integrate install
+  - vcpkg install protobuf:x86-windows
+  - vcpkg install protobuf:x64-windows
+  - vcpkg install openssl:x86-windows
+  - vcpkg install openssl:x64-windows
+  - vcpkg install zeromq:x86-windows
+  - vcpkg install zeromq:x64-windows
+  - echo [GIT SUBMODULE]
+  - cd C:\projects\daemon
   - git submodule update --init --recursive
-  - echo [COMPILING PROTO FILES]
-  - cd c:\projects\daemon\Shared\Proto
-  - CALL generate.bat
-  - echo [RUNNING CMAKE]
-  - cd c:\projects\daemon
-  - cmake -G "Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=%P%
 
 build_script:
-  - msbuild /p:Configuration=Debug /p:Platform=Win32 "C:\projects\daemon\daemon.sln"
+  - cmake -G "%CMAKE_GENERATOR%" . -DCMAKE_BUILD_TYPE=%CONFIGURATION% %ADDITIONAL_CMAKE_ARGS%
+  - msbuild /P:Configuration=Release ALL_BUILD.vcxproj
 
 after_build:
   - echo Running Unit Tests...
   - ctest -C Debug --verbose
+  - msbuild /P:Configuration=Release PACKAGE.vcxproj
