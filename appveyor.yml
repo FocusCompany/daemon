@@ -1,6 +1,7 @@
 clone_folder: C:\projects\daemon
 
-cache: C:\tools\vcpkg\installed\
+cache:
+    - C:\tools\vcpkg\installed\
 
 environment:
   matrix:
@@ -9,15 +10,15 @@ environment:
     VCVARSALL_DIR: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build'
     ADDITIONAL_CMAKE_ARGS: '-DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake'
     CONFIGURATION: Release
+    APPVEYOR_SAVE_CACHE_ON_ERROR: true
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     CMAKE_GENERATOR: 'Visual Studio 15 2017'
     VCVARSALL_DIR: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build'
     ADDITIONAL_CMAKE_ARGS: '-DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake'
     CONFIGURATION: Release
+    APPVEYOR_SAVE_CACHE_ON_ERROR: true
 
-before_build:
-  - echo [VCPKG]
-  - cd c:\tools\vcpkg
+install:
   - vcpkg integrate install
   - vcpkg install protobuf:x86-windows
   - vcpkg install protobuf:x64-windows
@@ -25,6 +26,8 @@ before_build:
   - vcpkg install openssl:x64-windows
   - vcpkg install zeromq:x86-windows
   - vcpkg install zeromq:x64-windows
+
+before_build:
   - echo [GIT SUBMODULE]
   - cd C:\projects\daemon
   - git submodule update --init --recursive
@@ -37,3 +40,22 @@ after_build:
   - echo Running Unit Tests...
   - ctest -C Debug --verbose
   - msbuild /P:Configuration=Release PACKAGE.vcxproj
+  - ps: $env:REL_NAME="$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)"
+
+artifacts:
+  - path: Focus*.exe
+    name: Focus
+
+deploy:
+  tag: $env:REL_NAME
+  release: Focus daemon v.$env:REL_NAME
+  description: 'Automated development pseudo-stable release from Appveyor'
+  provider: GitHub
+  auth_token:
+    secure: FCZ5MTyTIPWhb59oIUixNgopyNjcdLButeL9SH0PLK1qGvqJ82d6qhnG95EoyjIz
+  artifact: Focus
+  draft: false
+  prerelease: true
+  on:
+    branch: ep_windows_builds
+    appveyor_repo_tag: false
