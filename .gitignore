@@ -290,3 +290,4 @@ __pycache__/
 # CLion
 /build
 cmake-build-debug/
+/CMakeSettings.json

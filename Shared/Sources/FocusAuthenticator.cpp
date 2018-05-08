@@ -2,9 +2,9 @@
 // Created by Etienne Pasteur on 16/12/2017.
 //
 
+#include "json_pragma.hpp"
 #include "FocusAuthenticator.hpp"
-#include <json.hpp>
-#include <jwt/jwt_all.h>
+#include "jwt_pragma.hpp"
 #include <spdlog_pragma.hpp>
 
 void FocusAuthenticator::Run(std::shared_ptr<FocusConfiguration> &config) {
@@ -26,15 +26,14 @@ bool FocusAuthenticator::GetConnectionStatus() const {
 }
 
 std::string FocusAuthenticator::GetToken() {
-    ExpValidator exp;
-    RS256Validator signer(public_key);
     try {
-        nlohmann::json header, payload;
-        std::tie(header, payload) = JWT::Decode(_token, &signer, &exp);
+        auto dec_obj = jwt::decode(_token, jwt::params::algorithms({"rs256"}), jwt::params::secret(public_key), jwt::params::verify(true));
         spdlog::get("logger")->info("Token is valid");
-    } catch (InvalidTokenError &) {
-        spdlog::get("logger")->error("Renewing token");
+    } catch (const jwt::TokenExpiredError&) {
+        spdlog::get("logger")->info("Renewing token");
         RenewToken();
+    } catch (...) {
+        spdlog::get("logger")->error("Invalid token");
     }
     return _token;
 }
@@ -56,23 +55,20 @@ bool FocusAuthenticator::Login(const std::string &email, const std::string &pass
     } else if (res && res->status == 200) {
         auto j = nlohmann::json::parse(res->body);
         if (j.find("token") != j.end()) {
-            ExpValidator exp;
-            RS256Validator signer(public_key);
             try {
-                nlohmann::json header, payload;
-                std::tie(header, payload) = JWT::Decode(j["token"], &signer, &exp);
-                auto pl = nlohmann::json::parse(payload.dump());
-                if (pl.find("uuid") != pl.end()) {
-                    if (pl.find("device_id") != pl.end()) {
-                        _deviceId = std::to_string(static_cast<int>(pl["device_id"]));
+                std::string tmp = j["token"];
+                auto dec_obj = jwt::decode(tmp, jwt::params::algorithms({"rs256"}), jwt::params::secret(public_key), jwt::params::verify(true));
+                if (dec_obj.payload().has_claim("uuid")) {
+                    if (dec_obj.payload().has_claim("device_id")) {
+                        _deviceId = std::to_string(dec_obj.payload().get_claim_value<int>("device_id"));
                     }
-                    _uuid = pl["uuid"];
+                    _uuid = dec_obj.payload().get_claim_value<std::string>("uuid");
                     _token = j["token"];
                     _connected = true;
                     spdlog::get("logger")->info("Successfully connected");
                     return true;
                 }
-            } catch (InvalidTokenError &) {
+            } catch (...) {
                 spdlog::get("logger")->error("Invalid token");
                 _connected = false;
                 return false;
@@ -123,23 +119,20 @@ bool FocusAuthenticator::RenewToken() {
     } else if (res && res->status == 200) {
         auto j = nlohmann::json::parse(res->body);
         if (j.find("token") != j.end()) {
-            ExpValidator exp;
-            RS256Validator signer(public_key);
             try {
-                nlohmann::json header, payload;
-                std::tie(header, payload) = JWT::Decode(j["token"], &signer, &exp);
-                auto pl = nlohmann::json::parse(payload.dump());
-                if (pl.find("uuid") != pl.end()) {
-                    if (pl.find("device_id") != pl.end()) {
-                        _deviceId = std::to_string(static_cast<int>(pl["device_id"]));
+                std::string tmp = j["token"];
+                auto dec_obj = jwt::decode(tmp, jwt::params::algorithms({"rs256"}), jwt::params::secret(public_key), jwt::params::verify(true));
+                if (dec_obj.payload().has_claim("uuid")) {
+                    if (dec_obj.payload().has_claim("device_id")) {
+                        _deviceId = std::to_string(dec_obj.payload().get_claim_value<int>("device_id"));
                     }
-                    _uuid = pl["uuid"];
+                    _uuid = dec_obj.payload().get_claim_value<std::string>("uuid");
                     _token = j["token"];
                     _connected = true;
                     spdlog::get("logger")->info("Token successfully renewed");
                     return true;
                 }
-            } catch (InvalidTokenError &) {
+            } catch (...) {
                 spdlog::get("logger")->error("Invalid token signature");
                 _connected = false;
                 return false;

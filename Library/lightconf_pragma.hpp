@@ -2,8 +2,8 @@
 // Created by pasteu_e on 5/5/18.
 //
 
-#ifndef DAEMON_ZMQ_PRAGMA_HPP
-#define DAEMON_ZMQ_PRAGMA_HPP
+#ifndef DAEMON_LIGHTCONF_PRAGMA_HPP
+#define DAEMON_LIGHTCONF_PRAGMA_HPP
 
 #if defined(MSVC)
     #include "lightconf/lightconf.hpp"
@@ -17,4 +17,4 @@
     #pragma GCC diagnostic pop
 #endif
 
-#endif //DAEMON_ZMQ_PRAGMA_HPP
+#endif //DAEMON_LIGHTCONF_PRAGMA_HPP
