@@ -4,31 +4,6 @@ matrix:
     dist: trusty
     sudo: required
     compiler: gcc
-    before_deploy:
-    - git pull --tags
-    - make package
-    - export TAG="$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)"
-    - echo "Tagging release with tag ${TAG}"
-    - git config --local user.name "`git log -1 --format=%an`"
-    - git config --local user.email "`git log -1 --format=%ae`"
-    - if git rev-parse ${TAG} >/dev/null 2>&1; then echo "Tag §{TAG} exist, skipping tagging" && TRAVIS_TAG=${TAG}; else git tag ${TAG}; fi
-    - export RELEASE_RPM_FILE=$(ls $HOME/build/FocusCompany/daemon/build/*.rpm)
-    - export RELEASE_DEB_FILE=$(ls $HOME/build/FocusCompany/daemon/build/*.deb)
-    - echo "deploying $RELEASE_RPM_FILE and $$RELEASE_DEB_FILE to GitHub releases"
-    deploy:
-      provider: releases
-      prerelease: true
-      api_key:
-        secure: mBzpwgHJ4j9ij+Nob5osKTLxQaAMoR1xL97PltHyg+EjqVTUfLEr5VMjO3a++X4h+HqjaDXQ41AljiPLh4VTNJU4U16rQrZrKR5qprFTRoQ42QTKzivBFq/MNR3tFjCfbS8kNORXmnvn8Jps5EA6io4FJZ7F2uzEIU9IDqY3eyM71o4VfhpIrk2QULl7yKIv81OhH0TDx77AieLj3q2uLsPHwGo40UPMoq65HxEAbqlW0fGhvLDekUj7sIIYxm6AzT9HS0R/ZaFfoMzkfbFdbg+Zv7C0S/boiHORm5pVD8i4pZvaZhlEKfAkY/RWsOaYOyz+LKGZe0b8uGu2ZzmMVRxIkNVegIDDTKz/KwaGaD4r0+CYQWzR2TOnmXjfEps13jTtCE+xJUheDkvJChanv2hJnWupChMF7m6rVASHapl/+KbmHLVzABmWBYt5Pf9QoMXlxuUxOt9hL4W1/HU+HgVJ0TTRWmh9G6T4ObtEoDvkIcDWowsut5I2UgapZJxH8bnN6/6LTBXwVbo0LDCx+LaA6h/7fIulzgDYrZ2AW9RVmUSr3JyuU+1WvKNoZiwcUNM/7dtEUK12WDR4jtRrDg4qa9+N+1Qx9Bh41RR6u+5JBUcXsYqGHvqBjnxwpAWdXYq3LCW04uGOJXbyauc8vaBxvfDznGPG8IlIh/2UKCk=
-      file:
-      - "${RELEASE_RPM_FILE}"
-      - "${RELEASE_DEB_FILE}"
-      skip_cleanup: true
-      name: Focus daemon v.$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)
-      body: Automated development pseudo-stable release from CI.
-      on:
-        repo: FocusCompany/daemon
-        branch: development
     addons:
       apt:
         sources:
@@ -52,56 +27,53 @@ matrix:
         - rpm
         - checkinstall
     env:
-    - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+      - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
     cache:
       directories:
         - "$HOME/protobuf"
-        - "$HOME/jwt-cpp"
   - os: osx
     compiler: clang
     env:
-    - MATRIX_EVAL="brew install openssl@1.1 && brew install zmq"
-    before_deploy:
-    - git pull --tags
-    - make package
-    - export TAG="$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)"
-    - echo "Tagging release with tag ${TAG}"
-    - git config --local user.name "`git log -1 --format=%an`"
-    - git config --local user.email "`git log -1 --format=%ae`"
-    - if git rev-parse ${TAG} >/dev/null 2>&1; then echo "Tag §{TAG} exist, skipping tagging" && TRAVIS_TAG=${TAG}; else git tag ${TAG}; fi
-    - export RELEASE_DMG_FILE=$(ls $HOME/build/FocusCompany/daemon/build/*.dmg)
-    - echo "deploying $RELEASE_DMG_FILE to GitHub releases"
-    deploy:
-      provider: releases
-      prerelease: true
-      api_key:
-        secure: mBzpwgHJ4j9ij+Nob5osKTLxQaAMoR1xL97PltHyg+EjqVTUfLEr5VMjO3a++X4h+HqjaDXQ41AljiPLh4VTNJU4U16rQrZrKR5qprFTRoQ42QTKzivBFq/MNR3tFjCfbS8kNORXmnvn8Jps5EA6io4FJZ7F2uzEIU9IDqY3eyM71o4VfhpIrk2QULl7yKIv81OhH0TDx77AieLj3q2uLsPHwGo40UPMoq65HxEAbqlW0fGhvLDekUj7sIIYxm6AzT9HS0R/ZaFfoMzkfbFdbg+Zv7C0S/boiHORm5pVD8i4pZvaZhlEKfAkY/RWsOaYOyz+LKGZe0b8uGu2ZzmMVRxIkNVegIDDTKz/KwaGaD4r0+CYQWzR2TOnmXjfEps13jTtCE+xJUheDkvJChanv2hJnWupChMF7m6rVASHapl/+KbmHLVzABmWBYt5Pf9QoMXlxuUxOt9hL4W1/HU+HgVJ0TTRWmh9G6T4ObtEoDvkIcDWowsut5I2UgapZJxH8bnN6/6LTBXwVbo0LDCx+LaA6h/7fIulzgDYrZ2AW9RVmUSr3JyuU+1WvKNoZiwcUNM/7dtEUK12WDR4jtRrDg4qa9+N+1Qx9Bh41RR6u+5JBUcXsYqGHvqBjnxwpAWdXYq3LCW04uGOJXbyauc8vaBxvfDznGPG8IlIh/2UKCk=
-      file: "${RELEASE_DMG_FILE}"
-      skip_cleanup: true
-      name: Focus daemon v.$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)
-      body: Automated development pseudo-stable release from CI.
-      on:
-        repo: FocusCompany/daemon
-        branch: development
+      - MATRIX_EVAL="brew install openssl@1.1 && brew install zmq"
     cache:
       directories:
         - $HOME/Library/Caches/Homebrew
         - "$HOME/protobuf"
-        - "$HOME/jwt-cpp"
+
 language: cpp
+
 before_install:
-- eval "${MATRIX_EVAL}"
-- bash travis_jwt-cpp.sh
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bash travis_protobuf.sh osx; fi
-- if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then bash travis_protobuf.sh linux; fi
+  - eval "${MATRIX_EVAL}"
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bash travis_protobuf.sh osx; fi
+  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then bash travis_protobuf.sh linux; fi
+
 script:
-- echo "[COMPILING PROTO FILES]"
-- cd $HOME/build/FocusCompany/daemon/Shared/Proto/
-- chmod +x generate.sh
-- "./generate.sh"
-- echo "[RUNNING CMAKE]"
-- cd $HOME/build/FocusCompany/daemon/
-- mkdir build
-- cd build
-- cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=ON .. && make
-- ctest --verbose
+  - echo "[RUNNING CMAKE]"
+  - cd $HOME/build/FocusCompany/daemon/
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1" -DENABLE_TESTING=ON .. && make
+  - ctest --verbose
+
+before_deploy:
+  - git pull --tags
+  - make package
+  - export TAG="$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)"
+  - echo "Tagging release with tag ${TAG}"
+  - git config --local user.name "`git log -1 --format=%an`"
+  - git config --local user.email "`git log -1 --format=%ae`"
+  - if git rev-parse ${TAG} >/dev/null 2>&1; then echo "Tag §{TAG} exist, skipping tagging" && TRAVIS_TAG=${TAG}; else git tag ${TAG}; fi
+
+deploy:
+  provider: releases
+  prerelease: true
+  api_key:
+    secure: mBzpwgHJ4j9ij+Nob5osKTLxQaAMoR1xL97PltHyg+EjqVTUfLEr5VMjO3a++X4h+HqjaDXQ41AljiPLh4VTNJU4U16rQrZrKR5qprFTRoQ42QTKzivBFq/MNR3tFjCfbS8kNORXmnvn8Jps5EA6io4FJZ7F2uzEIU9IDqY3eyM71o4VfhpIrk2QULl7yKIv81OhH0TDx77AieLj3q2uLsPHwGo40UPMoq65HxEAbqlW0fGhvLDekUj7sIIYxm6AzT9HS0R/ZaFfoMzkfbFdbg+Zv7C0S/boiHORm5pVD8i4pZvaZhlEKfAkY/RWsOaYOyz+LKGZe0b8uGu2ZzmMVRxIkNVegIDDTKz/KwaGaD4r0+CYQWzR2TOnmXjfEps13jTtCE+xJUheDkvJChanv2hJnWupChMF7m6rVASHapl/+KbmHLVzABmWBYt5Pf9QoMXlxuUxOt9hL4W1/HU+HgVJ0TTRWmh9G6T4ObtEoDvkIcDWowsut5I2UgapZJxH8bnN6/6LTBXwVbo0LDCx+LaA6h/7fIulzgDYrZ2AW9RVmUSr3JyuU+1WvKNoZiwcUNM/7dtEUK12WDR4jtRrDg4qa9+N+1Qx9Bh41RR6u+5JBUcXsYqGHvqBjnxwpAWdXYq3LCW04uGOJXbyauc8vaBxvfDznGPG8IlIh/2UKCk=
+  file_glob: true
+  file: "$HOME/build/FocusCompany/daemon/build/Focus-$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty).*"
+  skip_cleanup: true
+  name: Focus daemon v.$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)
+  body: Automated development pseudo-stable release from CI.
+  on:
+    repo: FocusCompany/daemon
+    branch: ep_auth_policies
