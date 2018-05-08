@@ -40,22 +40,21 @@ after_build:
   - echo Running Unit Tests...
   - ctest -C Debug --verbose
   - msbuild /P:Configuration=Release PACKAGE.vcxproj
-  - ps: $env:REL_NAME="$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)"
 
 artifacts:
   - path: Focus*.exe
     name: Focus
 
-deploy:
-  tag: $env:REL_NAME
-  release: Focus daemon v.$env:REL_NAME
-  description: 'Automated development pseudo-stable release from Appveyor'
-  provider: GitHub
-  auth_token:
-    secure: FCZ5MTyTIPWhb59oIUixNgopyNjcdLButeL9SH0PLK1qGvqJ82d6qhnG95EoyjIz
-  artifact: Focus
-  draft: false
-  prerelease: true
-  on:
-    branch: ep_windows_builds
-    appveyor_repo_tag: false
+#deploy:
+#  tag: $env:REL_NAME="$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)"
+#  release: Focus daemon v.$env:REL_NAME="$(git log -1 --format=%ad --date=format:'%Y-%m-%d')-$(git describe --match=NeVeRmAtCh --always --dirty)"
+#  description: 'Automated development pseudo-stable release from Appveyor'
+#  provider: GitHub
+#  auth_token:
+#    secure: FCZ5MTyTIPWhb59oIUixNgopyNjcdLButeL9SH0PLK1qGvqJ82d6qhnG95EoyjIz
+#  artifact: Focus
+#  draft: false
+#  prerelease: true
+#  on:
+#    branch: ep_windows_builds
+#    appveyor_repo_tag: false
