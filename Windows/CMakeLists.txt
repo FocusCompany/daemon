@@ -37,6 +37,8 @@ endif()
 
 ####INSTALL####
 
+include(InstallRequiredSystemLibraries)
+install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION bin COMPONENT Libraries)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/BUILD/ DESTINATION bin FILES_MATCHING PATTERN "*.dll")
 install(TARGETS daemon_windows DESTINATION bin)
 
