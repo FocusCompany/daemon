@@ -28,7 +28,6 @@ install:
   - vcpkg install zeromq:x64-windows
 
 before_build:
-  - echo [GIT SUBMODULE]
   - cd C:\projects\daemon
   - git submodule update --init --recursive
 
@@ -60,4 +59,3 @@ deploy:
   prerelease: true
   on:
     branch: ep_windows_builds
-    appveyor_repo_tag: false
