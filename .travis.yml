@@ -70,4 +70,4 @@ deploy:
   body: Automated development pseudo-stable release from CI.
   on:
     repo: FocusCompany/daemon
-    branch: ep_auth_policies
+    branch: development
