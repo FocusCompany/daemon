@@ -117,7 +117,7 @@ void FocusConfiguration::generateConfigurationFile() {
         config.set<std::vector<server>>("servers", {server {
                 "auth.thefocuscompany.me", 3000, serverType::AUTHENTICATION
         }, server {
-                "auth.thefocuscompany.me", 5555, serverType::BACKEND
+                "backend.thefocuscompany.me", 5555, serverType::BACKEND
         }});
         config.set<std::string>("trigger_afk", "300");
 
