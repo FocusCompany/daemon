@@ -58,4 +58,4 @@ deploy:
   draft: false
   prerelease: true
   on:
-    branch: ep_windows_builds
+    branch: development
