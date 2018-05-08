@@ -24,6 +24,7 @@ private:
     std::string _uuid;
     std::string _deviceId;
     bool _connected;
+    int _connectionAttempt;
 
 public:
     void Run(std::shared_ptr<FocusConfiguration> &config);

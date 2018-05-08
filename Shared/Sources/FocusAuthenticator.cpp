@@ -29,7 +29,7 @@ std::string FocusAuthenticator::GetToken() {
     try {
         auto dec_obj = jwt::decode(_token, jwt::params::algorithms({"rs256"}), jwt::params::secret(public_key), jwt::params::verify(true));
         spdlog::get("logger")->info("Token is valid");
-    } catch (const jwt::TokenExpiredError&) {
+    } catch (const jwt::TokenExpiredError &) {
         spdlog::get("logger")->info("Renewing token");
         RenewToken();
     } catch (...) {
@@ -39,6 +39,11 @@ std::string FocusAuthenticator::GetToken() {
 }
 
 bool FocusAuthenticator::Login(const std::string &email, const std::string &password, const std::string &deviceId) {
+    if (_connectionAttempt > 3) {
+        spdlog::get("logger")->critical("Failed to connect to authentication server after {0} attempt", _connectionAttempt - 1);
+        std::exit(1);
+    }
+
     spdlog::get("logger")->info("Attempt to login");
     httplib::Params params = {
             {"email",    email},
@@ -50,8 +55,12 @@ bool FocusAuthenticator::Login(const std::string &email, const std::string &pass
     auto res = _cli->post("/api/v1/login", params);
     if (res == nullptr) {
         spdlog::get("logger")->error("Can not establish connection with authentication server");
+        int waiting = _connectionAttempt * 5;
+        spdlog::get("logger")->info("Retrying in {} seconds", waiting);
+        std::this_thread::sleep_for(std::chrono::seconds(waiting));
+        ++_connectionAttempt;
         _connected = false;
-        return false;
+        return Login(email, password, deviceId);
     } else if (res && res->status == 200) {
         auto j = nlohmann::json::parse(res->body);
         if (j.find("token") != j.end()) {
@@ -66,6 +75,7 @@ bool FocusAuthenticator::Login(const std::string &email, const std::string &pass
                     _token = j["token"];
                     _connected = true;
                     spdlog::get("logger")->info("Successfully connected");
+                    _connectionAttempt = 0;
                     return true;
                 }
             } catch (...) {
@@ -76,13 +86,25 @@ bool FocusAuthenticator::Login(const std::string &email, const std::string &pass
 
         }
     } else {
-        spdlog::get("logger")->error("Authentication failed");
+        spdlog::get("logger")->error("Authentication failed, enter your credentials again");
+        _config->generateConfigurationFile();
+        _config->readConfiguration(0);
+        auto usr = _config->getUser();
+        ++_connectionAttempt;
+        if (Login(usr._email, usr._password, _config->getDevice()._id)) {
+            return true;
+        }
     }
     _connected = false;
     return false;
 }
 
 bool FocusAuthenticator::RegisterDevice(const std::string &name) {
+    if (_connectionAttempt > 3) {
+        spdlog::get("logger")->critical("Failed to connect to authentication server after {0} attempt", _connectionAttempt - 1);
+        std::exit(1);
+    }
+
     spdlog::get("logger")->info("Registering new device : {}", name);
     std::stringstream auth;
     auth << "Bearer " << _token;
@@ -93,28 +115,45 @@ bool FocusAuthenticator::RegisterDevice(const std::string &name) {
     auto res = _cli->post("/api/v1/register_device", headers, params);
     if (res == nullptr) {
         spdlog::get("logger")->error("Can not establish connection with authentication server");
+        int waiting = _connectionAttempt * 5;
+        spdlog::get("logger")->info("Retrying in {} seconds", waiting);
+        std::this_thread::sleep_for(std::chrono::seconds(waiting));
+        ++_connectionAttempt;
+        RegisterDevice(name);
         return false;
     } else if (res && res->status == 200) {
         auto j = nlohmann::json::parse(res->body);
         if (j.find("deviceId") != j.end()) {
             _config->setDeviceId(std::to_string(static_cast<int>(j["deviceId"])));
             spdlog::get("logger")->info("Device successfully registered");
+            _connectionAttempt = 0;
             return true;
         }
     } else {
-        spdlog::get("logger")->error("Registration failed");
+        spdlog::get("logger")->critical("Registration failed");
+        std::exit(1);
     }
     return false;
 }
 
 bool FocusAuthenticator::RenewToken() {
+    if (_connectionAttempt > 3) {
+        spdlog::get("logger")->critical("Failed to connect to authentication server after {0} attempt", _connectionAttempt - 1);
+        std::exit(1);
+    }
+
     httplib::Params params = {
             {"token", _token}
     };
     auto res = _cli->post("/api/v1/renew_jwt", params);
     if (res == nullptr) {
         spdlog::get("logger")->error("Can not establish connection with authentication server");
+        int waiting = _connectionAttempt * 5;
+        spdlog::get("logger")->info("Retrying in {} seconds", waiting);
+        std::this_thread::sleep_for(std::chrono::seconds(waiting));
+        ++_connectionAttempt;
         _connected = false;
+        RenewToken();
         return false;
     } else if (res && res->status == 200) {
         auto j = nlohmann::json::parse(res->body);
@@ -130,6 +169,7 @@ bool FocusAuthenticator::RenewToken() {
                     _token = j["token"];
                     _connected = true;
                     spdlog::get("logger")->info("Token successfully renewed");
+                    _connectionAttempt = 0;
                     return true;
                 }
             } catch (...) {
@@ -173,4 +213,5 @@ FocusAuthenticator::FocusAuthenticator() : _cli(),
                                            _token(),
                                            _uuid(),
                                            _deviceId(),
-                                           _connected(false) {}
+                                           _connected(false),
+                                           _connectionAttempt(1) {}

@@ -1,3 +1,5 @@
+language: cpp
+
 matrix:
   include:
   - os: linux
@@ -6,9 +8,7 @@ matrix:
     compiler: gcc
     addons:
       apt:
-        sources:
-        - george-edison55/cmake-3.x
-        - ubuntu-toolchain-r-test
+        sources: ubuntu-toolchain-r-test
         packages:
         - cmake
         - gcc-7
@@ -26,26 +26,21 @@ matrix:
         - libxss-dev
         - rpm
         - checkinstall
-    env:
-      - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+    env: MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
     cache:
       directories:
         - "$HOME/protobuf"
   - os: osx
     compiler: clang
-    env:
-      - MATRIX_EVAL="brew install openssl@1.1 && brew install zmq"
+    env: MATRIX_EVAL="brew install openssl@1.1 && brew install zmq"
     cache:
       directories:
         - $HOME/Library/Caches/Homebrew
         - "$HOME/protobuf"
 
-language: cpp
-
 before_install:
   - eval "${MATRIX_EVAL}"
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bash travis_protobuf.sh osx; fi
-  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then bash travis_protobuf.sh linux; fi
+  - bash travis_protobuf.sh $TRAVIS_OS_NAME
 
 script:
   - echo "[RUNNING CMAKE]"

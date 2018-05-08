@@ -41,7 +41,7 @@ FocusConfiguration::FocusConfiguration(const std::string &configFile) :
         _defaultServer({std::string("127.0.0.1"), 4242, serverType::DEFAULT}),
         _configFile(configFile),
         _source() {
-    readConfiguration(_configFile, 0);
+    readConfiguration(0);
 }
 
 bool FocusConfiguration::isFilled() const {
@@ -97,7 +97,7 @@ void FocusConfiguration::setTriggerAfk(const std::string &triggerAfk) {
     }
 }
 
-void FocusConfiguration::generateConfigurationFile(const std::string &configFile) {
+void FocusConfiguration::generateConfigurationFile() {
     auto askStdin = [](std::string const &value) {
         std::string in;
         std::cout << value << ": ";
@@ -117,7 +117,7 @@ void FocusConfiguration::generateConfigurationFile(const std::string &configFile
         config.set<std::vector<server>>("servers", {server {
                 "auth.thefocuscompany.me", 3000, serverType::AUTHENTICATION
         }, server {
-                "backend.thefocuscompany.me", 5555, serverType::BACKEND
+                "auth.thefocuscompany.me", 5555, serverType::BACKEND
         }});
         config.set<std::string>("trigger_afk", "300");
 
@@ -126,7 +126,7 @@ void FocusConfiguration::generateConfigurationFile(const std::string &configFile
                 askStdin("Device Name")
         });
 
-        std::ofstream stream(configFile, std::ios::out);
+        std::ofstream stream(_configFile, std::ios::out);
         if (stream) {
             stream << lightconf::config_format::write(config, _source, 80);
         } else {
@@ -139,7 +139,7 @@ void FocusConfiguration::generateConfigurationFile(const std::string &configFile
     }
 }
 
-void FocusConfiguration::readConfiguration(const std::string &configFile, int attempt) {
+void FocusConfiguration::readConfiguration(int attempt) {
     if (attempt > 3) {
         spdlog::get("logger")->critical("Failed to read configuration file after {0} attempt", attempt);
         std::exit(1);
@@ -148,7 +148,7 @@ void FocusConfiguration::readConfiguration(const std::string &configFile, int at
     lightconf::group config;
     _source = "";
     try {
-        spdlog::get("logger")->info("Loading configuration file from {0}", configFile);
+        spdlog::get("logger")->info("Loading configuration file from {0}", _configFile);
         std::ifstream stream(_configFile, std::ios::in);
         if (stream) {
             _source = std::string(std::istreambuf_iterator<char>(stream),
@@ -164,15 +164,16 @@ void FocusConfiguration::readConfiguration(const std::string &configFile, int at
         } else {
             _filled = false;
             spdlog::get("logger")->warn("Missing configuration file");
-            generateConfigurationFile(configFile);
-
+            generateConfigurationFile();
         }
     } catch (const lightconf::parse_error &) {
         _filled = false;
         spdlog::get("logger")->error("Parsing configuration file error");
+        generateConfigurationFile();
     } catch (const std::exception &) {
         _filled = false;
         spdlog::get("logger")->error("Failed to read configuration file");
+        generateConfigurationFile();
     }
-    readConfiguration(configFile, ++attempt);
+    readConfiguration(++attempt);
 }
