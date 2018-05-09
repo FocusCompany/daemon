@@ -50,16 +50,16 @@ bool create_directories(std::string const& path)
 
 bool FocusDaemon::Run(const std::string &configFileName, std::atomic<bool> &sigReceived) {
     spdlog::get("logger")->info("FocusDaemon is running");
-
     _config = std::make_shared<FocusConfiguration>(sago::getConfigHome() + "/Focus/" + configFileName);
     auto usr = _config->getUser();
-
     Authenticator->Run(_config);
     if (Authenticator->Login(usr._email, usr._password, _config->getDevice()._id)) {
         _device_id = Authenticator->GetDeviceId();
         spdlog::get("logger")->info("User uuid: {}", Authenticator->GetUUID());
         if (_device_id.empty()) {
             if (Authenticator->RegisterDevice(_config->getDevice()._name)) {
+                spdlog::get("logger")->info("Re-Login with device_id");
+                auto usr = _config->getUser();
                 Authenticator->Login(usr._email, usr._password, _config->getDevice()._id);
                 _device_id = Authenticator->GetDeviceId();
             }

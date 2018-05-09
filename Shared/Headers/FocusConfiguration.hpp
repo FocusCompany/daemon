@@ -41,7 +41,7 @@ private:
 public:
     FocusConfiguration(const std::string &configFile);
 
-    void readConfiguration(const std::string &configFile, int attempt);
+    void readConfiguration(int attempt);
 
     bool isFilled() const;
 
@@ -57,7 +57,7 @@ public:
 
     std::string getTriggerAfk() const;
 
-    void generateConfigurationFile(const std::string &configFile);
+    void generateConfigurationFile();
 };
 
 
