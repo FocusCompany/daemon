@@ -24,6 +24,8 @@ matrix:
         - libx11-dev
         - libxmu-dev
         - libxss-dev
+        - libwebkitgtk-dev
+        - libwebkit2gtk-4.0-dev
         - rpm
         - checkinstall
     env: MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
