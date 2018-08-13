@@ -23,12 +23,12 @@ private:
     std::unique_ptr<FocusKeyLogger> KeyLogger = std::make_unique<FocusKeyLogger>();
     std::unique_ptr<FocusNetworkManager> NetworkManager = std::make_unique<FocusNetworkManager>();
     std::unique_ptr<FocusEventManager> EventManager = std::make_unique<FocusEventManager>();
-    std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
+    //std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
     std::string _device_id = "";
-    std::atomic<bool> _sigReceived;
-    std::atomic<bool> _isRunning;
-    std::string _configFileName;
-    std::unique_ptr<std::thread> _daemonThread;
+    std::atomic<bool> _sigReceived = {false};
+    std::atomic<bool> _isRunning = {false};
+    std::string _configFileName = "";
+    std::unique_ptr<std::thread> _daemonThread = nullptr;
     void RunDaemon();
 
 public:

@@ -12,7 +12,7 @@
 #elif defined(APPLE)
     #include <mach-o/dyld.h>
 #elif defined(UNIX)
-    // Unix
+    #include <libgen.h>
 #endif
 
 static const std::string getExecPath() {
@@ -27,6 +27,13 @@ static const std::string getExecPath() {
     path = path.substr(0, path.find_last_of('/') + 1);
     return path;
 #elif defined(UNIX)
+    char result[ PATH_MAX ];
+    ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+    const char *path;
+    if (count != -1) {
+        path = dirname(result);
+        return std::string(path) + "/";
+    }
     return std::string("");
 #endif
 }

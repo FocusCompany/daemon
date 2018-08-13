@@ -23,7 +23,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/BUILD)
 
 ### Add useful cmake macros that help with compiler/linker flags especially in VS2017
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
-ucm_set_runtime(STATIC)
 
 ### Turn on the ability to create folders to organize projects under VS2017
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -32,6 +31,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 if(MSVC)
     add_definitions(-DMSVC)
 	add_definitions(-DWIN32_LEAN_AND_MEAN)
+    ucm_set_runtime(STATIC)
 elseif(APPLE)
     add_definitions(-DAPPLE)
 elseif(UNIX)
