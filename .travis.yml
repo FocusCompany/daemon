@@ -3,12 +3,14 @@ language: cpp
 matrix:
   include:
   - os: linux
-    dist: xenial
+    dist: trusty
     sudo: required
     compiler: gcc
     addons:
       apt:
-        sources: ubuntu-toolchain-r-test
+        sources:
+        - sourceline: 'ppa:ubuntu-toolchain-r/test'
+        - sourceline: 'ppa:webkit-team/ppa'
         packages:
         - cmake
         - gcc-7
