@@ -5,6 +5,8 @@
 #include <FocusDaemon.hpp>
 #include <spdlog_pragma.hpp>
 #include <FocusPlatformFolders.hpp>
+#include <FocusUI.hpp>
+
 
 #ifdef MSVC
 #include <direct.h>
@@ -48,10 +50,25 @@ bool create_directories(std::string const& path)
     return bSuccess;
 }
 
-bool FocusDaemon::Run(const std::string &configFileName, std::atomic<bool> &sigReceived) {
+void FocusDaemon::Run(const std::string &configFileName, std::atomic<bool> &sigReceived) {
     spdlog::get("logger")->info("FocusDaemon is running");
-    _config = std::make_shared<FocusConfiguration>(sago::getConfigHome() + "/Focus/" + configFileName);
+
+    _sigReceived = sigReceived.load();
+    _configFileName = configFileName;
+    _isRunning = true;
+
+    _daemonThread = std::make_unique<std::thread>(std::bind(&FocusDaemon::RunDaemon, this));
+
+
+    FocusGUI->Run();
+}
+
+void FocusDaemon::RunDaemon() {
+    EventManager->Run(_sigReceived);
+
+    _config = std::make_shared<FocusConfiguration>(sago::getConfigHome() + "/Focus/" + _configFileName);
     auto usr = _config->getUser();
+
     Authenticator->Run(_config);
     if (Authenticator->Login(usr._email, usr._password, _config->getDevice()._id)) {
         _device_id = Authenticator->GetDeviceId();
@@ -65,15 +82,14 @@ bool FocusDaemon::Run(const std::string &configFileName, std::atomic<bool> &sigR
             }
         }
     }
+
     if (!_device_id.empty()) {
         spdlog::get("logger")->info("Device Id: {}", _device_id);
-        EventManager->Run(sigReceived);
-        NetworkManager->Run(_device_id, _config, sigReceived);
-        KeyLogger->Run(Authenticator, _config, sigReceived);
-        return true;
+        NetworkManager->Run(_device_id, _config, _sigReceived);
+        KeyLogger->Run(Authenticator, _config, _sigReceived);
     }
-    return false;
 }
+
 
 void FocusDaemon::bootstrap(std::string const &platform_name) {
     create_directories(sago::getDataHome() + "/Focus/");
@@ -90,4 +106,11 @@ void FocusDaemon::bootstrap(std::string const &platform_name) {
     spdlog::set_pattern("\t*****  %v  *****");
     spdlog::get("logger")->info("Starting Focus daemon (ver. {1}) on {0} Platform", platform_name, std::string(FocusDaemon::version));
     spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [thread %t] [%l]\t\t: %v");
+}
+
+FocusDaemon::~FocusDaemon() {
+    if (_isRunning) {
+        _isRunning = false;
+        _daemonThread->join();
+    }
 }

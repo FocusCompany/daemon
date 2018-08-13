@@ -12,17 +12,29 @@
 #include "FocusEventManager.hpp"
 #include "FocusAuthenticator.hpp"
 #include "FocusConfiguration.hpp"
+#include "FocusUI.hpp"
+#include "FocusEventEmitter.hpp"
 
 class FocusDaemon {
 private:
     std::shared_ptr<FocusAuthenticator> Authenticator = std::make_shared<FocusAuthenticator>();
     std::shared_ptr<FocusConfiguration> _config = nullptr;
+    std::unique_ptr<FocusUI> FocusGUI = std::make_unique<FocusUI>();
     std::unique_ptr<FocusKeyLogger> KeyLogger = std::make_unique<FocusKeyLogger>();
     std::unique_ptr<FocusNetworkManager> NetworkManager = std::make_unique<FocusNetworkManager>();
     std::unique_ptr<FocusEventManager> EventManager = std::make_unique<FocusEventManager>();
+    std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
     std::string _device_id = "";
+    std::atomic<bool> _sigReceived;
+    std::atomic<bool> _isRunning;
+    std::string _configFileName;
+    std::unique_ptr<std::thread> _daemonThread;
+    void RunDaemon();
+
 public:
-    bool Run(const std::string &configFileName, std::atomic<bool> &sigReceived);
+    virtual ~FocusDaemon();
+
+    void Run(const std::string &configFileName, std::atomic<bool> &sigReceived);
 
     static void bootstrap(std::string const& platform_name);
 

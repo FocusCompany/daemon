@@ -9,8 +9,6 @@
 #include <algorithm>
 #include <string>
 
-std::mutex mtx;
-std::condition_variable cv;
 std::atomic<bool> sigReceived;
 
 void exitProgram(int sig) {
@@ -21,8 +19,6 @@ void exitProgram(int sig) {
     spdlog::get("logger")->info("End of program : SIG {}", name);
     spdlog::get("logger")->flush();
     spdlog::drop_all();
-    std::unique_lock<std::mutex> lck(mtx);
-    cv.notify_all();
 }
 
 int main() {
@@ -35,11 +31,7 @@ int main() {
 
     FocusDaemon::bootstrap("macOS");
     FocusDaemon daemon;
-    if (daemon.Run("daemon.config", sigReceived)) {
-        std::unique_lock<std::mutex> lck(mtx);
-        cv.wait(lck);
-    } else {
-        exitProgram(0);
-    }
+    daemon.Run("daemon.config", sigReceived);
+    exitProgram(0);
     return (0);
 }
