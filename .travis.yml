@@ -8,7 +8,9 @@ matrix:
     compiler: gcc
     addons:
       apt:
-        sources: ubuntu-toolchain-r-test
+        sources:
+        - sourceline: 'ppa:ubuntu-toolchain-r/test'
+        - sourceline: 'ppa:webkit-team/ppa'
         packages:
         - cmake
         - gcc-7
@@ -24,6 +26,8 @@ matrix:
         - libx11-dev
         - libxmu-dev
         - libxss-dev
+        - libwebkitgtk-dev
+        - libwebkit2gtk-4.0-dev
         - rpm
         - checkinstall
     env: MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
