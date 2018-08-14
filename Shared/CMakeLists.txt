@@ -63,7 +63,7 @@ add_library(webview INTERFACE)
 
 IF(MSVC)
     target_link_libraries(webview INTERFACE ole32 comctl32 oleaut32 uuid)
-    target_link_libraries(daemon_shared_lib wsock32 ws2_32 webview)
+    target_link_libraries(daemon_shared_lib wsock32 ws2_32 shlwapi webview)
 ELSEIF(APPLE)
     find_library(COCOA_LIBRARY Cocoa)
     find_library(WEBKIT_LIBRARY WebKit)

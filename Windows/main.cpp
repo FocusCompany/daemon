@@ -8,11 +8,8 @@
 #include <signal.h>
 #include <spdlog_pragma.hpp>
 #include "FocusDaemon.hpp"
-#include <condition_variable>
 #include <FocusPlatformFolders.hpp>
 
-std::mutex mtx;
-std::condition_variable cv;
 std::atomic<bool> sigReceived;
 
 void exitProgram()
@@ -22,8 +19,6 @@ void exitProgram()
 	spdlog::get("logger")->info("End of program");
 	spdlog::get("logger")->flush();
 	spdlog::drop_all();
-	std::unique_lock<std::mutex> lck(mtx);
-	cv.notify_all();
 }
 
 BOOL WINAPI ConsoleHandler(DWORD CEvent)
@@ -42,11 +37,7 @@ int main()
 
 	FocusDaemon::bootstrap("Windows");
 	FocusDaemon daemon;
-	if (daemon.Run("daemon.config", sigReceived)) {
-		std::unique_lock<std::mutex> lck(mtx);
-		cv.wait(lck);
-	} else {
-		exitProgram();
-	}
+	daemon.Run("daemon.config", sigReceived);
+	exitProgram();
 	return (0);
 }

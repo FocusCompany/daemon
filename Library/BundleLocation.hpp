@@ -8,7 +8,7 @@
 #include <iostream>
 
 #if defined(MSVC)
-    // Windows
+	#include <Shlwapi.h>
 #elif defined(APPLE)
     #include <mach-o/dyld.h>
 #elif defined(UNIX)
@@ -17,7 +17,10 @@
 
 static const std::string getExecPath() {
 #if defined(MSVC)
-    return std::string("");
+	TCHAR dest[MAX_PATH];
+	DWORD length = GetModuleFileName(NULL, dest, MAX_PATH);
+	PathRemoveFileSpec(dest);
+	return std::string(dest) + "\\";
 #elif defined(APPLE)
     std::string path(PAGE_SIZE, '\0');
     auto size = static_cast<uint32_t>(path.size());
