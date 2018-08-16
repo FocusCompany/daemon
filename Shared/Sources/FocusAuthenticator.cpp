@@ -2,108 +2,185 @@
 // Created by Etienne Pasteur on 16/12/2017.
 //
 
+#include "json_pragma.hpp"
 #include "FocusAuthenticator.hpp"
-#include <json.hpp>
-#include <jwt/jwt_all.h>
-#include <spdlog/spdlog.h>
+#include "jwt_pragma.hpp"
+#include <spdlog_pragma.hpp>
 
-void FocusAuthenticator::Run() {
-    _cli = std::make_unique<httplib::Client>("auth.thefocuscompany.me", 3000, 5);
+void FocusAuthenticator::Run(std::shared_ptr<FocusConfiguration> &config) {
+    _config = config;
+    auto srv = _config->getServer(serverType::AUTHENTICATION);
+    _cli = std::make_unique<httplib::Client>(srv._ip.c_str(), srv._port, 5);
 }
 
 std::string FocusAuthenticator::GetUUID() const {
     return _uuid;
 }
 
+std::string FocusAuthenticator::GetDeviceId() const {
+    return _deviceId;
+}
+
 bool FocusAuthenticator::GetConnectionStatus() const {
     return _connected;
 }
 
-std::string FocusAuthenticator::GetCurrentToken() const{
+std::string FocusAuthenticator::GetToken() {
+    try {
+        auto dec_obj = jwt::decode(_token, jwt::params::algorithms({"rs256"}), jwt::params::secret(public_key), jwt::params::verify(true));
+        spdlog::get("logger")->info("Token is valid");
+    } catch (const jwt::TokenExpiredError &) {
+        spdlog::get("logger")->info("Renewing token");
+        RenewToken();
+    } catch (...) {
+        spdlog::get("logger")->error("Invalid token");
+    }
     return _token;
 }
 
-bool FocusAuthenticator::Login(const std::string &email, const std::string &password) {
+bool FocusAuthenticator::Login(const std::string &email, const std::string &password, const std::string &deviceId) {
+    if (_connectionAttempt > 3) {
+        spdlog::get("logger")->critical("Failed to connect to authentication server after {0} attempt", _connectionAttempt - 1);
+        std::exit(1);
+    }
+
     spdlog::get("logger")->info("Attempt to login");
     httplib::Params params = {
             {"email",    email},
             {"password", password}
     };
-    auto res = _cli->post("/login", params);
+    if (!deviceId.empty()) {
+        params.insert({"device_id", deviceId});
+    }
+    auto res = _cli->post("/api/v1/login", params);
     if (res == nullptr) {
         spdlog::get("logger")->error("Can not establish connection with authentication server");
+        int waiting = _connectionAttempt * 5;
+        spdlog::get("logger")->info("Retrying in {} seconds", waiting);
+        std::this_thread::sleep_for(std::chrono::seconds(waiting));
+        ++_connectionAttempt;
         _connected = false;
-        return false;
+        return Login(email, password, deviceId);
     } else if (res && res->status == 200) {
         auto j = nlohmann::json::parse(res->body);
         if (j.find("token") != j.end()) {
-            ExpValidator exp;
-            std::ifstream rsa_pub_file("./keys/public_key");
-            if (!rsa_pub_file.is_open()) {
-                spdlog::get("logger")->error("Can not find rsa keys to verify the token signature");
-            } else {
-                std::string rsa_pub_key{std::istreambuf_iterator<char>(rsa_pub_file), std::istreambuf_iterator<char>()};
-                RS256Validator signer(rsa_pub_key);
-                try {
-                    nlohmann::json header, payload;
-                    std::tie(header, payload) = JWT::Decode(j["token"], &signer, &exp);
-                    auto pl = nlohmann::json::parse(payload.dump());
-                    if (pl.find("uuid") != pl.end()) {
-                        _uuid = pl["uuid"];
-                        _token = j["token"];
-                        _connected = true;
-                        spdlog::get("logger")->info("Successfully connected");
-                        return true;
+            try {
+                std::string tmp = j["token"];
+                auto dec_obj = jwt::decode(tmp, jwt::params::algorithms({"rs256"}), jwt::params::secret(public_key), jwt::params::verify(true));
+                if (dec_obj.payload().has_claim("uuid")) {
+                    if (dec_obj.payload().has_claim("device_id")) {
+                        _deviceId = std::to_string(dec_obj.payload().get_claim_value<int>("device_id"));
                     }
-                } catch (InvalidTokenError &tfe) {
-                    spdlog::get("logger")->error("Invalid token signature");
-                    _connected = false;
-                    return false;
+                    _uuid = dec_obj.payload().get_claim_value<std::string>("uuid");
+                    _token = j["token"];
+                    _connected = true;
+                    spdlog::get("logger")->info("Successfully connected");
+                    _connectionAttempt = 0;
+                    return true;
                 }
+            } catch (...) {
+                spdlog::get("logger")->error("Invalid token");
+                _connected = false;
+                return false;
             }
+
+        }
+    } else {
+        spdlog::get("logger")->error("Authentication failed, enter your credentials again");
+        _config->generateConfigurationFile();
+        _config->readConfiguration(0);
+        auto usr = _config->getUser();
+        ++_connectionAttempt;
+        if (Login(usr._email, usr._password, _config->getDevice()._id)) {
+            return true;
         }
     }
     _connected = false;
     return false;
 }
 
+bool FocusAuthenticator::RegisterDevice(const std::string &name) {
+    if (_connectionAttempt > 3) {
+        spdlog::get("logger")->critical("Failed to connect to authentication server after {0} attempt", _connectionAttempt - 1);
+        std::exit(1);
+    }
+
+    spdlog::get("logger")->info("Registering new device : {}", name);
+    std::stringstream auth;
+    auth << "Bearer " << _token;
+    httplib::Headers headers = {
+            {"Authorization", auth.str()}
+    };
+    httplib::Params params = {{"devices_name", name}};
+    auto res = _cli->post("/api/v1/register_device", headers, params);
+    if (res == nullptr) {
+        spdlog::get("logger")->error("Can not establish connection with authentication server");
+        int waiting = _connectionAttempt * 5;
+        spdlog::get("logger")->info("Retrying in {} seconds", waiting);
+        std::this_thread::sleep_for(std::chrono::seconds(waiting));
+        ++_connectionAttempt;
+        RegisterDevice(name);
+        return false;
+    } else if (res && res->status == 200) {
+        auto j = nlohmann::json::parse(res->body);
+        if (j.find("deviceId") != j.end()) {
+            _config->setDeviceId(std::to_string(static_cast<int>(j["deviceId"])));
+            spdlog::get("logger")->info("Device successfully registered");
+            _connectionAttempt = 0;
+            return true;
+        }
+    } else {
+        spdlog::get("logger")->critical("Registration failed");
+        std::exit(1);
+    }
+    return false;
+}
+
 bool FocusAuthenticator::RenewToken() {
+    if (_connectionAttempt > 3) {
+        spdlog::get("logger")->critical("Failed to connect to authentication server after {0} attempt", _connectionAttempt - 1);
+        std::exit(1);
+    }
+
     httplib::Params params = {
             {"token", _token}
     };
-    auto res = _cli->post("/renew_jwt", params);
+    auto res = _cli->post("/api/v1/renew_jwt", params);
     if (res == nullptr) {
         spdlog::get("logger")->error("Can not establish connection with authentication server");
+        int waiting = _connectionAttempt * 5;
+        spdlog::get("logger")->info("Retrying in {} seconds", waiting);
+        std::this_thread::sleep_for(std::chrono::seconds(waiting));
+        ++_connectionAttempt;
         _connected = false;
+        RenewToken();
         return false;
     } else if (res && res->status == 200) {
         auto j = nlohmann::json::parse(res->body);
         if (j.find("token") != j.end()) {
-            ExpValidator exp;
-            std::ifstream rsa_pub_file("./keys/public_key");
-            if (!rsa_pub_file.is_open()) {
-                spdlog::get("logger")->error("Can not find rsa keys to verify the token signature");
-            } else {
-                std::string rsa_pub_key{std::istreambuf_iterator<char>(rsa_pub_file), std::istreambuf_iterator<char>()};
-                RS256Validator signer(rsa_pub_key);
-                try {
-                    nlohmann::json header, payload;
-                    std::tie(header, payload) = JWT::Decode(j["token"], &signer, &exp);
-                    auto pl = nlohmann::json::parse(payload.dump());
-                    if (pl.find("uuid") != pl.end()) {
-                        _uuid = pl["uuid"];
-                        _token = j["token"];
-                        _connected = true;
-                        spdlog::get("logger")->info("Token successfully renewed");
-                        return true;
+            try {
+                std::string tmp = j["token"];
+                auto dec_obj = jwt::decode(tmp, jwt::params::algorithms({"rs256"}), jwt::params::secret(public_key), jwt::params::verify(true));
+                if (dec_obj.payload().has_claim("uuid")) {
+                    if (dec_obj.payload().has_claim("device_id")) {
+                        _deviceId = std::to_string(dec_obj.payload().get_claim_value<int>("device_id"));
                     }
-                } catch (InvalidTokenError &tfe) {
-                    spdlog::get("logger")->error("Invalid token signature");
-                    _connected = false;
-                    return false;
+                    _uuid = dec_obj.payload().get_claim_value<std::string>("uuid");
+                    _token = j["token"];
+                    _connected = true;
+                    spdlog::get("logger")->info("Token successfully renewed");
+                    _connectionAttempt = 0;
+                    return true;
                 }
+            } catch (...) {
+                spdlog::get("logger")->error("Invalid token signature");
+                _connected = false;
+                return false;
             }
+
         }
+    } else {
+        spdlog::get("logger")->error("Renewing token failed");
     }
     _connected = false;
     return false;
@@ -115,7 +192,7 @@ bool FocusAuthenticator::Disconnect() {
     httplib::Headers headers = {
             {"Authorization", auth.str()}
     };
-    auto res = _cli->del("/delete_jwt", headers, "", "application/x-www-form-urlencoded");
+    auto res = _cli->del("/api/v1/delete_jwt", headers, "", "application/x-www-form-urlencoded");
     if (res == nullptr) {
         spdlog::get("logger")->error("Can not establish connection with authentication server");
         return false;
@@ -125,6 +202,16 @@ bool FocusAuthenticator::Disconnect() {
         _connected = false;
         spdlog::get("logger")->info("Successfully disconnected");
         return true;
+    } else {
+        spdlog::get("logger")->error("Disconnection failed");
     }
     return false;
 }
+
+FocusAuthenticator::FocusAuthenticator() : _cli(),
+                                           _config(),
+                                           _token(),
+                                           _uuid(),
+                                           _deviceId(),
+                                           _connected(false),
+                                           _connectionAttempt(1) {}

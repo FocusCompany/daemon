@@ -8,42 +8,22 @@ First take a look at the dependencies bellow, you should install all the depende
 mkdir build
 cd build
 
-cmake ..
-make                   //For Linux/Mac users
-
-cmake -G "Visual Studio 15 2017 Win64" ..
-msbuild daemon.sln     //For Windows users
+cmake .. (Linux)  /or/  cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug .. (Windows)
+make     (Linux)  /or/  nmake                                                  (Windows)
 ```
 Then simply run the generated executable depending on the platform where you have build the daemon.
 ### Dependencies
-#### Protobuf
-##### On windows :
-```bash
-mkdir tmp
-cd tmp
-mkdir install
-curl -L -o protobuf.zip https://github.com/google/protobuf/releases/download/v3.5.0/protobuf-all-3.5.0.zip
-7z x protobuf.zip
-del /Q protobuf.zip
-cd protobuf-3.5.0/cmake
-mkdir build
-cd build
-mkdir solution
-cd solution
-cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_INSTALL_PREFIX="../../../../install" -Dprotobuf_BUILD_TESTS=OFF ../..
-msbuild protobuf.sln
-msbuild INSTALL.vcxproj
-move "C:\....\tmp\install" "C:\Program Files\protobuf"
-```
-##### On Linux/Mac:
-```bash
-wget https://github.com/google/protobuf/releases/download/v3.5.0/protobuf-all-3.5.0.tar.gz -O protobuf.tar.gz
-tar -xzf protobuf.tar.gz
-rm protobuf.tar.gz
-cd protobuf-3.5.0 && ./autogen.sh && ./configure && make                //For Mac users
-cd protobuf-3.5.0 && ./autogen.sh && ./configure --prefix=/usr && make  //For Linux Users
-sudo make install
-```
+#### All Platform
+    - Protobuf 3 (https://github.com/google/protobuf)
+    - OpenSSL
+    - ZeroMQ (https://github.com/zeromq/libzmq)
+    - Jwt-cpp (https://github.com/pokowaka/jwt-cpp)
+#### Linux
+    - libx11-dev
+    - libxmu-dev
+    - libxss-dev
+#### MacOs
+    - Carbon    
 ## Class Diagram
 ![placeholder](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/FocusCompany/Daemon/master/docs/daemon.puml)
 ## Protobuf Envelope

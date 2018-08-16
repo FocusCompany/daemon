@@ -1,41 +1,59 @@
-cmake_minimum_required(VERSION 2.6)
+find_package(PkgConfig)
+pkg_check_modules(X11 REQUIRED x11)
+pkg_check_modules(XMU REQUIRED xmu)
 
-project(daemon_linux)
-
-set(CMAKE_CXX_STANDARD 14)
-
-include(FindProtobuf)
-find_package(Protobuf REQUIRED)
+find_library(XSS_LIBRARIES Xss)
+if(NOT XSS_LIBRARIES)
+    message(FATAL_ERROR "Xss library not found")
+else()
+    message(STATUS "Xss library found")
+endif()
 
 set(DEAMON_LINUX_SOURCE_FILES
         Sources/ContextAgent.cpp
-        Sources/KeyListener.cpp
-        Sources/MouseListener.cpp
+        Sources/AfkListener.cpp
 
         Headers/ContextAgent.hpp
-        Headers/KeyListener.hpp
-        Headers/MouseListener.hpp
+        Headers/AfkListener.hpp
         )
 
 set(MAIN_FILES
         main.cpp
         )
 
-include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ../Shared/Proto/ProtoCompiled ${PROTOBUF_INCLUDE_DIR})
+include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ../Shared/Proto/ProtoCompiled ${X11_INCLUDE_DIRS} ${XMU_INCLUDE_DIRS})
 
 add_library(daemon_linux_lib STATIC ${DEAMON_LINUX_SOURCE_FILES})
 
 add_executable(daemon_linux ${MAIN_FILES})
+set_target_properties(daemon_linux PROPERTIES OUTPUT_NAME "focus-daemon")
 
-target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib ${PROTOBUF_LIBRARY})
+target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib ${X11_LIBRARIES} ${XSS_LIBRARIES} ${XMU_LIBRARIES})
+
+link_directories(${X11_LIBRARY_DIRS} ${XMU_LIBRARY_DIRS})
+
+target_compile_options(daemon_linux_lib PRIVATE "${COMPILE_FLAGS}")
+target_compile_options(daemon_linux PRIVATE "${COMPILE_FLAGS}")
 
 ####TESTS####
 
-add_subdirectory(UnitTests)
+if (ENABLE_TESTING)
+    add_subdirectory(UnitTests)
 
-enable_testing()
-IF (MSVC)
-    add_test(NAME daemon_linux_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_linux_tests.exe)
-ELSE ()
-    add_test(NAME daemon_linux_tests COMMAND daemon_linux_tests)
-ENDIF ()
+    enable_testing()
+    IF (MSVC)
+        add_test(NAME daemon_linux_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_linux_tests.exe)
+    ELSE ()
+        add_test(NAME daemon_linux_tests COMMAND daemon_linux_tests)
+    ENDIF ()
+endif()
+
+####INSTALL####
+
+install(TARGETS daemon_linux DESTINATION bin)
+
+####PACKAGE####
+
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS TRUE)
+set(CPACK_GENERATOR RPM DEB) # Setup package version
+include (CPack)

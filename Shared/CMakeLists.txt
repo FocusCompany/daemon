@@ -1,14 +1,5 @@
-cmake_minimum_required(VERSION 2.6)
-
-project(daemon_shared_lib)
-
-set(CMAKE_CXX_STANDARD 14)
-
 include(FindOpenSSL)
 find_package(OpenSSL REQUIRED)
-
-include(FindJWTCPP)
-find_package(JWTCPP REQUIRED)
 
 include(FindProtobuf)
 find_package(Protobuf REQUIRED)
@@ -19,6 +10,10 @@ find_package(ZeroMQ REQUIRED)
 file(GLOB PROTO_SRC "Proto/ProtoCompiled/*.pb.cc")
 file(GLOB PROTO_HEADER "Proto/ProtoCompiled/*.pb.h")
 
+if(NOT MSVC)
+	set_source_files_properties(${PROTO_SRC} ${PROTO_HEADER} PROPERTIES COMPILE_FLAGS "-Wno-effc++ -Wno-unused-parameter")
+endif()
+
 set(DEAMON_SHARED_SOURCE_FILES
         Sources/FocusDaemon.cpp
         Sources/FocusEventManager.cpp
@@ -28,6 +23,8 @@ set(DEAMON_SHARED_SOURCE_FILES
         Sources/FocusSerializer.cpp
         Sources/FocusAuthenticator.cpp
         Sources/FocusSocket.cpp
+        Sources/FocusConfiguration.cpp
+        Sources/FocusPlatformFolders.cpp
 
         Headers/FocusDaemon.hpp
         Headers/FocusEventManager.hpp
@@ -39,13 +36,14 @@ set(DEAMON_SHARED_SOURCE_FILES
         Headers/FocusAuthenticator.hpp
         Headers/FocusSocket.hpp
         Headers/FocusSecureSocket.hpp
+        Headers/FocusConfiguration.hpp
+        Headers/FocusPlatformFolders.hpp
 
         Interfaces/IContextAgent.hpp
-        Interfaces/IKeyListener.hpp
-        Interfaces/IMouseListener.hpp
+        Interfaces/IAfkListener.hpp
         )
 
-include_directories(Headers Interfaces ${OPENSSL_INCLUDE_DIR} ${JWTCPP_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ${ZeroMQ_INCLUDE_DIR})
+include_directories(Headers Interfaces ${OPENSSL_INCLUDE_DIR} ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ${ZeroMQ_INCLUDE_DIR})
 
 IF (MSVC)
     include_directories(../Windows/Headers)
@@ -55,33 +53,27 @@ ELSEIF (UNIX)
     include_directories(../Linux/Headers)
 ENDIF ()
 
-add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER})
+add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} ${PROTO_HEADER} ${OPENSSL_INCLUDE_DIR})
 
-target_link_libraries(daemon_shared_lib ${JWTCPP_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
+target_link_libraries(daemon_shared_lib ${OPENSSL_CRYPTO_LIBRARY} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
 
 IF (MSVC)
     target_link_libraries(daemon_shared_lib wsock32 ws2_32)
-
-	set(ZeroMQ_ROOT_DIR "C:/Program Files/Focus/zmq")
-    file(GLOB ZMQ_DLL "${ZeroMQ_ROOT_DIR}/bin/*.dll")
-	message(STATUS "ZMQ_DLL: " ${ZMQ_DLL})
-	foreach(DLL ${ZMQ_DLL})
-		add_custom_command(TARGET daemon_shared_lib POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${DLL}"
-            "$<TARGET_FILE_DIR:daemon_shared_lib>")
-	endforeach()
 ELSE ()
     target_link_libraries(daemon_shared_lib pthread)
 ENDIF ()
 
+target_compile_options(daemon_shared_lib PRIVATE "${COMPILE_FLAGS}")
+
 ####TESTS####
 
-add_subdirectory(UnitTests)
+if (ENABLE_TESTING)
+    add_subdirectory(UnitTests)
 
-enable_testing()
-IF (MSVC)
-    add_test(NAME daemon_shared_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_shared_tests.exe)
-ELSE ()
-    add_test(NAME daemon_shared_tests COMMAND daemon_shared_tests)
-ENDIF ()
+    enable_testing()
+    IF (MSVC)
+        add_test(NAME daemon_shared_tests COMMAND ${PROJECT_BINARY_DIR}/bin/daemon_shared_tests.exe)
+    ELSE ()
+        add_test(NAME daemon_shared_tests COMMAND daemon_shared_tests)
+    ENDIF ()
+endif()

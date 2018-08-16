@@ -21,7 +21,7 @@ class FocusSecureSocket<Server> : public FocusSocket {
 public:
     FocusSecureSocket(const std::string &serverSecretKey) : FocusSocket() {
         _socket->setsockopt(ZMQ_CURVE_SERVER, 1);
-        _socket->setsockopt(ZMQ_CURVE_SECRETKEY, strdup(serverSecretKey.c_str()), serverSecretKey.size());
+        _socket->setsockopt(ZMQ_CURVE_SECRETKEY, serverSecretKey.c_str(), serverSecretKey.size());
     }
 };
 
@@ -29,9 +29,9 @@ template <>
 class FocusSecureSocket<Client> : public FocusSocket {
 public:
     FocusSecureSocket(const std::string &serverKey, const std::string &publicKey, const std::string &clientSecretKey) : FocusSocket() {
-        _socket->setsockopt(ZMQ_CURVE_SERVERKEY, strdup(serverKey.c_str()), serverKey.size());
-        _socket->setsockopt(ZMQ_CURVE_PUBLICKEY, strdup(publicKey.c_str()), publicKey.size());
-        _socket->setsockopt(ZMQ_CURVE_SECRETKEY, strdup(clientSecretKey.c_str()), clientSecretKey.size());
+        _socket->setsockopt(ZMQ_CURVE_SERVERKEY, serverKey.c_str(), serverKey.size());
+        _socket->setsockopt(ZMQ_CURVE_PUBLICKEY, publicKey.c_str(), publicKey.size());
+        _socket->setsockopt(ZMQ_CURVE_SECRETKEY, clientSecretKey.c_str(), clientSecretKey.size());
     }
 };
 

@@ -11,71 +11,92 @@
 #include <FocusSocket.hpp>
 #include <FocusEvent.pb.h>
 #include <FocusEnvelope.pb.h>
+#include <atomic>
+#include <iostream>
 
 template<class TPayload>
 class FocusEventListener {
 private:
+    int _socketTimeout; //milliseconds
     std::function<void(TPayload &payload)> _onMessage;
     std::unique_ptr<std::thread> _eventListenerThread;
-    std::shared_ptr<zmq::socket_t> _socketSUB = std::make_shared<zmq::socket_t>(*FocusSocket::Context, ZMQ_SUB);
+    std::unique_ptr<zmq::socket_t> _socketSUB;
+    std::atomic<bool> _isRunning;
 
-    static void RunReceive(zmq::socket_t *socketSUB, const std::function<void(TPayload &)> onMessage) {
-        while (true) {
-            zmq::message_t msg;
-            socketSUB->recv(&msg);
-            socketSUB->recv(&msg);
-            std::string payload = std::string(static_cast<char*>(msg.data()), msg.size());
-            Focus::Event event;
-            if (!event.ParseFromString(payload))
-                continue;
-            onMessage(event);
+    void RunReceive() {
+        while (_isRunning) {
+            zmq::multipart_t msg;
+            if (msg.recv(*_socketSUB)) {
+                std::string payload = std::string(static_cast<char *>(msg.at(1).data()), msg.at(1).size());
+                Focus::Event event;
+                if (!event.ParseFromString(payload))
+                    continue;
+                _onMessage(event);
+            }
         }
     }
 
-    static void RunReceiveEnvelope(zmq::socket_t *socketSUB, const std::function<void(TPayload &)> onMessage) {
-        while (true) {
-            zmq::message_t msg;
-            socketSUB->recv(&msg);
-            socketSUB->recv(&msg);
-            std::string payload = std::string(static_cast<char*>(msg.data()), msg.size());
-            Focus::Envelope envelope;
-            if (!envelope.ParseFromString(payload))
-                continue;
-            onMessage(envelope);
+    void RunReceiveEnvelope() {
+        while (_isRunning) {
+            zmq::multipart_t msg;
+            if (msg.recv(*_socketSUB)) {
+                std::string payload = std::string(static_cast<char *>(msg.at(1).data()), msg.at(1).size());
+                Focus::Envelope envelope;
+                if (!envelope.ParseFromString(payload))
+                    continue;
+                _onMessage(envelope);
+            }
         }
     }
 
-    static void RunReceiveMessage(zmq::socket_t *socketSUB, const std::function<void(TPayload &)> onMessage) {
-        while (true) {
-            zmq::message_t msg;
-            socketSUB->recv(&msg);
-            socketSUB->recv(&msg);
-            std::string payload = std::string(static_cast<char*>(msg.data()), msg.size());
-            onMessage(payload);
+    void RunReceiveMessage() {
+        while (_isRunning) {
+            zmq::multipart_t msg;
+            if (msg.recv(*_socketSUB)) {
+                std::string payload = std::string(static_cast<char *>(msg.at(1).data()), msg.at(1).size());
+                _onMessage(payload);
+            }
         }
     }
 
 public:
-    FocusEventListener() {
+    FocusEventListener() : _socketTimeout(1000),
+                           _onMessage(),
+                           _eventListenerThread(),
+                           _socketSUB(std::make_unique<zmq::socket_t>(*FocusSocket::Context, ZMQ_SUB)),
+                           _isRunning(false) {
         _socketSUB->connect("inproc:///tmp/EventEmitter");
+        _socketSUB->setsockopt(ZMQ_RCVTIMEO, &_socketTimeout, sizeof(_socketTimeout));
+    }
+
+    virtual ~FocusEventListener() {
+        if (_isRunning) {
+            _isRunning = false;
+            _eventListenerThread->join();
+        }
+        _socketSUB->close();
     }
 
     void Register(const std::string &payloadType, const std::function<void(TPayload &)> onMessage) {
         _socketSUB->setsockopt(ZMQ_SUBSCRIBE, payloadType.c_str(), payloadType.size());
         _onMessage = onMessage;
-        _eventListenerThread = std::make_unique<std::thread>(RunReceive, _socketSUB.get(), _onMessage);
+        _isRunning = true;
+        _eventListenerThread = std::make_unique<std::thread>(std::bind(&FocusEventListener::RunReceive, this));
     }
 
     void RegisterEnvelope(const std::string &payloadType, const std::function<void(TPayload &)> onMessage) {
         _socketSUB->setsockopt(ZMQ_SUBSCRIBE, payloadType.c_str(), payloadType.size());
         _onMessage = onMessage;
-        _eventListenerThread = std::make_unique<std::thread>(RunReceiveEnvelope, _socketSUB.get(), _onMessage);
+        _isRunning = true;
+        _eventListenerThread = std::make_unique<std::thread>(std::bind(&FocusEventListener::RunReceiveEnvelope, this));
+
     }
 
     void RegisterMessage(const std::string &payloadType, const std::function<void(TPayload &)> onMessage) {
         _socketSUB->setsockopt(ZMQ_SUBSCRIBE, payloadType.c_str(), payloadType.size());
         _onMessage = onMessage;
-        _eventListenerThread = std::make_unique<std::thread>(RunReceiveMessage, _socketSUB.get(), _onMessage);
+        _isRunning = true;
+        _eventListenerThread = std::make_unique<std::thread>(std::bind(&FocusEventListener::RunReceiveMessage, this));
     }
 };
 

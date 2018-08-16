@@ -8,20 +8,33 @@
 #include "IContextAgent.hpp"
 #include <memory>
 #include "FocusEventEmitter.hpp"
+#include <X11/Xlib.h>
+#include <X11/Xmu/WinUtil.h>
+#include <atomic>
 
 class ContextAgent : public IContextAgent {
+private:
+    std::atomic<bool> _isRunning;
+    std::atomic<bool> _sigReceived;
+    Window _window;
+    std::unique_ptr<Display, std::function<void(Display *)>> _display;
+    std::unique_ptr<std::thread> _eventListener;
+    std::unique_ptr<FocusEventEmitter> _eventEmitter;
+
+    void EventListener() override final;
+
+    std::tuple<std::string, std::string> getWindowInfo();
+
+    static int x11Errorhandler(Display *display, XErrorEvent *error);
 
 public:
-	ContextAgent();
+    void Run(std::atomic<bool> &sigReceived) override final;
 
-	~ContextAgent();
+    void OnContextChanged(const std::string &processName, const std::string &windowTitle) const override final;
 
-	void Run() override final;
+    ContextAgent();
 
-	void OnContextChanged(const std::string &processName, const std::string &windowTitle) const override final;
-
-private:
-	std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
+    virtual ~ContextAgent();
 };
 
 #endif //FOCUS_CLIENT_WINDOWSCONTEXTAGENT_HPP

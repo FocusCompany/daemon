@@ -6,7 +6,7 @@
 #define DAEMON_FOCUSSOCKET_HPP
 
 #include <memory>
-#include <zmq_addon.hpp>
+#include <zmq_pragma.hpp>
 
 class FocusSocket {
 protected:
@@ -17,7 +17,7 @@ public:
 
     FocusSocket();
 
-    bool Send(const std::string &clientId, const std::string &payload) const;
+    bool Send(const std::string &deviceId, const std::string &payload) const;
 
     std::string Receive() const;
 
