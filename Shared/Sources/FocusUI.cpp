@@ -9,12 +9,12 @@
 #include <webview_pragma.hpp>
 #include <BundleLocation.hpp>
 
-struct webview _w;
-
 void FocusUI::Run() {
     spdlog::get("logger")->info("FocusUI is running");
 
-    _messageListener->RegisterMessage("webviewAction", [](const std::string &payload) {
+    struct webview _w = {};
+
+    _messageListener->RegisterMessage("webviewAction", [&](const std::string &payload) {
         webview_dispatch(&_w, [](struct webview *w, void *arg) {
             std::string data = "HandleCommand('" + std::string(static_cast<char*>(arg)) + "');";
             free(arg);

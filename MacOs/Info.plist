@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-  <key>CFBundleExecutable</key>
-  <string>Focus</string>
-  <key>CFBundleIconFile</key>
-  <string>Resources/Focus.icns</string>
-</dict>
+  <dict>
+    <key>CFBundleDisplayName</key>
+    <string>Focus</string>
+    <key>CFBundleExecutable</key>
+    <string>Focus</string>
+    <key>CFBundleIconFile</key>
+    <string>Focus</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.focus.daemon</string>
+    <key>CFBundleName</key>
+    <string>Focus</string>
+  </dict>
 </plist>
