@@ -16,6 +16,7 @@
             height: 100%;
             margin: 0;
             padding: 0;
+            overflow: hidden;
         }
 
         .content {
@@ -41,6 +42,24 @@
             align-items: center;
             text-align: center;
         }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            display: none;
+        }
+
+        .app-form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
 
         h1 {
             margin-top: 0px;
@@ -76,7 +95,7 @@
             margin-top: 1em;
         }
 
-        .sign-in {
+        .custom-button {
             width: 250px;
             padding: 15px 12px;
             margin-top: 1em;
@@ -93,6 +112,15 @@
 
         .login-loader {
             display: none;
+        }
+
+        .watch {
+            display: none;
+            background: #d2f2c5;
+        }
+
+        .stop-watch {
+            background: #f2b2a9;
         }
 
         .loader {
@@ -174,7 +202,18 @@
                 <input type="checkbox" id="remember-me"> Remember me
             </label>
 
-            <button class="sign-in" onclick="sign_in()">SIGN IN</button>
+            <button class="custom-button" onclick="sign_in()">SIGN IN</button>
+        </div>
+        <div class="login-loader">
+            <div class="loader"></div>
+        </div>
+    </div>
+    <div class=app-container>
+        <div class="app-form">
+            <h1>You are connected to <span class="product-name">Focus</span> <span class="title-descr">The eye of sauron</span></h1>
+            <button class="custom-button toReplace watch" onclick="watch_me()">Watch me</button>
+            <button class="custom-button toReplace stop-watch" onclick="stop_watch_me()">Stop watch me</button>
+            <button class="custom-button" onclick="sign_out()">DISCONNECT</button>
         </div>
         <div class="login-loader">
             <div class="loader"></div>
@@ -195,9 +234,45 @@
                 $(".login-loader").fadeIn(200, function () {
                     const loginObj = {action: "LOGIN", data: {email: email, password: pass, remember: rememberMe}};
                     window.external.invoke(JSON.stringify(loginObj));
+                    show_app_content();
                 });
             });
         }
+    }
+
+    function show_app_content() {
+        $(".login-loader").fadeOut(1000, function () {
+            $(".login-container").hide();
+            $(".app-container").fadeIn(400, function () {
+                console.log("inside of app container")
+            });
+        });
+    }
+
+    function sign_out() {
+        $(".app-container").fadeOut(400, function () {
+            $(".watch").hide();
+            $(".stop-watch").show();
+            $(".login-loader").show();
+            $(".login-container").fadeIn(200, function () {
+                $(".login-loader").fadeOut(400, function () {
+                    $(".login-form").fadeIn(200, function () {
+                        console.log("sign_out");
+                    });
+                });
+
+            });
+        });
+    }
+
+    function watch_me() {
+        $(".toReplace").toggle();
+        console.log("watch_me button");
+    }
+
+    function stop_watch_me() {
+        $(".toReplace").toggle();
+        console.log("stop_watch_me button");
     }
 
     function fill_login_form(email, password) {

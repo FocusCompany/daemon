@@ -27,8 +27,8 @@ void FocusUI::Run() {
 
     _w.title = "Focus";
     _w.url = url.c_str();
-    _w.width = 800;
-    _w.height = 600;
+    _w.width = 350;
+    _w.height = 500;
     _w.userdata = this;
     _w.debug = true;
     _w.external_invoke_cb = [](struct webview *w, const char *data) {
