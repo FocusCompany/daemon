@@ -114,6 +114,10 @@
             display: none;
         }
 
+        .app-loader {
+            display: none;
+        }
+
         .watch {
             display: none;
             background: #d2f2c5;
@@ -215,7 +219,7 @@
             <button class="custom-button toReplace stop-watch" onclick="stop_watch_me()">Stop watch me</button>
             <button class="custom-button" onclick="sign_out()">DISCONNECT</button>
         </div>
-        <div class="login-loader">
+        <div class="app-loader">
             <div class="loader"></div>
         </div>
     </div>
@@ -243,6 +247,8 @@
     function show_app_content() {
         $(".login-loader").fadeOut(1000, function () {
             $(".login-container").hide();
+            $(".login-loader").hide();
+            $(".login-form").show();
             $(".app-container").fadeIn(400, function () {
                 console.log("inside of app container")
             });
@@ -250,17 +256,16 @@
     }
 
     function sign_out() {
-        $(".app-container").fadeOut(400, function () {
-            $(".watch").hide();
-            $(".stop-watch").show();
-            $(".login-loader").show();
-            $(".login-container").fadeIn(200, function () {
-                $(".login-loader").fadeOut(400, function () {
-                    $(".login-form").fadeIn(200, function () {
-                        console.log("sign_out");
-                    });
+        $(".app-form").fadeOut(400, function () {
+            $(".app-loader").fadeIn(200, function () {
+                $(".watch").hide();
+                $(".stop-watch").show();
+                $(".app-container").hide();
+                $(".app-loader").hide();
+                $(".app-form").show();
+                $(".login-container").fadeIn(200, function () {
+                    console.log("sign_out");
                 });
-
             });
         });
     }
