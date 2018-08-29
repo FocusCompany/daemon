@@ -7,6 +7,7 @@
 
 #include <thread>
 #include <atomic>
+#include <unordered_map>
 #include "FocusEventListener.hpp"
 #include "FocusEventEmitter.hpp"
 

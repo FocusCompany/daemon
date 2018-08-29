@@ -7,6 +7,7 @@
 #include <spdlog_pragma.hpp>
 #include "FocusConfiguration.hpp"
 #include <lightconf_pragma.hpp>
+#include "json_pragma.hpp"
 
 namespace lightconf {
     LIGHTCONF_BEGIN_ENUM(serverType)
@@ -44,13 +45,18 @@ FocusConfiguration::FocusConfiguration(const std::string &configFile) :
         _messageListener(std::make_unique<FocusEventListener<const std::string &>>()) {
     readConfiguration();
     generateConfigurationFile();
-    _messageListener->RegisterMessage("GetUserCredentials", [this](const std::string &) {
-        std::cout << "Je suis ici bebe !" << std::endl;
-        _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"fill_login_form\", \"data\": {\"email\": \"" + _userInfo._email + "\", \"password\": \"" + _userInfo._password + "\"}}");
-    });
-    _messageListener->RegisterMessage("SetUserCredentials", [this](const std::string &) {
-        //TODO: get the string and use json parser to get users credentials
-        setUser("et.pasteur@hotmail.fr", "toto42sh");
+    _messageListener->RegisterMessage("Configuration", [this](const std::string &data) {
+        auto j = nlohmann::json::parse(data);
+        if (j.find("action") != j.end()) {
+            if (j["action"] == "get_user_credentials") {
+                _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"fill_login_form\", \"data\": {\"email\": \"" + _userInfo._email + "\", \"password\": \"" + _userInfo._password + "\"}}");
+            } else if (j["action"] == "set_user_credentials") {
+                if (j.find("data") != j.end()) {
+                    auto infoUser = j["data"];
+                    setUser(infoUser["email"], infoUser["password"]);
+                }
+            }
+        }
     });
 }
 
@@ -118,7 +124,7 @@ void FocusConfiguration::setUser(const std::string &email, const std::string &pa
         std::ofstream stream(_configFile, std::ios::out);
         if (stream) {
             stream << lightconf::config_format::write(config, _source, 80);
-            spdlog::get("logger")->info("user stored in configuration file");
+            spdlog::get("logger")->info("User stored in configuration file");
         }
     }
 }
@@ -133,9 +139,10 @@ void FocusConfiguration::generateConfigurationFile() {
         config.set<std::vector<server>>("servers", _serversInfo);
         config.set<std::string>("trigger_afk", _triggerAfk);
         config.set<device>("device", _device);
-        std::ofstream stream(_configFile, std::ios::out);
-        if (stream) {
-            stream << lightconf::config_format::write(config, _source, 80);
+        std::ofstream outStream(_configFile, std::ios::out);
+        if (outStream) {
+            _source = lightconf::config_format::write(config, _source, 80);
+            outStream << _source;
             spdlog::get("logger")->info("Written configuration file successfully");
         } else {
             spdlog::get("logger")->critical("Unable to create config file");

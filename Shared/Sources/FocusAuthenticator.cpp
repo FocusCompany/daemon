@@ -11,12 +11,18 @@ void FocusAuthenticator::Run(std::shared_ptr<FocusConfiguration> &config) {
     _config = config;
     auto srv = _config->getServer(serverType::AUTHENTICATION);
     _cli = std::make_unique<httplib::Client>(srv._ip.c_str(), srv._port, 5);
-    _messageListener->RegisterMessage("Login", [this](const std::string &) {
-        //TODO: get the string and use json parser to get users credentials
-        Login("et.pasteur@hotmail.fr", "toto42sh");
-    });
-    _messageListener->RegisterMessage("Logout", [this](const std::string &) {
-        Disconnect();
+    _messageListener->RegisterMessage("Authenticator", [this](const std::string &data) {
+        auto j = nlohmann::json::parse(data);
+        if (j.find("action") != j.end()) {
+            if (j["action"] == "login") {
+                if (j.find("data") != j.end()) {
+                    auto infoUser = j["data"];
+                    Login(infoUser["email"], infoUser["password"]);
+                }
+            } else if (j["action"] == "logout") {
+                Disconnect();
+            }
+        }
     });
 }
 

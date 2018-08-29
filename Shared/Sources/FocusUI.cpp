@@ -49,32 +49,21 @@ void FocusUI::Run() {
 void FocusUI::HandleCommand(const std::string &data) {
     spdlog::get("logger")->info("Received from frontend : {}", data);
     auto j = nlohmann::json::parse(data);
-    if (j.find("action") != j.end()) {
-        std::string action = j["action"];
-        if (j.find("data") != j.end()) {
-            std::string actionData = j["data"].dump();
-            _command[action](actionData);
-        } else {
-            _command[action]("");
-        }
+    if (j.find("module") != j.end() && j.find("action") != j.end()) {
+        std::string module = j["module"];
+        _command[module](data);
     } else {
-        spdlog::get("logger")->info("Action command not found in frontend payload");
+        spdlog::get("logger")->info("Module and/or action not found in frontend payload");
     }
 }
 
 FocusUI::FocusUI() : _eventEmitter(std::make_unique<FocusEventEmitter>()),
                      _messageListener(std::make_unique<FocusEventListener<const std::string &>>()),
                      _command() {
-    _command["get_user_credentials"] = [this](const std::string &data) {
-        _eventEmitter->EmitMessage("GetUserCredentials", data);
+    _command["configuration"] = [this](const std::string &data) {
+        _eventEmitter->EmitMessage("Configuration", data);
     };
-    _command["set_user_credentials"] = [this](const std::string &data) {
-        _eventEmitter->EmitMessage("SetUserCredentials", data);
-    };
-    _command["login"] = [this](const std::string &data) {
-        _eventEmitter->EmitMessage("Login", data);
-    };
-    _command["logout"] = [this](const std::string &data) {
-        _eventEmitter->EmitMessage("Logout", data);
+    _command["authenticator"] = [this](const std::string &data) {
+        _eventEmitter->EmitMessage("Authenticator", data);
     };
 }

@@ -324,7 +324,7 @@
             var parent = $(this).parent('.toast');
             parent.fadeOut("slow");
         });
-        window.external.invoke(JSON.stringify({action: "get_user_credentials"}));
+        window.external.invoke(JSON.stringify({module: "configuration", action: "get_user_credentials"}));
     });
 
     //
@@ -340,11 +340,11 @@
             $(".login-form").fadeOut(400, function () {
                 $(".login-loader").fadeIn(200, function () {
                     if (rememberMe === true) {
-                        window.external.invoke(JSON.stringify({action: "set_user_credentials", data: {email: email, password: password}}));
+                        window.external.invoke(JSON.stringify({module: "configuration", action: "set_user_credentials", data: {email: email, password: password}}));
                     } else if (rememberMe === false) {
-                        window.external.invoke(JSON.stringify({action: "set_user_credentials", data: {email: "", password: ""}}));
+                        window.external.invoke(JSON.stringify({module: "configuration", action: "set_user_credentials", data: {email: "", password: ""}}));
                     }
-                    window.external.invoke(JSON.stringify({action: "login", data: {email: email, password: password}}));
+                    window.external.invoke(JSON.stringify({module: "authenticator", action: "login", data: {email: email, password: password}}));
                 });
             });
         } else {
@@ -361,7 +361,7 @@
                 $(".app-loader").hide();
                 $(".app-form").show();
                 $(".login-container").fadeIn(200);
-                window.external.invoke(JSON.stringify({action: "logout"}));
+                window.external.invoke(JSON.stringify({module: "authenticator", action: "logout"}));
             });
         });
     }
@@ -394,14 +394,14 @@
             $(".login-loader").fadeOut(1000, function () {
                 $(".login-container").hide();
                 $(".login-loader").hide();
+                $(".toast").hide();
                 $(".login-form").show();
                 $(".app-container").fadeIn(400);
             });
         } else {
             $(".login-loader").fadeOut(200, function () {
-                $(".login-form").fadeIn(100), function () {
-                    $(".toast").fadeIn(400);
-                };
+                $(".toast").show();
+                $(".login-form").fadeIn(100);
             });
         }
     }
