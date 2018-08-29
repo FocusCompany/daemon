@@ -21,7 +21,7 @@ set_target_properties(daemon_mac PROPERTIES OUTPUT_NAME "focus-daemon")
 
 target_link_libraries(daemon_mac daemon_mac_lib daemon_shared_lib ${CARBON_LIBRARY})
 
-add_custom_command(TARGET daemon_mac POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/assets/login.html" "$<TARGET_FILE_DIR:daemon_mac>/bin/login.html")
+add_custom_command(TARGET daemon_mac POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/assets/app.html" "$<TARGET_FILE_DIR:daemon_mac>/bin/app.html")
 add_custom_command(TARGET daemon_mac POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/MacOs/printAppTitle.scpt" "$<TARGET_FILE_DIR:daemon_mac>/bin/printAppTitle.scpt")
 add_custom_command(TARGET daemon_mac POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/MacOs/printAppTitle.scpt" "$<TARGET_FILE_DIR:daemon_mac>/printAppTitle.scpt")
 

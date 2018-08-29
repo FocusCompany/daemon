@@ -81,7 +81,7 @@ ENDIF()
 
 target_compile_options(daemon_shared_lib PRIVATE "${COMPILE_FLAGS}")
 
-add_custom_command(TARGET daemon_shared_lib POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/assets/login.html" "$<TARGET_FILE_DIR:daemon_shared_lib>/login.html")
+add_custom_command(TARGET daemon_shared_lib POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/assets/app.html" "$<TARGET_FILE_DIR:daemon_shared_lib>/app.html")
 
 ####TESTS####
 

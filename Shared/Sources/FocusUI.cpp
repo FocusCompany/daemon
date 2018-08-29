@@ -28,7 +28,7 @@ void FocusUI::Run() {
 
     });
 
-    std::string url = "file://" + getExecPath() + "login.html";
+    std::string url = "file://" + getExecPath() + "app.html";
 
     _w.title = "Focus";
     _w.url = url.c_str();
@@ -65,5 +65,8 @@ FocusUI::FocusUI() : _eventEmitter(std::make_unique<FocusEventEmitter>()),
     };
     _command["authenticator"] = [this](const std::string &data) {
         _eventEmitter->EmitMessage("Authenticator", data);
+    };
+    _command["keylogger"] = [this](const std::string &data) {
+        _eventEmitter->EmitMessage("Keylogger", data);
     };
 }

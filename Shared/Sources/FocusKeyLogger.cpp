@@ -6,14 +6,31 @@
 #include <FocusEnvelope.pb.h>
 #include <spdlog_pragma.hpp>
 #include "FocusSerializer.hpp"
+#include "json_pragma.hpp"
 
 void
-FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator, std::shared_ptr<FocusConfiguration> &config,
-                    std::atomic<bool> &sigReceived) {
+FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator, std::shared_ptr<FocusConfiguration> &config, std::atomic<bool> &sigReceived) {
     _authenticator = authenticator;
 
     _eventListener->Register("NewEvent", [this](Focus::Event &newContext) {
-        AddEvent(newContext);
+        if (_watching) {
+            AddEvent(newContext);
+        } else {
+            spdlog::get("console")->info("New event catch but recording is turned off");
+        }
+    });
+
+    _keyLoggerListener->RegisterMessage("Keylogger", [this](const std::string &data) {
+        auto j = nlohmann::json::parse(data);
+        if (j.find("action") != j.end()) {
+            if (j["action"] == "watch") {
+                _watching = true;
+                _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"toggle_watch_button\"}");
+            } else if (j["action"] == "stop_watching") {
+                _watching = false;
+                _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"toggle_watch_button\"}");
+            }
+        }
     });
 
     _messageListener->RegisterMessage("FocusSendDataToBackend", [this](const std::string &) {
