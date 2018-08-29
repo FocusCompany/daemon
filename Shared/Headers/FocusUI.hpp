@@ -12,8 +12,9 @@
 
 class FocusUI {
 private:
+    std::unique_ptr<FocusEventEmitter> _eventEmitter;
     std::unique_ptr<FocusEventListener<const std::string &>> _messageListener;
-
+    std::unordered_map<std::string, std::function<void(const std::string &)>> _command;
 public:
     FocusUI();
 
