@@ -100,7 +100,7 @@ bool FocusAuthenticator::Login(const std::string &email, const std::string &pass
                         _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"login\", \"data\": {\"status\": \"success\", \"device\": \"false\"}}");
                     } else {
                         _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"login\", \"data\": {\"status\": \"success\", \"device\": \"true\"}}");
-                        _eventEmitter->EmitMessage("OkForRunning", "OK");
+                        _eventEmitter->EmitMessage("Connected", "OK");
                     }
                     return true;
                 }
@@ -110,7 +110,16 @@ bool FocusAuthenticator::Login(const std::string &email, const std::string &pass
                 _connected = false;
                 return false;
             }
-
+        }
+    } else if (res && res->status == 400) {
+        auto j = nlohmann::json::parse(res->body);
+        if (j.find("code") != j.end()) {
+            if (j["code"] == "WRONG_PARAMETERS") {
+                Login(email, password, "");
+            } else {
+                _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"login\", \"data\": {\"status\": \"error\"}}");
+                spdlog::get("logger")->error("Authentication failed, enter your credentials again");
+            }
         }
     } else {
         _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"login\", \"data\": {\"status\": \"error\"}}");
@@ -220,6 +229,7 @@ bool FocusAuthenticator::Disconnect() {
     } else if (res && res->status == 200) {
         _token.clear();
         _uuid.clear();
+        _deviceId.clear();
         _connected = false;
         spdlog::get("logger")->info("Successfully disconnected");
         return true;

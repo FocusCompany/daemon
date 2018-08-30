@@ -44,17 +44,21 @@ FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator, std::sha
 }
 
 void FocusKeyLogger::AddEvent(const Focus::Event &ev) {
-    _events.push_back(ev);
-    spdlog::get("console")->info("Adding new event of type {0} to cache", ev.payloadtype());
-    spdlog::get("logger")->flush();
-    if (_events.size() > 5) {
-        Focus::Envelope envelope;
+    if (!_authenticator->GetDeviceId().empty()) {
+        _events.push_back(ev);
+        spdlog::get("console")->info("Adding new event of type {0} to cache", ev.payloadtype());
+        spdlog::get("logger")->flush();
+        if (_events.size() > 5) {
+            Focus::Envelope envelope;
 
-        envelope.set_jwt(_authenticator->GetToken());
-        envelope.set_deviceid(_authenticator->GetDeviceId());
-        google::protobuf::RepeatedPtrField<Focus::Event> data(_events.begin(), _events.end());
-        envelope.mutable_events()->Swap(&data);
+            envelope.set_jwt(_authenticator->GetToken());
+            envelope.set_deviceid(_authenticator->GetDeviceId());
+            google::protobuf::RepeatedPtrField<Focus::Event> data(_events.begin(), _events.end());
+            envelope.mutable_events()->Swap(&data);
 
-        _eventEmitter->EmitEnvelope("FocusNetworkManager", envelope);
+            _eventEmitter->EmitEnvelope("FocusNetworkManager", envelope);
+        }
+    } else {
+        spdlog::get("console")->info("Can't add new event of type {0} to cache", ev.payloadtype());
     }
 }
