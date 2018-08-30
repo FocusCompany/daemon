@@ -43,6 +43,24 @@
             text-align: center;
         }
 
+        .device-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            display: none;
+        }
+
+        .device-form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+
         .app-container {
             display: flex;
             flex-direction: column;
@@ -79,6 +97,18 @@
             color: #989598;
         }
 
+        .device-field {
+            width: 250px;
+            padding: 15px 12px;
+            margin-bottom: 5px;
+            border: 1px solid #e5e5e5;
+            border-bottom: 2px solid #ddd;
+            background: #f2f2f2;
+            color: #555;
+            font-weight: 100;
+            font-size: 14px;
+        }
+
         .login-field {
             width: 250px;
             padding: 15px 12px;
@@ -111,6 +141,10 @@
         }
 
         .login-loader {
+            display: none;
+        }
+
+        .device-loader {
             display: none;
         }
 
@@ -193,7 +227,7 @@
             }
         }
 
-        .toast {
+        .toast-device, .toast-login {
             display: none;
             text-align:left;
             padding: 21px 0;
@@ -210,7 +244,7 @@
             fill:#fff;
         }
 
-        .toast:before {
+        .toast-device:before, .toast-login:before {
             content: '';
             position: absolute;
             top: 0;
@@ -254,7 +288,7 @@
             padding-right:60px;
         }
 
-        .toast__close {
+        .toast__close__device, .toast__close__login {
             position: absolute;
             right: 22px;
             top: 50%;
@@ -270,7 +304,7 @@
 <div class="content">
     <div class=login-container>
         <div class="login-form">
-            <div class="toast">
+            <div class="toast-login">
                 <div class="toast__icon">
                     <svg version="1.1" class="toast__svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 301.691 301.691" style="enable-background:new 0 0 301.691 301.691;" xml:space="preserve">
                         <g><polygon points="119.151,0 129.6,218.406 172.06,218.406 182.54,0  "></polygon><rect x="130.563" y="261.168" width="40.525" height="40.523"></rect></g>
@@ -280,7 +314,7 @@
                     <p class="toast__type">Error</p>
                     <p class="toast__message">Can't connect to Focus</p>
                 </div>
-                <div class="toast__close">
+                <div class="toast__close__login">
                     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.642 15.642" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 15.642 15.642">
                         <path fill-rule="evenodd" d="M8.882,7.821l6.541-6.541c0.293-0.293,0.293-0.768,0-1.061  c-0.293-0.293-0.768-0.293-1.061,0L7.821,6.76L1.28,0.22c-0.293-0.293-0.768-0.293-1.061,0c-0.293,0.293-0.293,0.768,0,1.061  l6.541,6.541L0.22,14.362c-0.293,0.293-0.293,0.768,0,1.061c0.147,0.146,0.338,0.22,0.53,0.22s0.384-0.073,0.53-0.22l6.541-6.541  l6.541,6.541c0.147,0.146,0.338,0.22,0.53,0.22c0.192,0,0.384-0.073,0.53-0.22c0.293-0.293,0.293-0.768,0-1.061L8.882,7.821z"></path>
                     </svg>
@@ -301,6 +335,37 @@
             <div class="loader"></div>
         </div>
     </div>
+
+    <div class=device-container>
+        <div class="device-form">
+            <div class="toast-device">
+                <div class="toast__icon">
+                    <svg version="1.1" class="toast__svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 301.691 301.691" style="enable-background:new 0 0 301.691 301.691;" xml:space="preserve">
+                        <g><polygon points="119.151,0 129.6,218.406 172.06,218.406 182.54,0  "></polygon><rect x="130.563" y="261.168" width="40.525" height="40.523"></rect></g>
+                    </svg>
+                </div>
+                <div class="toast__content">
+                    <p class="toast__type">Error</p>
+                    <p class="toast__message">Can't register device</p>
+                </div>
+                <div class="toast__close__device">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.642 15.642" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 15.642 15.642">
+                        <path fill-rule="evenodd" d="M8.882,7.821l6.541-6.541c0.293-0.293,0.293-0.768,0-1.061  c-0.293-0.293-0.768-0.293-1.061,0L7.821,6.76L1.28,0.22c-0.293-0.293-0.768-0.293-1.061,0c-0.293,0.293-0.293,0.768,0,1.061  l6.541,6.541L0.22,14.362c-0.293,0.293-0.293,0.768,0,1.061c0.147,0.146,0.338,0.22,0.53,0.22s0.384-0.073,0.53-0.22l6.541-6.541  l6.541,6.541c0.147,0.146,0.338,0.22,0.53,0.22c0.192,0,0.384-0.073,0.53-0.22c0.293-0.293,0.293-0.768,0-1.061L8.882,7.821z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <h1>Register a <span class="product-name">Device</span> <span class="title-descr">Connection to Focus</span></h1>
+
+            <input type="text" class="device-field" value="" placeholder="Device name" id="device-name">
+
+            <button class="custom-button" onclick="register_device_button()">REGISTER DEVICE</button>
+        </div>
+        <div class="device-loader">
+            <div class="loader"></div>
+        </div>
+    </div>
+
     <div class=app-container>
         <div class="app-form">
             <h1>You are connected to <span class="product-name">Focus</span> <span class="title-descr">The eye of sauron</span></h1>
@@ -320,11 +385,19 @@
 </script>
 <script type="text/javascript">
     var isConnected = false;
+    var email = "";
+    var password = "";
+    var deviceName = "";
 
     $(document).ready(function(){
-        $('.toast__close').click(function(e){
+        $('.toast__close__login').click(function(e){
             e.preventDefault();
-            var parent = $(this).parent('.toast');
+            var parent = $(this).parent('.toast-login');
+            parent.fadeOut("slow");
+        });
+        $('.toast__close__device').click(function(e){
+            e.preventDefault();
+            var parent = $(this).parent('.toast-device');
             parent.fadeOut("slow");
         });
         window.external.invoke(JSON.stringify({module: "configuration", action: "get_user_credentials"}));
@@ -335,8 +408,8 @@
     //
 
     function sign_in_button() {
-        const email = $("#login-email").val();
-        const password = $("#login-pass").val();
+        email = $("#login-email").val();
+        password = $("#login-pass").val();
         const rememberMe = $("#remember-me").is(":checked");
 
         if (email !== "" && password !== "") {
@@ -351,7 +424,20 @@
                 });
             });
         } else {
-            $(".toast").fadeIn(400);
+            $(".toast-login").fadeIn(400);
+        }
+    }
+
+    function register_device_button() {
+        deviceName = $("#device-name").val();
+        if (deviceName !== "") {
+            $(".device-form").fadeOut(400, function () {
+                $(".device-loader").fadeIn(200, function () {
+                    window.external.invoke(JSON.stringify({module: "authenticator", action: "register_device", data: {email: email, password: password, device_name: deviceName}}));
+                });
+            });
+        } else{
+            $(".toast-device").fadeIn(400);
         }
     }
 
@@ -396,20 +482,35 @@
         }
     }
 
-    function login(status) {
-        if (status === "success") {
+    function login(data) {
+        if (data.status === "success" && data.device === "true") {
             $(".keylogger-button").show();
             $(".login-loader").fadeOut(1000, function () {
                 $(".login-container").hide();
                 $(".login-loader").hide();
-                $(".toast").hide();
+                $(".toast-login").hide();
                 $(".login-form").show();
+
+                $(".device-container").hide();
+                $(".device-loader").hide();
+                $(".toast-device").hide();
+                $(".device-form").show();
+
                 $(".app-container").fadeIn(400);
+            });
+            isConnected = true;
+        } else if (data.status === "success" && data.device === "false") {
+            $(".login-loader").fadeOut(1000, function () {
+                $(".login-container").hide();
+                $(".login-loader").hide();
+                $(".toast-login").hide();
+                $(".login-form").show();
+                $(".device-container").fadeIn(400);
             });
             isConnected = true;
         } else {
             $(".login-loader").fadeOut(200, function () {
-                $(".toast").show();
+                $(".toast-login").show();
                 $(".login-form").fadeIn(100);
             });
             isConnected = false;
@@ -429,7 +530,7 @@
                     fill_login_form(command.data.email, command.data.password);
                     break;
                 case ("login"):
-                    login(command.data.status);
+                    login(command.data);
                     break;
                 case ("toggle_watch_button"):
                     toggleWatchButton();

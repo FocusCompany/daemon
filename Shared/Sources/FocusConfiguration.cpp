@@ -84,7 +84,8 @@ void FocusConfiguration::setDevice(const std::string &deviceName, const std::str
         });
         std::ofstream stream(_configFile, std::ios::out);
         if (stream) {
-            stream << lightconf::config_format::write(config, _source, 80);
+            _source = lightconf::config_format::write(config, _source, 80);
+            stream << _source;
             spdlog::get("logger")->info("Device id stored in configuration file");
         }
     }
@@ -102,7 +103,8 @@ void FocusConfiguration::setTriggerAfk(const std::string &triggerAfk) {
         config.set<std::string>("trigger_afk", triggerAfk);
         std::ofstream stream(_configFile, std::ios::out);
         if (stream) {
-            stream << lightconf::config_format::write(config, _source, 80);
+            _source = lightconf::config_format::write(config, _source, 80);
+            stream << _source;
             spdlog::get("logger")->info("triggerAfk id stored in configuration file");
         }
     }
@@ -123,7 +125,8 @@ void FocusConfiguration::setUser(const std::string &email, const std::string &pa
         });
         std::ofstream stream(_configFile, std::ios::out);
         if (stream) {
-            stream << lightconf::config_format::write(config, _source, 80);
+            _source = lightconf::config_format::write(config, _source, 80);
+            stream << _source;
             spdlog::get("logger")->info("User stored in configuration file");
         }
     }

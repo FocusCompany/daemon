@@ -17,7 +17,14 @@ void FocusAuthenticator::Run(std::shared_ptr<FocusConfiguration> &config) {
             if (j["action"] == "login") {
                 if (j.find("data") != j.end()) {
                     auto infoUser = j["data"];
-                    Login(infoUser["email"], infoUser["password"]);
+                    Login(infoUser["email"], infoUser["password"], _config->getDevice()._id);
+                }
+            } else if (j["action"] == "register_device") {
+                if (j.find("data") != j.end()) {
+                    auto infoUser = j["data"];
+                    if (RegisterDevice(infoUser["device_name"])) {
+                        Login(infoUser["email"], infoUser["password"], _config->getDevice()._id);
+                    }
                 }
             } else if (j["action"] == "logout") {
                 Disconnect();
@@ -89,7 +96,11 @@ bool FocusAuthenticator::Login(const std::string &email, const std::string &pass
                     _connected = true;
                     spdlog::get("logger")->info("Successfully connected");
                     _connectionAttempt = 1;
-                    _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"login\", \"data\": {\"status\": \"success\"}}");
+                    if (_deviceId.empty()) {
+                        _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"login\", \"data\": {\"status\": \"success\", \"device\": \"false\"}}");
+                    } else {
+                        _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"login\", \"data\": {\"status\": \"success\", \"device\": \"true\"}}");
+                    }
                     return true;
                 }
             } catch (...) {
