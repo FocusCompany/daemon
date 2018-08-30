@@ -100,6 +100,7 @@ bool FocusAuthenticator::Login(const std::string &email, const std::string &pass
                         _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"login\", \"data\": {\"status\": \"success\", \"device\": \"false\"}}");
                     } else {
                         _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"login\", \"data\": {\"status\": \"success\", \"device\": \"true\"}}");
+                        _eventEmitter->EmitMessage("OkForRunning", "OK");
                     }
                     return true;
                 }

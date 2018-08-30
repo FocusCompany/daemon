@@ -57,9 +57,9 @@ void FocusDaemon::Run(const std::string &configFileName, std::atomic<bool> &sigR
     _configFileName = configFileName;
 
     _messageListener->RegisterMessage("OkForRunning", [this](const std::string &) {
-        if (!_device_id.empty()) {
-            spdlog::get("logger")->info("Device Id: {}", _device_id);
-            NetworkManager->Run(_device_id, _config, _sigReceived);
+        if (!_config->getDevice()._id.empty()) {
+            spdlog::get("logger")->info("Device Id: {}", _config->getDevice()._id);
+            NetworkManager->Run(_config->getDevice()._id, _config, _sigReceived);
             KeyLogger->Run(Authenticator, _config, _sigReceived);
         }
     });

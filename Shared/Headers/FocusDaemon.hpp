@@ -25,7 +25,6 @@ private:
     std::unique_ptr<FocusEventManager> EventManager = std::make_unique<FocusEventManager>();
     std::unique_ptr<FocusEventListener<const std::string &>> _messageListener = std::make_unique<FocusEventListener<const std::string &>>();
     std::atomic<bool> _sigReceived = {false};
-    std::string _device_id = "";
     std::string _configFileName = "";
 
 public:

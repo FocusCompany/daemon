@@ -470,10 +470,12 @@
     //   COMMAND
     //
 
-    function fill_login_form(email, password) {
-        $("#remember-me").prop('checked', true);
-        $("#login-email").val(email);
-        $("#login-pass").val(password);
+    function fill_login_form(_email, _password) {
+        if (_email !== "" && _password !== "") {
+            $("#remember-me").prop('checked', true);
+            $("#login-email").val(_email);
+            $("#login-pass").val(_password);
+        }
     }
 
     function toggleWatchButton() {
