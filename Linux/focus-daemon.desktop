@@ -1,0 +1,11 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Focus
+Icon=focus
+Exec=focus-daemon
+Comment=The Eye of Sauron
+Categories=Utility;
+Terminal=false
+StartupNotify=false
