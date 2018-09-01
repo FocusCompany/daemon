@@ -25,6 +25,7 @@ set(DEAMON_SHARED_SOURCE_FILES
         Sources/FocusSocket.cpp
         Sources/FocusConfiguration.cpp
         Sources/FocusPlatformFolders.cpp
+        Sources/FocusUI.cpp
 
         Headers/FocusDaemon.hpp
         Headers/FocusEventManager.hpp
@@ -38,6 +39,7 @@ set(DEAMON_SHARED_SOURCE_FILES
         Headers/FocusSecureSocket.hpp
         Headers/FocusConfiguration.hpp
         Headers/FocusPlatformFolders.hpp
+        Headers/FocusUI.hpp
 
         Interfaces/IContextAgent.hpp
         Interfaces/IAfkListener.hpp
@@ -57,13 +59,29 @@ add_library(daemon_shared_lib STATIC ${DEAMON_SHARED_SOURCE_FILES} ${PROTO_SRC} 
 
 target_link_libraries(daemon_shared_lib ${OPENSSL_CRYPTO_LIBRARY} ${ZeroMQ_LIBRARIES} ${PROTOBUF_LIBRARY})
 
-IF (MSVC)
-    target_link_libraries(daemon_shared_lib wsock32 ws2_32)
-ELSE ()
-    target_link_libraries(daemon_shared_lib pthread)
-ENDIF ()
+add_library(webview INTERFACE)
+
+IF(MSVC)
+    target_link_libraries(webview INTERFACE ole32 comctl32 oleaut32 uuid)
+    target_link_libraries(daemon_shared_lib wsock32 ws2_32 shlwapi webview)
+ELSEIF(APPLE)
+    find_library(COCOA_LIBRARY Cocoa)
+    find_library(WEBKIT_LIBRARY WebKit)
+    target_compile_options(webview INTERFACE "-x" "objective-c++")
+    target_link_libraries(webview INTERFACE ${COCOA_LIBRARY} ${WEBKIT_LIBRARY})
+    target_link_libraries(daemon_shared_lib webview pthread)
+ELSEIF(UNIX)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+    pkg_check_modules(WEBKIT REQUIRED webkit2gtk-4.0)
+    target_include_directories(webview INTERFACE ${GTK3_INCLUDE_DIRS} ${WEBKIT_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR})
+    target_link_libraries(webview INTERFACE ${GTK3_LIBRARIES} ${WEBKIT_LIBRARIES})
+    target_link_libraries(daemon_shared_lib webview pthread)
+ENDIF()
 
 target_compile_options(daemon_shared_lib PRIVATE "${COMPILE_FLAGS}")
+
+add_custom_command(TARGET daemon_shared_lib POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/assets/app.html" "$<TARGET_FILE_DIR:daemon_shared_lib>/app.html")
 
 ####TESTS####
 

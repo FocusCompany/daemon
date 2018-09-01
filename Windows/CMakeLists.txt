@@ -14,7 +14,7 @@ include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ..
 
 add_library(daemon_windows_lib STATIC ${DEAMON_WINDOWS_SOURCE_FILES})
 
-add_executable(daemon_windows ${MAIN_FILES})
+add_executable(daemon_windows WIN32 ${MAIN_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/Info.rc)
 set_target_properties(daemon_windows PROPERTIES OUTPUT_NAME "focus-daemon")
 
 target_link_libraries(daemon_windows daemon_windows_lib daemon_shared_lib Psapi)
@@ -40,6 +40,7 @@ endif()
 include(InstallRequiredSystemLibraries)
 install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION bin COMPONENT Libraries)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/BUILD/ DESTINATION bin FILES_MATCHING PATTERN "*.dll")
+install(FILES "$<TARGET_FILE_DIR:daemon_shared_lib>/app.html" DESTINATION bin)
 install(TARGETS daemon_windows DESTINATION bin)
 
 ####PACKAGE####

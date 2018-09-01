@@ -11,6 +11,26 @@ void FocusAuthenticator::Run(std::shared_ptr<FocusConfiguration> &config) {
     _config = config;
     auto srv = _config->getServer(serverType::AUTHENTICATION);
     _cli = std::make_unique<httplib::Client>(srv._ip.c_str(), srv._port, 5);
+    _messageListener->RegisterMessage("Authenticator", [this](const std::string &data) {
+        auto j = nlohmann::json::parse(data);
+        if (j.find("action") != j.end()) {
+            if (j["action"] == "login") {
+                if (j.find("data") != j.end()) {
+                    auto infoUser = j["data"];
+                    Login(infoUser["email"], infoUser["password"], _config->getDevice()._id);
+                }
+            } else if (j["action"] == "register_device") {
+                if (j.find("data") != j.end()) {
+                    auto infoUser = j["data"];
+                    if (RegisterDevice(infoUser["device_name"])) {
+                        Login(infoUser["email"], infoUser["password"], _config->getDevice()._id);
+                    }
+                }
+            } else if (j["action"] == "logout") {
+                Disconnect();
+            }
+        }
+    });
 }
 
 std::string FocusAuthenticator::GetUUID() const {
@@ -75,25 +95,35 @@ bool FocusAuthenticator::Login(const std::string &email, const std::string &pass
                     _token = j["token"];
                     _connected = true;
                     spdlog::get("logger")->info("Successfully connected");
-                    _connectionAttempt = 0;
+                    _connectionAttempt = 1;
+                    if (_deviceId.empty()) {
+                        _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"login\", \"data\": {\"status\": \"success\", \"device\": \"false\"}}");
+                    } else {
+                        _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"login\", \"data\": {\"status\": \"success\", \"device\": \"true\"}}");
+                        _eventEmitter->EmitMessage("Connected", "OK");
+                    }
                     return true;
                 }
             } catch (...) {
                 spdlog::get("logger")->error("Invalid token");
+                _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"login\", \"data\": {\"status\": \"error\"}}");
                 _connected = false;
                 return false;
             }
-
+        }
+    } else if (res && res->status == 400) {
+        auto j = nlohmann::json::parse(res->body);
+        if (j.find("code") != j.end()) {
+            if (j["code"] == "WRONG_PARAMETERS") {
+                Login(email, password, "");
+            } else {
+                _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"login\", \"data\": {\"status\": \"error\"}}");
+                spdlog::get("logger")->error("Authentication failed, enter your credentials again");
+            }
         }
     } else {
+        _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"login\", \"data\": {\"status\": \"error\"}}");
         spdlog::get("logger")->error("Authentication failed, enter your credentials again");
-        _config->generateConfigurationFile();
-        _config->readConfiguration(0);
-        auto usr = _config->getUser();
-        ++_connectionAttempt;
-        if (Login(usr._email, usr._password, _config->getDevice()._id)) {
-            return true;
-        }
     }
     _connected = false;
     return false;
@@ -124,7 +154,7 @@ bool FocusAuthenticator::RegisterDevice(const std::string &name) {
     } else if (res && res->status == 200) {
         auto j = nlohmann::json::parse(res->body);
         if (j.find("deviceId") != j.end()) {
-            _config->setDeviceId(std::to_string(static_cast<int>(j["deviceId"])));
+            _config->setDevice(name, std::to_string(static_cast<int>(j["deviceId"])));
             spdlog::get("logger")->info("Device successfully registered");
             _connectionAttempt = 0;
             return true;
@@ -199,6 +229,7 @@ bool FocusAuthenticator::Disconnect() {
     } else if (res && res->status == 200) {
         _token.clear();
         _uuid.clear();
+        _deviceId.clear();
         _connected = false;
         spdlog::get("logger")->info("Successfully disconnected");
         return true;
@@ -208,7 +239,9 @@ bool FocusAuthenticator::Disconnect() {
     return false;
 }
 
-FocusAuthenticator::FocusAuthenticator() : _cli(),
+FocusAuthenticator::FocusAuthenticator() : _eventEmitter(std::make_unique<FocusEventEmitter>()),
+                                           _messageListener(std::make_unique<FocusEventListener<const std::string &>>()),
+                                           _cli(),
                                            _config(),
                                            _token(),
                                            _uuid(),

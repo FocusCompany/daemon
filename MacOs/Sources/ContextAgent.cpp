@@ -10,7 +10,7 @@
 #include "FocusContextEventPayload.pb.h"
 #include <spdlog_pragma.hpp>
 #include <array>
-#include <mach-o/dyld.h>
+#include <BundleLocation.hpp>
 
 void ContextAgent::Run(std::atomic<bool> &sigReceived) {
     _sigReceived = sigReceived.load();
@@ -73,13 +73,6 @@ ContextAgent::ContextAgent() : _eventListener(),
                                _sigReceived(false),
                                _eventEmitter(std::make_unique<FocusEventEmitter>()),
                                _appleScriptLocation() {
-    std::string path(PAGE_SIZE, '\0');
-    auto size = static_cast<uint32_t>(path.size());
-    if (_NSGetExecutablePath(path.begin().base(), &size) != 0) {
-        spdlog::get("logger")->critical("Unable to locate Bundle location. Aborting.");
-        std::exit(1);
-    }
-    path = path.substr(0, path.find_last_of('/') + 1);
-    spdlog::get("logger")->info("Successfully located Bundle at {0}", path);
-    _appleScriptLocation = path + "printAppTitle.scpt";
+
+    _appleScriptLocation = getExecPath() + "printAppTitle.scpt";
 }

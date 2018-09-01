@@ -22,6 +22,7 @@ Then simply run the generated executable depending on the platform where you hav
     - libx11-dev
     - libxmu-dev
     - libxss-dev
+    - libwebkit2gtk-4.0-dev
 #### MacOs
     - Carbon    
 ## Class Diagram

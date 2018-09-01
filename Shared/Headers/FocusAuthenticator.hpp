@@ -18,6 +18,8 @@ private:
                                        "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDdlatRjRjogo3WojgGHFHYLugdUWAY9iR3fy4arWNA1KoS8kVw33cJibXr8bvwUAUparCwlvdbH6dvEOfou0/gCFQsHUfQrSDv+MuSUMAe8jzKE4qW+jK+xQU9a03GUnKHkkle+Q0pX/g6jXZ7r1/xAK5Do2kQ+X5xK9cipRgEKwIDAQAB\n"
                                        "-----END PUBLIC KEY-----";
 
+    std::unique_ptr<FocusEventEmitter> _eventEmitter;
+    std::unique_ptr<FocusEventListener<const std::string &>> _messageListener;
     std::unique_ptr<httplib::Client> _cli;
     std::shared_ptr<FocusConfiguration> _config;
     std::string _token;

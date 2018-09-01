@@ -7,6 +7,7 @@
 #include <spdlog_pragma.hpp>
 #include "FocusConfiguration.hpp"
 #include <lightconf_pragma.hpp>
+#include "json_pragma.hpp"
 
 namespace lightconf {
     LIGHTCONF_BEGIN_ENUM(serverType)
@@ -33,23 +34,30 @@ namespace lightconf {
 }
 
 FocusConfiguration::FocusConfiguration(const std::string &configFile) :
-        _userInfo(),
-        _device(),
-        _triggerAfk(),
-        _serversInfo(),
-        _filled(false),
+        _userInfo({user{"", ""}}),
+        _device({device{"", ""}}),
+        _triggerAfk("300"),
+        _serversInfo({server{"auth.thefocuscompany.me", 3000, serverType::AUTHENTICATION}, server{"backend.thefocuscompany.me", 5555, serverType::BACKEND}}),
         _defaultServer({std::string("127.0.0.1"), 4242, serverType::DEFAULT}),
         _configFile(configFile),
-        _source() {
-    readConfiguration(0);
-}
-
-bool FocusConfiguration::isFilled() const {
-    return _filled;
-}
-
-struct user FocusConfiguration::getUser() const {
-    return _userInfo;
+        _source(),
+        _eventEmitter(std::make_unique<FocusEventEmitter>()),
+        _messageListener(std::make_unique<FocusEventListener<const std::string &>>()) {
+    readConfiguration();
+    generateConfigurationFile();
+    _messageListener->RegisterMessage("Configuration", [this](const std::string &data) {
+        auto j = nlohmann::json::parse(data);
+        if (j.find("action") != j.end()) {
+            if (j["action"] == "get_user_credentials") {
+                _eventEmitter->EmitMessage("WebviewAction", "{\"action\": \"fill_login_form\", \"data\": {\"email\": \"" + _userInfo._email + "\", \"password\": \"" + _userInfo._password + "\"}}");
+            } else if (j["action"] == "set_user_credentials") {
+                if (j.find("data") != j.end()) {
+                    auto infoUser = j["data"];
+                    setUser(infoUser["email"], infoUser["password"]);
+                }
+            }
+        }
+    });
 }
 
 struct server FocusConfiguration::getServer(const serverType type) const {
@@ -61,22 +69,26 @@ struct server FocusConfiguration::getServer(const serverType type) const {
     }
 }
 
-void FocusConfiguration::setDeviceId(const std::string &deviceId) {
-    if (_filled && !_source.empty()) {
-        _device._id = deviceId;
+struct device FocusConfiguration::getDevice() const {
+    return _device;
+}
+
+void FocusConfiguration::setDevice(const std::string &deviceName, const std::string &deviceId) {
+    if (!_source.empty()) {
+        _device = device{deviceId, deviceName};
         lightconf::group config;
         config = lightconf::config_format::read(_source);
-        config.set<device>("device", _device);
+        config.set<device>("device", device{
+                deviceId,
+                deviceName
+        });
         std::ofstream stream(_configFile, std::ios::out);
         if (stream) {
-            stream << lightconf::config_format::write(config, _source, 80);
+            _source = lightconf::config_format::write(config, _source, 80);
+            stream << _source;
             spdlog::get("logger")->info("Device id stored in configuration file");
         }
     }
-}
-
-struct device FocusConfiguration::getDevice() const {
-    return _device;
 }
 
 std::string FocusConfiguration::getTriggerAfk() const {
@@ -84,67 +96,66 @@ std::string FocusConfiguration::getTriggerAfk() const {
 }
 
 void FocusConfiguration::setTriggerAfk(const std::string &triggerAfk) {
-    if (_filled && !_source.empty()) {
+    if (!_source.empty()) {
         _triggerAfk = triggerAfk;
         lightconf::group config;
         config = lightconf::config_format::read(_source);
         config.set<std::string>("trigger_afk", triggerAfk);
         std::ofstream stream(_configFile, std::ios::out);
         if (stream) {
-            stream << lightconf::config_format::write(config, _source, 80);
+            _source = lightconf::config_format::write(config, _source, 80);
+            stream << _source;
             spdlog::get("logger")->info("triggerAfk id stored in configuration file");
         }
     }
 }
 
-void FocusConfiguration::generateConfigurationFile() {
-    auto askStdin = [](std::string const &value) {
-        std::string in;
-        std::cout << value << ": ";
-        std::getline(std::cin, in);
-        return in;
-    };
+struct user FocusConfiguration::getUser() const {
+    return _userInfo;
+}
 
+void FocusConfiguration::setUser(const std::string &email, const std::string &password) {
+    if (!_source.empty()) {
+        _userInfo = user{email, password};
+        lightconf::group config;
+        config = lightconf::config_format::read(_source);
+        config.set<user>("user", user{
+                email,
+                password
+        });
+        std::ofstream stream(_configFile, std::ios::out);
+        if (stream) {
+            _source = lightconf::config_format::write(config, _source, 80);
+            stream << _source;
+            spdlog::get("logger")->info("User stored in configuration file");
+        }
+    }
+}
+
+void FocusConfiguration::generateConfigurationFile() {
     spdlog::get("logger")->info("Generating a default configuration file");
     lightconf::group config;
     _source = "";
     try {
         config = lightconf::config_format::read(_source);
-        config.set<user>("user", user {
-                askStdin("Email"),
-                askStdin("Password")
-        });
-        config.set<std::vector<server>>("servers", {server {
-                "auth.thefocuscompany.me", 3000, serverType::AUTHENTICATION
-        }, server {
-                "backend.thefocuscompany.me", 5555, serverType::BACKEND
-        }});
-        config.set<std::string>("trigger_afk", "300");
-
-        config.set<device>("device", device {
-                "",
-                askStdin("Device Name")
-        });
-
-        std::ofstream stream(_configFile, std::ios::out);
-        if (stream) {
-            stream << lightconf::config_format::write(config, _source, 80);
+        config.set<user>("user", _userInfo);
+        config.set<std::vector<server>>("servers", _serversInfo);
+        config.set<std::string>("trigger_afk", _triggerAfk);
+        config.set<device>("device", _device);
+        std::ofstream outStream(_configFile, std::ios::out);
+        if (outStream) {
+            _source = lightconf::config_format::write(config, _source, 80);
+            outStream << _source;
+            spdlog::get("logger")->info("Written configuration file successfully");
         } else {
             spdlog::get("logger")->critical("Unable to create config file");
-            std::exit(1);
         }
-        spdlog::get("logger")->info("Written configuration file successfully");
     } catch (const std::exception &) {
         spdlog::get("logger")->error("Failed to write configuration file");
     }
 }
 
-void FocusConfiguration::readConfiguration(int attempt) {
-    if (attempt > 3) {
-        spdlog::get("logger")->critical("Failed to read configuration file after {0} attempt", attempt);
-        std::exit(1);
-    }
-
+void FocusConfiguration::readConfiguration() {
     lightconf::group config;
     _source = "";
     try {
@@ -154,26 +165,18 @@ void FocusConfiguration::readConfiguration(int attempt) {
             _source = std::string(std::istreambuf_iterator<char>(stream),
                                   std::istreambuf_iterator<char>());
             config = lightconf::config_format::read(_source);
-            _userInfo = config.get<user>("user");
-            _device = config.get<device>("device");
-            _triggerAfk = config.get<std::string>("trigger_afk", "300");
-            _serversInfo = config.get<std::vector<server>>("servers", {});
-            _filled = true;
+            _userInfo = config.get<user>("user", _userInfo);
+            _device = config.get<device>("device", _device);
+            _triggerAfk = config.get<std::string>("trigger_afk", _triggerAfk);
+            _serversInfo = config.get<std::vector<server>>("servers", _serversInfo);
             spdlog::get("logger")->info("Reading configuration file successfully");
             return;
         } else {
-            _filled = false;
             spdlog::get("logger")->warn("Missing configuration file");
-            generateConfigurationFile();
         }
     } catch (const lightconf::parse_error &) {
-        _filled = false;
         spdlog::get("logger")->error("Parsing configuration file error");
-        generateConfigurationFile();
     } catch (const std::exception &) {
-        _filled = false;
         spdlog::get("logger")->error("Failed to read configuration file");
-        generateConfigurationFile();
     }
-    readConfiguration(++attempt);
 }

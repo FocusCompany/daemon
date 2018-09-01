@@ -22,8 +22,10 @@ private:
     std::unique_ptr<IAfkListener> _afkListener = std::unique_ptr<IAfkListener>(std::make_unique<AfkListener>());
     std::unique_ptr<FocusEventListener<Focus::Event>> _eventListener = std::make_unique<FocusEventListener<Focus::Event>>();
     std::unique_ptr<FocusEventListener<const std::string &>> _messageListener = std::make_unique<FocusEventListener<const std::string &>>();
+    std::unique_ptr<FocusEventListener<const std::string &>> _keyLoggerListener = std::make_unique<FocusEventListener<const std::string &>>();
     std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
     std::vector<Focus::Event> _events = std::vector<Focus::Event>();
+    std::atomic<bool> _watching = {false};
 
     void AddEvent(const Focus::Event &event);
 

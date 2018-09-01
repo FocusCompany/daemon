@@ -5,6 +5,8 @@
 #include <FocusDaemon.hpp>
 #include <spdlog_pragma.hpp>
 #include <FocusPlatformFolders.hpp>
+#include <FocusUI.hpp>
+
 
 #ifdef MSVC
 #include <direct.h>
@@ -48,31 +50,26 @@ bool create_directories(std::string const& path)
     return bSuccess;
 }
 
-bool FocusDaemon::Run(const std::string &configFileName, std::atomic<bool> &sigReceived) {
+void FocusDaemon::Run(const std::string &configFileName, std::atomic<bool> &sigReceived) {
     spdlog::get("logger")->info("FocusDaemon is running");
-    _config = std::make_shared<FocusConfiguration>(sago::getConfigHome() + "/Focus/" + configFileName);
-    auto usr = _config->getUser();
-    Authenticator->Run(_config);
-    if (Authenticator->Login(usr._email, usr._password, _config->getDevice()._id)) {
-        _device_id = Authenticator->GetDeviceId();
-        spdlog::get("logger")->info("User uuid: {}", Authenticator->GetUUID());
-        if (_device_id.empty()) {
-            if (Authenticator->RegisterDevice(_config->getDevice()._name)) {
-                spdlog::get("logger")->info("Re-Login with device_id");
-                auto usr = _config->getUser();
-                Authenticator->Login(usr._email, usr._password, _config->getDevice()._id);
-                _device_id = Authenticator->GetDeviceId();
-            }
+
+    _sigReceived = sigReceived.load();
+    _configFileName = configFileName;
+
+    _messageListener->RegisterMessage("Connected", [this](const std::string &) {
+        if (!_config->getDevice()._id.empty()) {
+            spdlog::get("logger")->info("Device Id: {}", _config->getDevice()._id);
+            NetworkManager->setDeviceId(_config->getDevice()._id);
         }
-    }
-    if (!_device_id.empty()) {
-        spdlog::get("logger")->info("Device Id: {}", _device_id);
-        EventManager->Run(sigReceived);
-        NetworkManager->Run(_device_id, _config, sigReceived);
-        KeyLogger->Run(Authenticator, _config, sigReceived);
-        return true;
-    }
-    return false;
+    });
+
+    EventManager->Run(_sigReceived);
+    _config = std::make_shared<FocusConfiguration>(sago::getConfigHome() + "/Focus/" + _configFileName);
+    Authenticator->Run(_config);
+    NetworkManager->Run(_config, _sigReceived);
+    KeyLogger->Run(Authenticator, _config, _sigReceived);
+
+    FocusGUI->Run();
 }
 
 void FocusDaemon::bootstrap(std::string const &platform_name) {

@@ -1,3 +1,5 @@
+include(GNUInstallDirs)
+
 find_package(PkgConfig)
 pkg_check_modules(X11 REQUIRED x11)
 pkg_check_modules(XMU REQUIRED xmu)
@@ -32,6 +34,8 @@ target_link_libraries(daemon_linux daemon_linux_lib daemon_shared_lib ${X11_LIBR
 
 link_directories(${X11_LIBRARY_DIRS} ${XMU_LIBRARY_DIRS})
 
+include_target_dependency_in_target_package(daemon_shared_lib daemon_linux)
+
 target_compile_options(daemon_linux_lib PRIVATE "${COMPILE_FLAGS}")
 target_compile_options(daemon_linux PRIVATE "${COMPILE_FLAGS}")
 
@@ -50,6 +54,10 @@ endif()
 
 ####INSTALL####
 
+install(DIRECTORY ${CMAKE_BINARY_DIR}/BUILD/lib/ DESTINATION lib/focus)
+install(FILES "$<TARGET_FILE_DIR:daemon_shared_lib>/app.html" DESTINATION bin)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/focus-daemon.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+install(FILES ${PROJECT_SOURCE_DIR}/assets/icon_daemon.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps/ RENAME focus.svg)
 install(TARGETS daemon_linux DESTINATION bin)
 
 ####PACKAGE####

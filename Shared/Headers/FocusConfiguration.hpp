@@ -5,6 +5,8 @@
 #ifndef DAEMON_FOCUSCONFIGURATION_HPP
 #define DAEMON_FOCUSCONFIGURATION_HPP
 
+#include "FocusEventEmitter.hpp"
+#include "FocusEventListener.hpp"
 #include <string>
 #include <vector>
 
@@ -34,14 +36,16 @@ private:
     device _device;
     std::string _triggerAfk;
     std::vector<server> _serversInfo;
-    bool _filled;
     struct server _defaultServer;
     std::string _configFile;
     std::string _source;
+    std::unique_ptr<FocusEventEmitter> _eventEmitter;
+    std::unique_ptr<FocusEventListener<const std::string &>> _messageListener;
+
 public:
     FocusConfiguration(const std::string &configFile);
 
-    void readConfiguration(int attempt);
+    void readConfiguration();
 
     bool isFilled() const;
 
@@ -51,7 +55,9 @@ public:
 
     struct device getDevice() const;
 
-    void setDeviceId(const std::string &deviceId);
+    void setDevice(const std::string &deviceName, const std::string &deviceId);
+
+    void setUser(const std::string &email, const std::string &password);
 
     void setTriggerAfk(const std::string &triggerAfk);
 

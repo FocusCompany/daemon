@@ -29,7 +29,10 @@ public:
 
     virtual ~FocusNetworkManager();
 
-    void Run(const std::string &device_id, std::shared_ptr<FocusConfiguration> &config, std::atomic<bool> &sigReceived);
+    void Run(std::shared_ptr<FocusConfiguration> &config, std::atomic<bool> &sigReceived);
+
+    void setDeviceId(const std::string &device_id);
+
 };
 
 #endif //FOCUS_CLIENT_FOCUSNETWORKMANAGER_HPP
