@@ -29,6 +29,7 @@ void FocusUI::Run() {
     });
 
     std::string url = "file://" + getExecPath() + "app.html";
+	spdlog::get("logger")->info("Loading frontend from file : {}", url);
 
     _w.title = "Focus";
     _w.url = url.c_str();
