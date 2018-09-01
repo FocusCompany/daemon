@@ -47,7 +47,7 @@ function(filter_dynamic_library lib ret)
     endif()
 
     set(${ret} FALSE PARENT_SCOPE)
-    if(lib MATCHES "${SHARED_LIB_EXT}$")
+    if(lib MATCHES "${SHARED_LIB_EXT}(\\.([0-9]+))*$")
         set(${ret} TRUE PARENT_SCOPE)
     endif()
 endfunction()

@@ -13,6 +13,8 @@
     #include <mach-o/dyld.h>
 #elif defined(UNIX)
     #include <libgen.h>
+    #include <unistd.h>
+    #include <linux/limits.h>
 #endif
 
 static const std::string getExecPath() {
@@ -32,6 +34,7 @@ static const std::string getExecPath() {
 #elif defined(UNIX)
     char result[ PATH_MAX ];
     ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+    result[count] = '\0';
     const char *path;
     if (count != -1) {
         path = dirname(result);
