@@ -64,7 +64,7 @@ void ContextAgent::OnContextChanged(const std::string &processName, const std::s
 ContextAgent::~ContextAgent() {
     if (_isRunning) {
         _isRunning = false;
-        _eventListener->join();
+        _eventListener->detach();
     }
 }
 

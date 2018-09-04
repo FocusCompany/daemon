@@ -35,7 +35,7 @@ void FocusEventManager::RunReceive() const {
 FocusEventManager::~FocusEventManager() {
     if (_isRunning) {
         _isRunning = false;
-        _eventManagerThread->join();
+        _eventManagerThread->detach();
     }
     _socketSUB->close();
     _socketPUB->close();

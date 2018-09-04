@@ -21,7 +21,7 @@ FocusNetworkManager::FocusNetworkManager() :
 FocusNetworkManager::~FocusNetworkManager() {
     if (_isRunning) {
         _isRunning = false;
-        _networkManagerThread->join();
+        _networkManagerThread->detach();
     }
     _socket->Disconnect();
 }

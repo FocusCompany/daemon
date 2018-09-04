@@ -66,7 +66,7 @@ void AfkListener::OnAfk(const std::chrono::milliseconds &timeSinceEpoch) const {
 AfkListener::~AfkListener() {
     if (_isRunning) {
         _isRunning = false;
-        _eventListener->join();
+        _eventListener->detach();
     }
 }
 

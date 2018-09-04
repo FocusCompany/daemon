@@ -17,7 +17,6 @@ Then simply run the generated executable depending on the platform where you hav
     - Protobuf 3 (https://github.com/google/protobuf)
     - OpenSSL
     - ZeroMQ (https://github.com/zeromq/libzmq)
-    - Jwt-cpp (https://github.com/pokowaka/jwt-cpp)
 #### Linux
     - libx11-dev
     - libxmu-dev

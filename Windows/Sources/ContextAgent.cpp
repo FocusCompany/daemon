@@ -15,7 +15,7 @@ ContextAgent::ContextAgent() : _isRunning(false),
 ContextAgent::~ContextAgent() {
     if (_isRunning) {
         _isRunning = false;
-        _eventListener->join();
+        _eventListener->detach();
     }
 }
 

@@ -10,10 +10,6 @@
 #include <webview_pragma.hpp>
 #include <BundleLocation.hpp>
 
-// This is how to send data to webview
-//std::unique_ptr<FocusEventEmitter> _eventEmitter = std::make_unique<FocusEventEmitter>();
-//_eventEmitter->EmitMessage("webviewAction", "{\"action\": \"fill_login_form\", \"data\": {\"email\": \"test\", \"password\": \"etienne\"}}");
-
 void FocusUI::Run() {
     spdlog::get("logger")->info("FocusUI is running");
 

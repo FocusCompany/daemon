@@ -72,7 +72,7 @@ public:
     virtual ~FocusEventListener() {
         if (_isRunning) {
             _isRunning = false;
-            _eventListenerThread->join();
+            _eventListenerThread->detach();
         }
         _socketSUB->close();
     }
