@@ -161,6 +161,15 @@
             background: #f2b2a9;
         }
 
+        .dnd {
+            background: #f2f2f2;
+        }
+
+        .stop-dnd {
+            display: none;
+            background: #7f75f2;
+        }
+
         .loader {
             position: relative;
             width: 12px;
@@ -369,6 +378,10 @@
     <div class=app-container>
         <div class="app-form">
             <h1>You are connected to<br><span class="product-name">Focus</span> <span class="title-descr">The eye of sauron</span></h1>
+            <div class="dnd-button">
+                <button class="custom-button toReplaceDndButton dnd" onclick="dnd_button()">Do not disturb</button>
+                <button class="custom-button toReplaceDndButton stop-dnd" onclick="stop_dnd_button()">Stop do not disturb</button>
+            </div>
             <div class="keylogger-button">
                 <button class="custom-button toReplaceWatchButton watch" onclick="watch_me_button()">Watch me</button>
                 <button class="custom-button toReplaceWatchButton stop-watch" onclick="stop_watch_me_button()">Stop watch me</button>
@@ -457,6 +470,14 @@
         });
     }
 
+    function dnd_button() {
+        window.external.invoke(JSON.stringify({module: "disturb_agent", action: "dnd"}));
+    }
+
+    function stop_dnd_button() {
+        window.external.invoke(JSON.stringify({module: "disturb_agent", action: "stop_dnd"}));
+    }
+
     function watch_me_button() {
         window.external.invoke(JSON.stringify({module: "keylogger", action: "watch"}));
     }
@@ -484,6 +505,22 @@
         }
     }
 
+    function toggleDndButton() {
+        if (isConnected) {
+            window.external.invoke(JSON.stringify({module: "disturb_agent", action: "get_state"}));
+        }
+    }
+
+    function setDndButton(_state) {
+        if (_state === "on") {
+            $(".dnd").hide();
+            $(".stop-dnd").show();
+        } else if (_state === "off") {
+            $(".dnd").show();
+            $(".stop-dnd").hide();
+        }
+    }
+
     function login(data) {
         if (data.status === "success" && data.device === "true") {
             $(".keylogger-button").show();
@@ -498,6 +535,7 @@
                 $(".toast-device").hide();
                 $(".device-form").show();
 
+                window.external.invoke(JSON.stringify({module: "disturb_agent", action: "get_state"}));
                 $(".app-container").fadeIn(400);
             });
             isConnected = true;
@@ -536,6 +574,12 @@
                     break;
                 case ("toggle_watch_button"):
                     toggleWatchButton();
+                    break;
+                case ("toggle_dnd_button"):
+                    toggleDndButton();
+                    break;
+                case ("dnd_button"):
+                    setDndButton(command.data.status);
                     break;
                 default:
                     break;

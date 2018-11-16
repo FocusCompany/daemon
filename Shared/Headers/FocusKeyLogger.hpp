@@ -8,6 +8,8 @@
 #include <thread>
 #include "IContextAgent.hpp"
 #include "ContextAgent.hpp"
+#include "IDisturbAgent.hpp"
+#include "DisturbAgent.hpp"
 #include "FocusEventListener.hpp"
 #include "FocusEventEmitter.hpp"
 #include <FocusContextEventPayload.pb.h>
@@ -18,6 +20,7 @@
 class FocusKeyLogger {
 private:
     std::shared_ptr<FocusAuthenticator> _authenticator = nullptr;
+    std::unique_ptr<IDisturbAgent> _disturbAgent = std::unique_ptr<IDisturbAgent>(std::make_unique<DisturbAgent>());
     std::unique_ptr<IContextAgent> _contextAgent = std::unique_ptr<IContextAgent>(std::make_unique<ContextAgent>());
     std::unique_ptr<IAfkListener> _afkListener = std::unique_ptr<IAfkListener>(std::make_unique<AfkListener>());
     std::unique_ptr<FocusEventListener<Focus::Event>> _eventListener = std::make_unique<FocusEventListener<Focus::Event>>();
