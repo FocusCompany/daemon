@@ -3,10 +3,11 @@ find_library(CARBON_LIBRARY Carbon)
 set(DEAMON_MAC_SOURCE_FILES
         Sources/ContextAgent.cpp
         Sources/AfkListener.cpp
+        Sources/DisturbAgent.cpp
 
         Headers/ContextAgent.hpp
         Headers/AfkListener.hpp
-        Sources/DisturbAgent.cpp Headers/DisturbAgent.hpp)
+        Headers/DisturbAgent.hpp)
 
 set(MAIN_FILES
         main.cpp
