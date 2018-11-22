@@ -1,9 +1,11 @@
 set(DEAMON_WINDOWS_SOURCE_FILES
         Sources/ContextAgent.cpp
         Sources/AfkListener.cpp
+        Sources/DisturbAgent.cpp
 
         Headers/ContextAgent.hpp
         Headers/AfkListener.hpp
+        Headers/DisturbAgent.hpp
         )
 
 set(MAIN_FILES

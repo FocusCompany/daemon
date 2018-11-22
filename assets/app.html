@@ -170,6 +170,13 @@
             background: #7f75f2;
         }
 
+        .no-dnd {
+            display: none;
+            background: #9c9c9c;
+            cursor: not-allowed;
+        }
+
+
         .loader {
             position: relative;
             width: 12px;
@@ -417,6 +424,7 @@
             <div class="dnd-button">
                 <button class="custom-button toReplaceDndButton dnd trn" onclick="dnd_button()">Do not disturb</button>
                 <button class="custom-button toReplaceDndButton stop-dnd trn" onclick="stop_dnd_button()">Stop do not disturb</button>
+                <button class="custom-button toReplaceDndButton no-dnd trn" onclick="no_dnd_button()">Do not disturb unavailable</button>
             </div>
             <div class="keylogger-button">
                 <button class="custom-button toReplaceWatchButton watch trn" onclick="watch_me_button()">Watch me</button>
@@ -506,6 +514,10 @@
         "Stop do not disturb": {
             en: "Stop do not disturb",
             fr: "Me déranger"
+        },
+        "Do not disturb unavailable": {
+            en: "Do not disturb unavailable",
+            fr: "Ne pas déranger indisponible"
         },
         "Watch me": {
             en: "Watch me",
@@ -598,6 +610,10 @@
         window.external.invoke(JSON.stringify({module: "disturb_agent", action: "stop_dnd"}));
     }
 
+    function no_dnd_button() {
+        window.external.invoke(JSON.stringify({module: "disturb_agent", action: "get_state"}));
+    }
+
     function watch_me_button() {
         window.external.invoke(JSON.stringify({module: "keylogger", action: "watch"}));
     }
@@ -651,9 +667,15 @@
     function setDndButton(_state) {
         if (_state === "on") {
             $(".dnd").hide();
+            $(".no-dnd").hide();
             $(".stop-dnd").show();
         } else if (_state === "off") {
             $(".dnd").show();
+            $(".no-dnd").hide();
+            $(".stop-dnd").hide();
+        } else if (_state === "not_allowed") {
+            $(".dnd").hide();
+            $(".no-dnd").show();
             $(".stop-dnd").hide();
         }
     }
