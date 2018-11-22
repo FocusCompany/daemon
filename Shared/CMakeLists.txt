@@ -43,7 +43,7 @@ set(DEAMON_SHARED_SOURCE_FILES
 
         Interfaces/IContextAgent.hpp
         Interfaces/IAfkListener.hpp
-        )
+        Interfaces/IDisturbAgent.hpp)
 
 include_directories(Headers Interfaces ${OPENSSL_INCLUDE_DIR} ${PROTOBUF_INCLUDE_DIR} Proto/ProtoCompiled ${ZeroMQ_INCLUDE_DIR})
 

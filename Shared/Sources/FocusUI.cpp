@@ -66,4 +66,7 @@ FocusUI::FocusUI() : _eventEmitter(std::make_unique<FocusEventEmitter>()),
     _command["keylogger"] = [this](const std::string &data) {
         _eventEmitter->EmitMessage("Keylogger", data);
     };
+    _command["disturb_agent"] = [this](const std::string &data) {
+        _eventEmitter->EmitMessage("DisturbAgent", data);
+    };
 }

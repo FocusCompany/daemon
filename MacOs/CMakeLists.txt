@@ -3,16 +3,17 @@ find_library(CARBON_LIBRARY Carbon)
 set(DEAMON_MAC_SOURCE_FILES
         Sources/ContextAgent.cpp
         Sources/AfkListener.cpp
+        Sources/DisturbAgent.cpp
 
         Headers/ContextAgent.hpp
         Headers/AfkListener.hpp
-        )
+        Headers/DisturbAgent.hpp)
 
 set(MAIN_FILES
         main.cpp
         )
 
-include_directories(Headers ../Shared/Interfaces ../Shared/Headers ../Library ../Shared/Proto/ProtoCompiled)
+include_directories(Headers ${PROTOBUF_INCLUDE_DIR} ../Shared/Interfaces ../Shared/Headers ../Library ../Shared/Proto/ProtoCompiled)
 
 add_library(daemon_mac_lib STATIC ${DEAMON_MAC_SOURCE_FILES})
 
@@ -24,6 +25,8 @@ target_link_libraries(daemon_mac daemon_mac_lib daemon_shared_lib ${CARBON_LIBRA
 add_custom_command(TARGET daemon_mac POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/assets/app.html" "$<TARGET_FILE_DIR:daemon_mac>/bin/app.html")
 add_custom_command(TARGET daemon_mac POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/MacOs/printAppTitle.scpt" "$<TARGET_FILE_DIR:daemon_mac>/bin/printAppTitle.scpt")
 add_custom_command(TARGET daemon_mac POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/MacOs/printAppTitle.scpt" "$<TARGET_FILE_DIR:daemon_mac>/printAppTitle.scpt")
+add_custom_command(TARGET daemon_mac POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/MacOs/toggleDoNotDisturb.sh" "$<TARGET_FILE_DIR:daemon_mac>/bin/toggleDoNotDisturb.sh")
+add_custom_command(TARGET daemon_mac POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/MacOs/toggleDoNotDisturb.sh" "$<TARGET_FILE_DIR:daemon_mac>/toggleDoNotDisturb.sh")
 
 include_target_dependency_in_target_package(daemon_shared_lib daemon_mac)
 

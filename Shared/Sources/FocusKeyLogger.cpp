@@ -8,8 +8,7 @@
 #include "FocusSerializer.hpp"
 #include "json_pragma.hpp"
 
-void
-FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator, std::shared_ptr<FocusConfiguration> &config, std::atomic<bool> &sigReceived) {
+void FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator, std::shared_ptr<FocusConfiguration> &config, std::atomic<bool> &sigReceived) {
     _authenticator = authenticator;
 
     _eventListener->Register("NewEvent", [this](Focus::Event &newContext) {
@@ -39,6 +38,7 @@ FocusKeyLogger::Run(std::shared_ptr<FocusAuthenticator> &authenticator, std::sha
         _events.clear();
     });
 
+    _disturbAgent->Run();
     _contextAgent->Run(sigReceived);
     _afkListener->Run(std::stoi(config->getTriggerAfk()), sigReceived);
 }

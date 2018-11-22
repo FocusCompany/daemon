@@ -14,10 +14,11 @@ endif()
 set(DEAMON_LINUX_SOURCE_FILES
         Sources/ContextAgent.cpp
         Sources/AfkListener.cpp
+        Sources/DisturbAgent.cpp
 
         Headers/ContextAgent.hpp
         Headers/AfkListener.hpp
-        )
+        Headers/DisturbAgent.hpp)
 
 set(MAIN_FILES
         main.cpp
@@ -38,6 +39,8 @@ include_target_dependency_in_target_package(daemon_shared_lib daemon_linux)
 
 target_compile_options(daemon_linux_lib PRIVATE "${COMPILE_FLAGS}")
 target_compile_options(daemon_linux PRIVATE "${COMPILE_FLAGS}")
+
+add_custom_command(TARGET daemon_linux POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/Linux/toggleDoNotDisturb.sh" "$<TARGET_FILE_DIR:daemon_linux>/toggleDoNotDisturb.sh")
 
 ####TESTS####
 
