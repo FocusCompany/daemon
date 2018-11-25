@@ -61,10 +61,11 @@ void FocusNetworkManager::Run(std::shared_ptr<FocusConfiguration> &config, std::
 void FocusNetworkManager::RunReceive() {
     while (_isRunning && !_sigReceived) {
         auto msg = _socket->Receive();
-
+        spdlog::get("console")->info("Payload received from backend");
         Focus::FilterEventPayload filterEvent;
         try {
             filterEvent.ParseFromString(msg);
+            spdlog::get("console")->info("Backend said do not disutrb is {}", filterEvent.isdndon());
             if (filterEvent.isdndon()) {
                 _eventEmitter->EmitMessage("DisturbAgent", "{\"action\": \"dnd\"}");
             } else {
