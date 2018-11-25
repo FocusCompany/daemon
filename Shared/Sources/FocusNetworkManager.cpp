@@ -4,6 +4,7 @@
 
 #include <FocusNetworkManager.hpp>
 #include <FocusContextEventPayload.pb.h>
+#include <FocusFilterEventPayload.pb.h>
 #include <FocusSecureSocket.hpp>
 #include <iostream>
 #include <FocusEnvelope.pb.h>
@@ -58,5 +59,20 @@ void FocusNetworkManager::Run(std::shared_ptr<FocusConfiguration> &config, std::
 }
 
 void FocusNetworkManager::RunReceive() {
-    //TODO: Implementing Reception module to handle server request.
+    while (_isRunning && !_sigReceived) {
+        auto msg = _socket->Receive();
+
+        Focus::FilterEventPayload filterEvent;
+        try {
+            filterEvent.ParseFromString(msg);
+            if (filterEvent.isdndon()) {
+                _eventEmitter->EmitMessage("DisturbAgent", "{\"action\": \"dnd\"}");
+            } else {
+                _eventEmitter->EmitMessage("DisturbAgent", "{\"action\": \"stop_dnd\"}");
+            }
+        }
+        catch (const std::runtime_error& e) {
+            spdlog::get("logger")->warn("Failed to deserialize backend payload");
+        }
+    }
 }
